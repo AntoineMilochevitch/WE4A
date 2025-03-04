@@ -1,0 +1,76 @@
+<html>
+    <head>
+        <title>MyMoodle</title>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <link rel="stylesheet" type="text/css" href="../static/style.css">
+        <script src="../js/courseModif.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="logo">
+                <a href="index.html">
+                    <img src="../static/logo_UTBM_blanc.png" alt="MyMoodle">
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="dashboard.html">Tableau de bord</a></li>
+                    <li><a href="myCourses.html">Mes cours</a></li>
+                    <li><a href="#">Recherche de cours</a></li>
+                    <li><a href="#">Sites UTBM</a></li>
+                    <li><a href="#">Semestre à l'UTBM</a></li>
+                    <li><a href="#">Stage/SEE</a></li>
+                </ul>
+            </div>
+            <div class="user">
+                <ul>
+                    <li><a href="#"><ion-icon name="notifications-outline"></ion-icon></a></li>
+                    <li><a href="#"><ion-icon name="chatbubble-outline"></ion-icon></a></li>
+                    <li><a href="#"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+                </ul>
+            </div>
+        </header>
+        <div class="content">
+            <div class="container">
+                <h1>Titre du cours</h1>
+                <div class="course-menu">
+                    <ul>
+                        <li><a href="#">Cours</a></li>
+                        <li><a href="#">Participants</a></li>
+                        <li><a href="#">Notes</a></li>
+                        <li><a href="#">Compétences</a></li>
+                    </ul>
+                </div>
+                <div class="ligne-gris"></div>
+                <div class="course-content">
+                </div>
+                <button class="btn-add-part">Ajouter une partie</button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="part-modal" class="modal">
+            <div class="modal-content">
+                <div class="part-form">
+                    <label for="part-title">Titre de la partie:</label>
+                    <input type="text" id="part-title" name="part-title">
+                    <div id="elements-container"></div>
+                    <div class="element-form">
+                        <label for="element-type">Type d'élément:</label>
+                        <select id="element-type" name="element-type">
+                            <option value="document-outline">Document</option>
+                            <option value="chatbubbles-outline">Forum</option>
+                            <!-- Add more options as needed -->
+                        </select>
+                        <label for="element-text">Nom de l'élément:</label>
+                        <input type="text" id="element-text" name="element-text">
+                        <button type="button" id="add-element">Ajouter un élément</button>
+                    </div>
+                    <button type="button" id="save-part">Enregistrer la partie</button>
+                    <button type="button" id="cancel-part">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

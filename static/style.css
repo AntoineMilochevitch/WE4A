@@ -1,0 +1,677 @@
+/* General body styling */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F7F7F7;
+}
+
+/* Header styling */
+header {
+    background-color: #007BC0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+/* Header links styling */
+header a {
+    text-decoration: none;
+    color: white;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+/* Header links hover effect */
+header a:hover {
+    background-color: white;
+    color: #007BC0;
+}
+
+/* Menu and user list styling */
+header .menu ul, header .user ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+/* Menu and user list items styling */
+header .menu ul li, header .user ul li {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Menu items hover effect */
+header .menu ul li:hover {
+    background-color: white;
+}
+
+/* Logo styling */
+header .logo img {
+    width: 100px;
+    height: auto;
+}
+
+/* User icons styling */
+header .user ul li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+}
+
+/* User icons size and color */
+header .user ul li a ion-icon {
+    font-size: 24px;
+    color: white;
+}
+
+/* User icons hover effect */
+header .user ul li a:hover {
+    background-color: #007BC0;
+}
+
+/* Logo hover effect */
+header .logo a:hover {
+    background-color: #007BC0;
+}
+
+/* Active menu item styling */
+header .menu ul li a.active {
+    position: relative;
+}
+
+/* Active menu item underline */
+header .menu ul li a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 1px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: white;
+}
+
+/* Content background color */
+.content {
+    background-color: #F7F7F7;
+}
+
+/* Container styling */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    margin: 30px auto;
+    max-width: 1300px;
+    padding: 20px;
+}
+
+/* Container title alignment */
+.container h1 {
+    align-self: flex-start;
+}
+
+/* Grid1 styling */
+.grid1 {
+    background-color:#008196;
+    border-color: #008196;
+    color: white;
+    padding: 10px;
+    margin: 40px auto;
+    width: 90%;
+    text-align: center;
+    border-radius: 10px;
+}
+
+/* Grid1 title styling */
+.grid1 h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* Grid1 links styling */
+.grid1 a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Grid2 styling */
+.grid2 {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin: 40px 0;
+}
+
+/* Grid2 items styling */
+.grid2 div {
+    flex: 1;
+    margin: 0 10px;
+    text-align: left;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Grid2 links styling */
+.grid2 div a {
+    color: #007BC0;
+    text-decoration: none;
+}
+
+/* Grid2 images styling */
+.grid2 div img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Search bar styling */
+.search {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0;
+}
+
+/* Search input styling */
+.search input[type="text"] {
+    padding: 10px;
+    font-size: 18px;
+    border: 2px solid #007BC0;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+}
+
+/* Search button styling */
+.search button {
+    padding: 10px;
+    background-color: #007BC0;
+    border: 2px solid #007BC0;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+/* Search button icon styling */
+.search button ion-icon {
+    font-size: 24px; 
+    color: white; 
+}
+
+/* Course list styling */
+.liste-cours {
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    width: 90%;
+}
+
+/* Course list title styling */
+.liste-cours h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Gray line styling */
+.ligne-gris {
+    background-color: gray;
+    height: 1px;
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Course sorting options styling */
+.liste-tri-cours {
+    display: flex;
+    justify-content: flex-start; 
+    align-items: center;
+    width: auto;
+    margin-top: 20px;
+}
+
+/* Individual sorting option styling */
+.tri-cours-1, .tri-cours-2, .tri-cours-3, .tri-cours-4, .tri-cours-5 {
+    position: relative;
+    margin-right: 10px; 
+}
+
+/* Dropdown menu styling */
+.tri-cours-1 ul, .tri-cours-3 ul, .tri-cours-4 ul, .tri-cours-5 ul {
+    list-style: none; 
+    padding: 0; 
+    margin: 0;
+}
+
+/* Sorting button styling */
+.btn-tri-cours {
+    padding: 5px 10px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Sorting button icon styling */
+.btn-tri-cours ion-icon {
+    margin-left: 5px;
+}
+
+/* Dropdown menu styling */
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: auto;
+    min-width: 200px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Dropdown item styling */
+.dropdown-item {
+    padding: 10px 20px;
+    text-decoration: none;
+    display: block;
+    color: #007BC0;
+    white-space: nowrap;
+}
+
+/* Dropdown item hover effect */
+.dropdown-item:hover {
+    background-color: #f1f1f1;
+}
+
+/* Dropdown divider styling */
+.dropdown-divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 5px 0;
+}
+
+/* Show dropdown on hover */
+.tri-cours-1:hover .dropdown,
+.tri-cours-3:hover .dropdown,
+.tri-cours-4:hover .dropdown,
+.tri-cours-5:hover .dropdown {
+    display: block;
+}
+
+/* Course container styling */
+.cours {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+/* Card mode course styling */
+.carte-mode .case-cours {
+    width: calc(33.333% - 20px);
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+/* Card mode course image styling */
+.carte-mode .course-image {
+    height: 50%; 
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Card mode course image size */
+.carte-mode .course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Card mode course title styling */
+.carte-mode .course-title {
+    height: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding: 10px;
+}
+
+/* Card mode course title text styling */
+.carte-mode .course-title p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* List mode course styling */
+.list-mode .case-cours {
+    width: 100%;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    height: 100px;
+}
+
+/* List mode course link styling */
+.list-mode .case-cours a {
+    width: 100%;
+    display: flex;
+}
+
+/* List mode course image styling */
+.list-mode .course-image {
+    width: 200px;
+    height: 100%;
+    flex: none;
+}
+
+/* List mode course image size */
+.list-mode .course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* List mode course title styling */
+.list-mode .course-title {
+    flex: 1;
+    display: flex;
+    align-items: left;
+    justify-content: left;
+    background-color: white;
+    height: 100%;
+    padding: 10px;
+}
+
+/* Pagination container styling */
+.pagination {
+    display: flex;
+    justify-content: right;
+    margin-top: 40px;
+}
+
+/* Pagination button styling */
+.btn-pagination {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+/* Course menu styling */
+.course-menu {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Course menu list styling */
+.course-menu ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+/* Course menu list items styling */
+.course-menu ul li {
+    margin: 0;
+    padding: 0 10px;
+}
+
+/* Course menu links styling */
+.course-menu ul li a {
+    color: #007BC0;
+    text-decoration: none;
+}
+
+/* Course menu links hover effect */
+.course-menu ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Course content container styling */
+.course-content {
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Part container styling */
+.part {
+    margin-bottom: 20px;
+}
+
+/* Part header styling */
+.part-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
+    padding: 10px 0;
+    cursor: pointer;
+}
+
+/* Part header title styling */
+.part-header h2 {
+    margin: 10px;
+    flex-grow: 1;
+    text-align: left;
+}
+
+/* Part header icons styling */
+.part-header ion-icon {
+    margin-left: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+/* Part header icons hover effect */
+.part-header:hover ion-icon {
+    transform: scale(1.2); 
+    color: #007BC0; 
+}
+
+/* Chevron icon transition */
+.part-header ion-icon[name="chevron-down-outline"] {
+    transition: transform 0.3s ease;
+}
+
+/* Chevron icon rotation when collapsed */
+.part-header.collapsed ion-icon[name="chevron-down-outline"] {
+    transform: rotate(-90deg);
+}
+
+/* Edit and delete buttons styling */
+.part-header .btn-edit-part,
+.part-header .btn-delete-part {
+    margin-left: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #007BC0;
+}
+
+/* Edit and delete buttons hover effect */
+.part-header .btn-edit-part:hover,
+.part-header .btn-delete-part:hover {
+    color: #005f8a;
+}
+
+/* Part content container styling */
+.part-content {
+    display: none;
+    padding-left: 20px;
+    background-color: white;
+}
+
+/* Element container styling */
+.part-content .element {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-left: 20px;
+}
+
+/* Element icon styling */
+.part-content .element ion-icon {
+    margin-right: 10px;
+}
+
+/* Add part button styling */
+.btn-add-part {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    align-self: flex-start;
+}
+
+/* Part form styling */
+.part-form {
+    background-color: #f7f7f7;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* Part form label styling */
+.part-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Part form input and select styling */
+.part-form input[type="text"],
+.part-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+/* Part form button styling */
+.part-form button {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+/* Element form styling */
+.element-form {
+    margin-bottom: 20px;
+}
+
+/* Modal styling */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+    padding-top: 60px; 
+}
+
+/* Modal content styling */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+/* Close button styling */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Close button hover effect */
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Element container styling */
+.element {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    cursor: move;
+}
+
+/* Element text styling */
+.element p {
+    margin: 0;
+    flex-grow: 1;
+}
+
+/* Delete element button styling */
+.element .btn-delete-element {
+    margin-left: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #007BC0;
+}
+
+/* Delete element button hover effect */
+.element .btn-delete-element:hover {
+    color: #005f8a;
+}
+
+/* Hide element styling */
+.element.hide {
+    display: none;
+}
+
+
