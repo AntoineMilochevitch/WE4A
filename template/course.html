@@ -59,12 +59,15 @@
                     <div class="element-form">
                         <label for="element-type">Type d'élément:</label>
                         <select id="element-type" name="element-type">
-                            <option value="document-outline">Document</option>
-                            <option value="chatbubbles-outline">Forum</option>
-                            <!-- Add more options as needed -->
+                            <option value="" disabled selected>Choisir un type d'élément</option>
+                            <option value="text">Texte</option>
+                            <option value="file">Fichier</option>
+                            <option value="depot">Dépot</option>
                         </select>
-                        <label for="element-text">Nom de l'élément:</label>
-                        <input type="text" id="element-text" name="element-text">
+                        <div id="element-fields">
+                            <label for="element-text">Nom de l'élément:</label>
+                            <input type="text" id="element-text" name="element-text">
+                        </div>
                         <button type="button" id="add-element">Ajouter un élément</button>
                     </div>
                     <button type="button" id="save-part">Enregistrer la partie</button>

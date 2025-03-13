@@ -536,14 +536,27 @@ header .menu ul li a.active::after {
 /* Element container styling */
 .part-content .element {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 10px;
     padding-left: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f7f7f7;
+}
+
+/* Element header styling */
+.part-content .element-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 
 /* Element icon styling */
-.part-content .element ion-icon {
+.part-content .element-header ion-icon {
     margin-right: 10px;
+    font-size: 24px;
 }
 
 /* Add part button styling */
@@ -647,21 +660,23 @@ header .menu ul li a.active::after {
     align-items: center;
     margin-bottom: 10px;
     padding-left: 20px;
-    cursor: move;
 }
 
-/* Element text styling */
-.element p {
+/* Element title styling */
+.part-content .element-header p {
     margin: 0;
+    font-size: 18px;
+    font-weight: bold;
     flex-grow: 1;
 }
 
 /* Delete element button styling */
-.element .btn-delete-element {
+.part-content .btn-delete-element {
     margin-left: 10px;
     font-size: 24px;
     cursor: pointer;
     color: #007BC0;
+    align-self: flex-end;
 }
 
 /* Delete element button hover effect */
@@ -672,6 +687,51 @@ header .menu ul li a.active::after {
 /* Hide element styling */
 .element.hide {
     display: none;
+}
+
+/* Styles for the new element types */
+.element-form .element-fields {
+    margin-bottom: 10px;
+}
+
+.element-form .element-fields label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.element-form .element-fields input,
+.element-form .element-fields textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.element-form .element-fields input[type="file"] {
+    padding: 0;
+}
+
+/* Element description styling */
+.part-content .element-description {
+    margin-top: 5px;
+    font-size: 14px;
+    color: #555;
+    padding-left: 34px; /* Align with icon */
+}
+
+/* Element date styling */
+.part-content .element-date {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #888;
+    padding-left: 34px; /* Align with icon */
+}
+
+/* Editable class styling */
+.editable {
+    border: 1px dashed #007BC0;
+    padding: 2px;
 }
 
 
