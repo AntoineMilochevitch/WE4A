@@ -1,0 +1,214 @@
+
+<html>
+    <head>
+        <title>MyMoodle</title>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <link rel="stylesheet" type="text/css" href="../static/style.css">
+    </head>
+    <header>
+        <div class="logo">
+            <a href="index.html">
+                <img src="../static/logo_UTBM_blanc.png" alt="MyMoodle">
+            </a>
+        </div>
+        <div class="menu">
+            <ul>
+                <li><a href="dashboard.html">Tableau de bord</a></li>
+                <li><a href="myCourses.html">Mes cours</a></li>
+                <li><a href="#">Recherche de cours</a></li>
+                <li><a href="#">Sites UTBM</a></li>
+                <li><a href="#">Semestre à l'UTBM</a></li>
+                <li><a href="#">Stage/SEE</a></li>
+            </ul>
+        </div>
+        <div class="user">
+            <ul>
+                <li><a href="#"><ion-icon name="notifications-outline"></ion-icon></a></li>
+                <li><a href="#"><ion-icon name="chatbubble-outline"></ion-icon></a></li>
+                <li><a href="profil.html"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+            </ul>
+        </div>
+    </header>
+    <body>     
+        <div class="content">
+            <div class="container">
+                <h1>Profil</h1>
+                <div class="profil-content">
+                    <div class="perso-info">
+                        <div class="profil-pic">
+                            <img src="../static/profil_pic1.jpg" alt="Profil">
+                        </div>
+                        <div class="profil-name">
+                            <h2>Moi ENcoremoi</h2>
+                            <h3>Statut</h3>
+                        </div>
+                    </div>
+                    <div class="snake">
+                        <h2>Snake 🐍</h2>
+                        <p id="instructions">Utilisez les touches ZQSD pour jouer</p>
+                        <button id="startButton" onclick="startGame()">Commencer</button>
+                        <canvas id="snakeGame" width="400" height="400"></canvas>
+                    </div>
+                </div>
+                <div class="emploi-du-temps">
+                    <h1>Emploi du temps</h1>
+                    <div class="edt">
+                        <table id="edtTable">
+                            <thead>
+                                <tr>
+                                    <th class="heure_edt">Heure</th>
+                                    <th>Lundi</th>
+                                    <th>Mardi</th>
+                                    <th>Mercredi</th>
+                                    <th>Jeudi</th>
+                                    <th>Vendredi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>8h-10h</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                    <td>Anglais</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                </tr>
+                                <tr>
+                                    <td>10h-12h</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                    <td>Anglais</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                </tr>
+                                <tr>
+                                    <td>14h-16h</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                    <td>Anglais</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                </tr>
+                                <tr>
+                                    <td>16h-18h</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                    <td>Anglais</td>
+                                    <td>Mathématiques</td>
+                                    <td>Physique</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            const canvas = document.getElementById("snakeGame");
+            const ctx = canvas.getContext("2d");
+            const startButton = document.getElementById("startButton");
+            const instructions = document.getElementById("instructions");
+        
+            const box = 20;
+            let snake;
+            let food;
+            let score;
+            let d;
+            let game;
+        
+            function startGame() {
+                snake = [];
+                snake[0] = { x: 9 * box, y: 10 * box };
+        
+                food = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+        
+                score = 0;
+                d = null;
+        
+                document.addEventListener("keydown", direction);
+        
+                if (game) clearInterval(game);
+                game = setInterval(draw, 110);
+                startButton.style.display = "none";
+                instructions.style.display = "none";
+            }
+        
+            function direction(event) {
+                if (event.keyCode == 90 && d != "DOWN") {
+                    d = "UP";
+                } else if (event.keyCode == 83 && d != "UP") {
+                    d = "DOWN";
+                } else if (event.keyCode == 81 && d != "RIGHT") {
+                    d = "LEFT";
+                } else if (event.keyCode == 68 && d != "LEFT") {
+                    d = "RIGHT";
+                }
+            }
+        
+            function collision(newHead, array) {
+                for (let i = 0; i < array.length; i++) {
+                    if (newHead.x == array[i].x && newHead.y == array[i].y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        
+            function draw() {
+                ctx.fillStyle = "#F7F7F7";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+                for (let i = 0; i < snake.length; i++) {
+                    ctx.fillStyle = (i == 0) ? "#007BC0" : "#005f8a";
+                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                    ctx.strokeStyle = "#F7F7F7";
+                    ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+                }
+        
+                ctx.fillStyle = "#FF0000";
+                ctx.fillRect(food.x, food.y, box, box);
+        
+                let snakeX = snake[0].x;
+                let snakeY = snake[0].y;
+        
+                if (d == "LEFT") snakeX -= box;
+                if (d == "UP") snakeY -= box;
+                if (d == "RIGHT") snakeX += box;
+                if (d == "DOWN") snakeY += box;
+        
+                if (snakeX == food.x && snakeY == food.y) {
+                    score++;
+                    food = {
+                        x: Math.floor(Math.random() * 19 + 1) * box,
+                        y: Math.floor(Math.random() * 19 + 1) * box
+                    };
+                } else {
+                    snake.pop();
+                }
+        
+                let newHead = {
+                    x: snakeX,
+                    y: snakeY
+                };
+        
+                if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                    clearInterval(game);
+                    startButton.style.display = "block";
+                    instructions.style.display = "block";
+                }
+        
+                snake.unshift(newHead);
+        
+                ctx.fillStyle = "#000";
+                ctx.font = "20px Arial";
+                ctx.fillText("Score: " + score, 2 * box, 1.5 * box);
+            }
+        
+            startButton.style.display = "block";
+        </script>
+    </body>
+</html>
