@@ -434,6 +434,7 @@ header .menu ul li a.active::after {
 .course-menu {
     display: flex;
     justify-content: left;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     margin-top: 10px;
@@ -462,6 +463,11 @@ header .menu ul li a.active::after {
 /* Course menu links hover effect */
 .course-menu ul li a:hover {
     text-decoration: underline;
+}
+
+.course-menu button{
+    margin-left: auto;
+    margin-top: 10px;
 }
 
 /* Course content container styling */
