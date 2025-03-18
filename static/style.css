@@ -68,12 +68,13 @@ header .user ul li a {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 10px;
+    margin: 0 1px;
+    margin-right: 1em;
 }
 
 /* User icons size and color */
 header .user ul li a ion-icon {
-    font-size: 24px;
+    font-size: 28px;
     color: white;
 }
 
@@ -101,6 +102,16 @@ header .menu ul li a.active::after {
     right: 0;
     height: 3px;
     background-color: white;
+}
+
+/* Transition pour les icônes */
+header .user ul li a ion-icon {
+    transition: transform 0.3s ease;
+}
+
+/* Effet de mise à l'échelle lors du survol */
+header .user ul li a:hover ion-icon {
+    transform: scale(1.2);
 }
 
 /* Content background color */
@@ -881,4 +892,85 @@ header .menu ul li a.active::after {
     background-color: #f2f2f2;
 }
 
+/* Notification panel styling */
+.notification-panel {
+    position: fixed;
+    right: -300px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
 
+.notification-panel.open {
+    right: 0;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #007BC0;
+    color: white;
+}
+
+.notification-header h2 {
+    margin: 0;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.notification-content {
+    padding: 10px;
+}
+
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notification-item p {
+    margin: 0;
+}
+
+.notification-item .delete-btn {
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+}
+
+.notification-item.important {
+    background-color: #ffdddd;
+}
+
+.notification-item.warning {
+    background-color: #fff4cc;
+}
+
+.notification-item.info {
+    background-color: #ddf4ff;
+}
+
+.notification-count {
+    position: relative;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    bottom: 10px;
+}

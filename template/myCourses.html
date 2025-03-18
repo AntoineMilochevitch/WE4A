@@ -4,6 +4,7 @@
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <script src="../js/notification.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const courseContainer = document.querySelector('.cours');
@@ -121,8 +122,12 @@
     </div>
     <div class="user">
         <ul>
-            <li><a href="#"><ion-icon name="notifications-outline"></ion-icon></a></li>
-            <li><a href="#"><ion-icon name="chatbubble-outline"></ion-icon></a></li>
+            <li>
+                <a href="#">
+                    <ion-icon name="notifications-outline"></ion-icon>
+                    <span class="notification-count">3</span>
+                </a>
+            </li>
             <li><a href="profil.html"><ion-icon name="person-circle-outline"></ion-icon></a></li>
         </ul>
     </div>
@@ -186,6 +191,26 @@
                 <div class="pagination">
                     <!-- Les boutons de pagination seront générés ici par JavaScript -->
                 </div>
+            </div>
+        </div>
+    </div>
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h2>Notifications</h2>
+            <span class="close-btn" id="closeNotificationPanel">&times;</span>
+        </div>
+        <div class="notification-content">
+            <div class="notification-item important">
+                <p>Notification importante</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item warning">
+                <p>Notification d'avertissement</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item info">
+                <p>Notification d'information</p>
+                <span class="delete-btn">&times;</span>
             </div>
         </div>
     </div>
