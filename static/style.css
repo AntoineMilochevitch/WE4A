@@ -441,6 +441,12 @@ header .user ul li a:hover ion-icon {
     margin: 0 5px;
 }
 
+.selection {
+    display: flex;
+    justify-content: right;
+    margin-top: 40px;
+}
+
 .btn-selection {
     padding: 10px 20px;
     background-color: #007BC0;

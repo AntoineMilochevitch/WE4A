@@ -9,7 +9,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const selectionDiv = document.querySelector('.selection');
 
-            // Create buttons
+            // Bouton qui permet d'afficher la liste des utilisateurs
             const utilisateursButton = document.createElement('button');
             utilisateursButton.textContent = 'Utilisateurs';
             utilisateursButton.addEventListener('click', showUtilisateurs);
@@ -20,11 +20,11 @@
             ueButton.addEventListener('click', showUE);
             ueButton.classList.add('btn-selection');
 
-            // Append buttons to selection div
+            // Bouton qui permet d'afficher la liste des cours
             selectionDiv.appendChild(utilisateursButton);
             selectionDiv.appendChild(ueButton);
 
-            // Create content div
+            // Création du div
             const contentDiv = document.createElement('div');
             contentDiv.className = 'content-display';
             selectionDiv.appendChild(contentDiv);
