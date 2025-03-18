@@ -1,0 +1,91 @@
+<html>
+<head>
+    <title>Mes Cours</title>
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <script src="../js/notification.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectionDiv = document.querySelector('.selection');
+
+            // Create buttons
+            const utilisateursButton = document.createElement('button');
+            utilisateursButton.textContent = 'Utilisateurs';
+            utilisateursButton.addEventListener('click', showUtilisateurs);
+            utilisateursButton.classList.add('btn-selection');
+
+            const ueButton = document.createElement('button');
+            ueButton.textContent = 'UE';
+            ueButton.addEventListener('click', showUE);
+            ueButton.classList.add('btn-selection');
+
+            // Append buttons to selection div
+            selectionDiv.appendChild(utilisateursButton);
+            selectionDiv.appendChild(ueButton);
+
+            // Create content div
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content-display';
+            selectionDiv.appendChild(contentDiv);
+
+            function showUtilisateurs() {
+                contentDiv.innerHTML = '<h2>Liste des Utilisateurs</h2><ul><li>Utilisateur 1</li><li>Utilisateur 2</li><li>Utilisateur 3</li></ul>';
+            }
+
+            function showUE() {
+                contentDiv.innerHTML = '<h2>Liste des UE</h2><ul><li>UE 1</li><li>UE 2</li><li>UE 3</li></ul>';
+            }
+        });
+    </script>
+</head>
+<header>
+    <div class="logo">
+        <a href="index.html">
+            <img src="../static/logo_UTBM_blanc.png" alt="MyMoodle">
+        </a>
+    </div>
+    <div class="menu">
+        <ul>
+            <li><a href="myCourses.html">Mes cours</a></li>
+            <li><a href="#">Recherche de cours</a></li>
+        </ul>
+    </div>
+    <div class="user">
+        <ul>
+            <li><a href="#"><ion-icon name="notifications-outline"></ion-icon></a></li>
+            <li><a href="profil.html"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+        </ul>
+    </div>
+</header>
+<body>
+    <div class="content">
+        <div class="container">
+            <h1>Page Admin</h1>
+            <div class="selection">
+                
+            </div>
+        </div>
+    </div>
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h2>Notifications</h2>
+            <span class="close-btn" id="closeNotificationPanel">&times;</span>
+        </div>
+        <div class="notification-content">
+            <div class="notification-item important">
+                <p>Notification importante</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item warning">
+                <p>Notification d'avertissement</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item info">
+                <p>Notification d'information</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

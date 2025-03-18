@@ -430,6 +430,16 @@ header .menu ul li a.active::after {
     margin: 0 5px;
 }
 
+.btn-selection {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
 /* Course menu styling */
 .course-menu {
     display: flex;
