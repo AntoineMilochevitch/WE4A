@@ -13,27 +13,32 @@ body {
 
 /* Header styling */
 header {
-    background-color: #007BC0;
+    background: linear-gradient(to right, #007bff 0%, rgb(161, 182, 228) 50%, #007bff 100%);
+    /* Dégradé blanc vers bleu */
+    overflow: hidden;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    height: 60px;
+    justify-content: space-between;
+    padding: 2px 20px;
+    position: relative;
 }
 
 /* Header links styling */
 header a {
-    text-decoration: none;
     color: white;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
+    text-decoration: none;
+    padding: 14px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    display: inline-block;
+    transition: transform 0.3s ease-in-out;
 }
 
 /* Header links hover effect */
 header a:hover {
-    background-color: white;
-    color: #007BC0;
+    background-color: #0056b3;
+    border-radius: 5px;
+    transform: translateY(-5px);
 }
 
 /* Menu and user list styling */
@@ -52,10 +57,6 @@ header .menu ul li, header .user ul li {
     height: 100%;
 }
 
-/* Menu items hover effect */
-header .menu ul li:hover {
-    background-color: white;
-}
 
 /* Logo styling */
 header .logo img {
