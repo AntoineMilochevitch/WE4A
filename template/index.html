@@ -3,8 +3,9 @@
     <title>MyMoodle</title>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/style_index.css">
     <script src="../js/notification.js"></script>
+    <script src="../js/index.js"></script>
 </head>
 <header>
     <div class="logo">
@@ -28,34 +29,79 @@
 <body>
     <div class="content">
         <div class="container">
-            <h1>Plateforme Pédagogique UTBM</h1>
-            <div class="course-content">
-                <div class="grid1">
-                    <h2>Bienvenue à tous et toutes pour la rentrée de printemps 2025.</h2>
-                    <h4>L'équipe Moodle se tient à votre disposition pour faciliter votre travail sur la plateforme. Nous vous souhaitons un excellent semestre riche en apprentissages. En cas de difficulté technique, nous vous invitons à contacter l'adresse:</h4>
-                    <h4><a href="mailto:ingenierie.pedagogique@utbm.fr"><em>ingenierie.pedagogique@utbm.fr</em></a></h4>
+            <div class="cards-wrapper">
+                <div class="card-arrows">
+                    <button class="arrow left" id="arrowLeft"><ion-icon name="chevron-back-outline"></ion-icon></button>
+                    <button class="arrow right" id="arrowRight"><ion-icon name="chevron-forward-outline"></ion-icon></button>
                 </div>
-                <div class="grid2">
-                    <div class="grid2-1">
-                        <a href="#">
-                            <img src="../static/grid2_1.jpg" alt="UTBM">
-                            <h3>Nouveautés Moodle</h3>
-                        </a>
-                    </div>
-                    <div class="grid2-2">
-                        <a href="#">
-                            <img src="../static/grid2_2.jpg" alt="UTBM">
-                            <h3>Découvrir l'UTBM</h3>
-                        </a>
-                    </div>
-                    <div class="grid2-3">
-                        <a href="#">
-                            <img src="../static/grid2_3.png" alt="UTBM">
-                            <h3>Pix à l'UTBM</h3>
-                        </a>
-                    </div>
+                
+                <div class="cards-container" id="scrollContainer">
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="UE_content.php">
+                        <div class="card">
+                            <img src="../static/image_logo.png" alt="Card Logo" class="card__image">
+                            <div class="card__content">
+                                <p class="card__title">UE</p>
+                                <p class="card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
                 </div>
             </div>
+            
+           
+            
+            
+            
+
+
             <div class="search">
                 <input type="text" placeholder="Rechercher un cours">
                 <button><ion-icon name="search-outline"></ion-icon></button>
