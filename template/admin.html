@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Mes Cours</title>
+    <title>Admin</title>
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/style.css">
@@ -27,8 +27,25 @@
             // Création du div
             const contentDiv = document.querySelector('.content-display');
 
+            const utilisateurs = [
+                { name: 'Utilisateur 1', description: 'Description 1' },
+                { name: 'Utilisateur 2', description: 'Description 2' },
+                { name: 'Utilisateur 3', description: 'Description 3' }
+            ];
+
+            const ue = [
+                { name: 'UE 1', description: 'Description 1' },
+                { name: 'UE 2', description: 'Description 2' },
+                { name: 'UE 3', description: 'Description 3' }
+            ];
+
             function showUtilisateurs() {
-                contentDiv.innerHTML = '<h2>Liste des Utilisateurs</h2><ul><li>Utilisateur 1</li><li>Utilisateur 2</li><li>Utilisateur 3</li></ul>';
+                let html = '<button class="btn-create" style="float: right;" onclick="showCreateModal()">Creer</button><h2>Liste des Utilisateurs</h2><ul>';
+                utilisateurs.forEach(utilisateur => {
+                    html += `<li><span class="item-name">${utilisateur.name}</span> <span class="item-description">${utilisateur.description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button></li>`;
+                });
+                html += '</ul>';
+                contentDiv.innerHTML = html;                
                 utilisateursButton.disabled = true;
                 utilisateursButton.classList.remove('btn-enabled');
                 ueButton.disabled = false;
@@ -36,11 +53,67 @@
             }
 
             function showUE() {
-                contentDiv.innerHTML = '<h2>Liste des UE</h2><ul><li>UE 1</li><li>UE 2</li><li>UE 3</li></ul>';
+                let html = '<button class="btn-create" style="float: right;" onclick="showCreateModal()">Creer</button><h2>Liste des UE</h2><ul>';
+                ue.forEach(course => {
+                    html += `<li><span class="item-name">${course.name}</span> <span class="item-description">${course.description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button></li>`;
+                });
+                html += '</ul>';
+                contentDiv.innerHTML = html;                
                 ueButton.disabled = true;
                 ueButton.classList.remove('btn-enabled');
                 utilisateursButton.disabled = false;
                 utilisateursButton.classList.add('btn-enabled');
+            }
+
+            function showCreateModal() {
+                const modal = document.getElementById('modal');
+                modal.style.display = 'block';
+                document.getElementById('modal-title').textContent = 'Créer';
+                document.getElementById('modal-content').innerHTML = '<input type="text" id="new-name" placeholder="Nom"><br><input type="text" id="new-description" placeholder="Description"><br><button onclick="confirmCreate()">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
+            }
+
+            function showEditModal(button) {
+                const listItem = button.parentElement;
+                const name = listItem.querySelector('.item-name').textContent;
+                const description = listItem.querySelector('.item-description').textContent;
+                const modal = document.getElementById('modal');
+                modal.style.display = 'block';
+                document.getElementById('modal-title').textContent = 'Modifier';
+                document.getElementById('modal-content').innerHTML = `<input type="text" value="${name}"><br><input type="text" value="${description}"><br><button onclick="confirmEdit()">Confirmer</button> <button onclick="closeModal()">Annuler</button>`;
+            }
+
+            function showDeleteModal(button) {
+                const listItem = button.parentElement;
+                const modal = document.getElementById('modal');
+                modal.style.display = 'block';
+                document.getElementById('modal-title').textContent = 'Supprimer';
+                document.getElementById('modal-content').innerHTML = '<p>Êtes-vous sûr de vouloir supprimer cet élément ?</p><button onclick="confirmDelete()">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
+            }
+
+            function closeModal() {
+                const modal = document.getElementById('modal');
+                modal.style.display = 'none';
+            }
+
+            function confirmCreate() {
+                const name = document.getElementById('new-name').value;
+                const description = document.getElementById('new-description').value;
+                const list = utilisateursButton.disabled ? document.getElementById('utilisateurs-list') : document.getElementById('ue-list');
+                const newItem = document.createElement('li');
+                newItem.innerHTML = `${name} <span class="item-name">${name}</span> <span class="item-description">${description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button>`;
+                list.appendChild(newItem);
+                closeModal();
+                showEditModal(newItem.querySelector('.btn-action'));
+            }
+
+            function confirmEdit() {
+                closeModal();
+                alert('Modification confirmée');
+            }
+
+            function confirmDelete() {
+                closeModal();
+                alert('Suppression confirmée');
             }
         });
     </script>
@@ -81,6 +154,16 @@
             </div>
         </div>
     </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    
     <div id="notificationPanel" class="notification-panel">
         <div class="notification-header">
             <h2>Notifications</h2>
