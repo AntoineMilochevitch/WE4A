@@ -13,28 +13,34 @@
             const utilisateursButton = document.createElement('button');
             utilisateursButton.textContent = 'Utilisateurs';
             utilisateursButton.addEventListener('click', showUtilisateurs);
-            utilisateursButton.classList.add('btn-selection');
+            utilisateursButton.classList.add('btn-selection', 'btn-enabled');
 
             const ueButton = document.createElement('button');
             ueButton.textContent = 'UE';
             ueButton.addEventListener('click', showUE);
-            ueButton.classList.add('btn-selection');
+            ueButton.classList.add('btn-selection', 'btn-enabled');
 
             // Bouton qui permet d'afficher la liste des cours
             selectionDiv.appendChild(utilisateursButton);
             selectionDiv.appendChild(ueButton);
 
             // Création du div
-            const contentDiv = document.createElement('div');
-            contentDiv.className = 'content-display';
-            selectionDiv.appendChild(contentDiv);
+            const contentDiv = document.querySelector('.content-display');
 
             function showUtilisateurs() {
                 contentDiv.innerHTML = '<h2>Liste des Utilisateurs</h2><ul><li>Utilisateur 1</li><li>Utilisateur 2</li><li>Utilisateur 3</li></ul>';
+                utilisateursButton.disabled = true;
+                utilisateursButton.classList.remove('btn-enabled');
+                ueButton.disabled = false;
+                ueButton.classList.add('btn-enabled');
             }
 
             function showUE() {
                 contentDiv.innerHTML = '<h2>Liste des UE</h2><ul><li>UE 1</li><li>UE 2</li><li>UE 3</li></ul>';
+                ueButton.disabled = true;
+                ueButton.classList.remove('btn-enabled');
+                utilisateursButton.disabled = false;
+                utilisateursButton.classList.add('btn-enabled');
             }
         });
     </script>
@@ -69,6 +75,9 @@
             <h1>Page Admin</h1>
             <div class="selection">
                 
+            </div>
+            <div class="content-display">
+            
             </div>
         </div>
     </div>

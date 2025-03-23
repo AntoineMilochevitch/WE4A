@@ -443,19 +443,39 @@ header .user ul li a:hover ion-icon {
 }
 
 .selection {
+    align-self: flex-start;
     display: flex;
-    justify-content: right;
-    margin-top: 40px;
+    margin-bottom: 20px;
 }
 
 .btn-selection {
     padding: 10px 20px;
-    background-color: #007BC0;
+    background-color: #cccccc;
     color: white;
     border: none;
-    cursor: pointer;
+    cursor: not-allowed;
     border-radius: 5px;
     margin: 0 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-enabled:hover {
+    background-color: #005f8a;
+}
+
+.btn-enabled {
+    background-color: #007BC0;
+    cursor: pointer;
+}
+
+.content-display {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1200px; /* Set a maximum width */
+    margin: 20px auto; /* Center the content display */
 }
 
 /* Course menu styling */
