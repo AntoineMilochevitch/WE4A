@@ -128,3 +128,9 @@ input {
 	transform: scale(1.1); /* Agrandit le div de 10% */
 	box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Ombre légère */
 }
+
+.stat-item:hover{
+	background: rgba(255, 255, 255, 0.3);
+	border-radius: 10px;
+	transform: translateY(-5px); /* Faire monter l'image légèrement */
+}
