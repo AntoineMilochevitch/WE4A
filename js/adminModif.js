@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contentDiv.innerHTML = ''; // Clear previous content
 
         const createButton = document.createElement('button');
-        createButton.className = 'btn-create';
+        createButton.className = 'btn-create btn-action';
         createButton.style.float = 'right';
         createButton.textContent = 'Creer';
         createButton.onclick = function() {showCreateModal(true);};
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
-            editButton.className = 'btn-action';
+            editButton.className = 'btn-action btn-modify';
             editButton.textContent = 'Modifier';
             editButton.onclick = function() { showEditModal(this); };
             li.appendChild(editButton);
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contentDiv.innerHTML = ''; // Clear previous content
 
         const createButton = document.createElement('button');
-        createButton.className = 'btn-create';
+        createButton.className = 'btn-create bten-action';
         createButton.style.float = 'right';
         createButton.textContent = 'Creer';
         createButton.onclick = function() {showCreateModal(false);};
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
-            editButton.className = 'btn-action';
+            editButton.className = 'btn-action btn-modify';
             editButton.textContent = 'Modifier';
             editButton.onclick = function() { showEditModal(this); };
             li.appendChild(editButton);
@@ -224,4 +224,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     showUtilisateurs(); // Pour initialiser la page avec la liste des users
+
+
+
+    /* Rajouter ici des fonctions qui reprennent les éléments ci dessus */
+
+
+
+    // Fonction qui permet d'afficher le formulaire (fonction showForm) lorsque l'on clique surles boutons creer, modifier et supprimer
+    document.querySelector('.btn-action').addEventListener('click', function() {
+        showForm();
+    });
+
+    // Fonction qui permet de fermer le formulaire quand on clique en dehors de celui-ci
+    window.onclick = function(event) {
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
 });

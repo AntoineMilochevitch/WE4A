@@ -559,7 +559,7 @@ header .user ul li a:hover ion-icon {
     right: 10px; 
     z-index: 10;
 }
-
+/* Déjà présent plus bas, à régler
 .modal {
     display: none;
     position: fixed;
@@ -582,7 +582,7 @@ header .user ul li a:hover ion-icon {
     max-width: 500px; 
     border-radius: 5px;
 }
-
+*/
 .close {
     color: #aaa;
     float: right;
