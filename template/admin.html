@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Admin</title>
@@ -5,6 +6,7 @@
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/style.css">
     <script src="../js/notification.js"></script>
+    <script src="../js/adminModif.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const selectionDiv = document.querySelector('.selection');
@@ -46,7 +48,7 @@
                 createButton.className = 'btn-create';
                 createButton.style.float = 'right';
                 createButton.textContent = 'Creer';
-                createButton.onclick = showCreateModal;
+                createButton.onclick = function() {showCreateModal(true);};
                 contentDiv.appendChild(createButton);
 
                 const header = document.createElement('h2');
@@ -95,7 +97,7 @@
                 createButton.className = 'btn-create';
                 createButton.style.float = 'right';
                 createButton.textContent = 'Creer';
-                createButton.onclick = showCreateModal;
+                createButton.onclick = function() {showCreateModal(false);};
                 contentDiv.appendChild(createButton);
 
                 const header = document.createElement('h2');
@@ -137,11 +139,47 @@
                 utilisateursButton.classList.add('btn-enabled');
             }
 
-            function showCreateModal() {
+            function showCreateModal(isUser) {
+                if (isUser){
+                    text1 = 'Nom';
+                    text2 = 'Prenom';
+                }
+                else{
+                    text1 = 'Code';
+                    text2 = 'Description';
+                }
                 const modal = document.getElementById('modal');
                 modal.style.display = 'block';
-                document.getElementById('modal-title').textContent = 'Créer';
-                document.getElementById('modal-content').innerHTML = '<input type="text" id="new-name" placeholder="Nom"><br><input type="text" id="new-description" placeholder="Description"><br><button onclick="confirmCreate()">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
+                document.getElementById('modal-title').textContent = 'Creation d\'un element';
+                //document.getElementById('modal-content').innerHTML = '<input type="text" id="new-name" placeholder="Nom"><br><input type="text" id="new-description" placeholder="Description"><br><button onclick="confirmCreate()">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
+                
+                const modalContent = document.getElementById('modal-content');
+                modalContent.innerHTML = '';
+
+                const input1 = document.createElement(input);
+                input1.className = 'input-modal';
+                input1.textContent = text1;
+
+                const input2 = document.createElement(input);
+                input2.className = 'input-modal';
+                input2.textContent = text2;
+
+                modalContent.appendChild(input1);
+                modalContent.appendChild(document.createElement('br'));
+                modalContent.appendChild(input2);
+                modalContent.appendChild(document.createElement('br'));
+
+                const confirmButton = document.createElement('button');
+                confirmButton.textContent = 'Confirmer';
+                confirmButton.onclick = confirmCreate;
+
+                const cancelButton = document.createElement('button');
+                cancelButton.textContent = 'Annuler';
+                cancelButton.onclick = closeModal;
+
+                modalContent.appendChild(confirmButton);
+                modalContent.appendChild(cancelButton);
+
             }
 
             function showEditModal(button) {
@@ -195,7 +233,7 @@
                 closeModal();
             }
 
-            // showUtilisateurs(); // Pour initialiser la page avec la liste des users
+            showUtilisateurs(); // Pour initialiser la page avec la liste des users
         });
     </script>
 </head>
