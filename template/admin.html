@@ -40,12 +40,48 @@
             ];
 
             function showUtilisateurs() {
-                let html = '<button class="btn-create" style="float: right;" onclick="showCreateModal()">Creer</button><h2>Liste des Utilisateurs</h2><ul>';
+                contentDiv.innerHTML = ''; // Clear previous content
+
+                const createButton = document.createElement('button');
+                createButton.className = 'btn-create';
+                createButton.style.float = 'right';
+                createButton.textContent = 'Creer';
+                createButton.onclick = showCreateModal;
+                contentDiv.appendChild(createButton);
+
+                const header = document.createElement('h2');
+                header.textContent = 'Liste des Utilisateurs';
+                contentDiv.appendChild(header);
+
+                const ul = document.createElement('ul');
                 utilisateurs.forEach(utilisateur => {
-                    html += `<li><span class="item-name">${utilisateur.name}</span> <span class="item-description">${utilisateur.description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button></li>`;
+                    const li = document.createElement('li');
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'item-name';
+                    nameSpan.textContent = utilisateur.name;
+                    li.appendChild(nameSpan);
+
+                    const descriptionSpan = document.createElement('span');
+                    descriptionSpan.className = 'item-description';
+                    descriptionSpan.textContent = utilisateur.description;
+                    li.appendChild(descriptionSpan);
+
+                    const editButton = document.createElement('button');
+                    editButton.className = 'btn-action';
+                    editButton.textContent = 'Modifier';
+                    editButton.onclick = function() { showEditModal(this); };
+                    li.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'btn-action btn-delete';
+                    deleteButton.textContent = 'Supprimer';
+                    deleteButton.onclick = function() { showDeleteModal(this); };
+                    li.appendChild(deleteButton);
+
+                    ul.appendChild(li);
                 });
-                html += '</ul>';
-                contentDiv.innerHTML = html;                
+                contentDiv.appendChild(ul);
+
                 utilisateursButton.disabled = true;
                 utilisateursButton.classList.remove('btn-enabled');
                 ueButton.disabled = false;
@@ -53,12 +89,48 @@
             }
 
             function showUE() {
-                let html = '<button class="btn-create" style="float: right;" onclick="showCreateModal()">Creer</button><h2>Liste des UE</h2><ul>';
+                contentDiv.innerHTML = ''; // Clear previous content
+
+                const createButton = document.createElement('button');
+                createButton.className = 'btn-create';
+                createButton.style.float = 'right';
+                createButton.textContent = 'Creer';
+                createButton.onclick = showCreateModal;
+                contentDiv.appendChild(createButton);
+
+                const header = document.createElement('h2');
+                header.textContent = 'Liste des UE';
+                contentDiv.appendChild(header);
+
+                const ul = document.createElement('ul');
                 ue.forEach(course => {
-                    html += `<li><span class="item-name">${course.name}</span> <span class="item-description">${course.description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button></li>`;
+                    const li = document.createElement('li');
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'item-name';
+                    nameSpan.textContent = course.name;
+                    li.appendChild(nameSpan);
+
+                    const descriptionSpan = document.createElement('span');
+                    descriptionSpan.className = 'item-description';
+                    descriptionSpan.textContent = course.description;
+                    li.appendChild(descriptionSpan);
+
+                    const editButton = document.createElement('button');
+                    editButton.className = 'btn-action';
+                    editButton.textContent = 'Modifier';
+                    editButton.onclick = function() { showEditModal(this); };
+                    li.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.className = 'btn-action btn-delete';
+                    deleteButton.textContent = 'Supprimer';
+                    deleteButton.onclick = function() { showDeleteModal(this); };
+                    li.appendChild(deleteButton);
+
+                    ul.appendChild(li);
                 });
-                html += '</ul>';
-                contentDiv.innerHTML = html;                
+                contentDiv.appendChild(ul);
+
                 ueButton.disabled = true;
                 ueButton.classList.remove('btn-enabled');
                 utilisateursButton.disabled = false;
@@ -79,7 +151,7 @@
                 const modal = document.getElementById('modal');
                 modal.style.display = 'block';
                 document.getElementById('modal-title').textContent = 'Modifier';
-                document.getElementById('modal-content').innerHTML = `<input type="text" value="${name}"><br><input type="text" value="${description}"><br><button onclick="confirmEdit()">Confirmer</button> <button onclick="closeModal()">Annuler</button>`;
+                document.getElementById('modal-content').innerHTML = `<input type="text" id="edit-name" value="${name}"><br><input type="text" id="edit-description" value="${description}"><br><button onclick="confirmEdit(this)">Confirmer</button> <button onclick="closeModal()">Annuler</button>`;
             }
 
             function showDeleteModal(button) {
@@ -87,7 +159,7 @@
                 const modal = document.getElementById('modal');
                 modal.style.display = 'block';
                 document.getElementById('modal-title').textContent = 'Supprimer';
-                document.getElementById('modal-content').innerHTML = '<p>Êtes-vous sûr de vouloir supprimer cet élément ?</p><button onclick="confirmDelete()">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
+                document.getElementById('modal-content').innerHTML = '<p>Êtes-vous sûr de vouloir supprimer cet élément ?</p><button onclick="confirmDelete(this)">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
             }
 
             function closeModal() {
@@ -98,23 +170,32 @@
             function confirmCreate() {
                 const name = document.getElementById('new-name').value;
                 const description = document.getElementById('new-description').value;
-                const list = utilisateursButton.disabled ? document.getElementById('utilisateurs-list') : document.getElementById('ue-list');
-                const newItem = document.createElement('li');
-                newItem.innerHTML = `${name} <span class="item-name">${name}</span> <span class="item-description">${description}</span> <button class="btn-action" onclick="showEditModal(this)">Modifier</button> <button class="btn-action btn-delete" onclick="showDeleteModal(this)">Supprimer</button>`;
-                list.appendChild(newItem);
+                const list = utilisateursButton.disabled ? utilisateurs : ue;
+                list.push({ name, description });
                 closeModal();
-                showEditModal(newItem.querySelector('.btn-action'));
+                if (utilisateursButton.disabled) {
+                    showUtilisateurs();
+                } else {
+                    showUE();
+                }
             }
 
             function confirmEdit() {
+                const listItem = button.parentElement.parentElement;
+                const name = document.getElementById('edit-name').value;
+                const description = document.getElementById('edit-description').value;
+                listItem.querySelector('.item-name').textContent = name;
+                listItem.querySelector('.item-description').textContent = description;
                 closeModal();
-                alert('Modification confirmée');
             }
 
             function confirmDelete() {
+                const listItem = button.parentElement.parentElement;
+                listItem.remove();
                 closeModal();
-                alert('Suppression confirmée');
             }
+
+            // showUtilisateurs(); // Pour initialiser la page avec la liste des users
         });
     </script>
 </head>
