@@ -10,6 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createPart(title, elements) {
+        const courseContent = document.querySelector('.course-content');
+        if (!courseContent) {
+            console.error('Element .course-content introuvable.');
+            return;
+        }
+    
+        // Vérifier si une partie avec le même titre existe déjà
+        const existingPart = Array.from(courseContent.querySelectorAll('.part h2')).find(
+            h2 => h2.innerText === title
+        );
+        if (existingPart) {
+            console.warn(`Une partie avec le titre "${title}" existe déjà.`);
+            return;
+        }
+    
         const newPart = document.createElement('div');
         newPart.classList.add('part');
         newPart.innerHTML = `
@@ -36,28 +51,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="button" class="btn-add-element" style="display: none;">Ajouter un élément</button>
             </div>
         `;
-        document.querySelector('.course-content').appendChild(newPart);
     
-        newPart.querySelector('.part-header').addEventListener('click', function() {
+        courseContent.appendChild(newPart);
+    
+        // Ajout des événements nécessaires
+        const partHeader = newPart.querySelector('.part-header');
+        partHeader.addEventListener('click', function () {
             togglePartContent(this);
         });
     
-        newPart.querySelector('.btn-edit-part').addEventListener('click', function() {
+        const editButton = newPart.querySelector('.btn-edit-part');
+        editButton.addEventListener('click', function () {
             editPart(newPart, this);
             togglePartContent(newPart.querySelector('.part-header'));
         });
     
-        newPart.querySelector('.btn-delete-part').addEventListener('click', function() {
+        const deleteButton = newPart.querySelector('.btn-delete-part');
+        deleteButton.addEventListener('click', function () {
+            const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
+            if (!confirmDelete) return;
             newPart.remove();
         });
     
         newPart.querySelectorAll('.btn-delete-element').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 deleteElement(btn.parentElement.parentElement);
             });
         });
     
-        newPart.querySelector('.btn-add-element').addEventListener('click', function() {
+        const addElementButton = newPart.querySelector('.btn-add-element');
+        addElementButton.addEventListener('click', function () {
             showElementForm(newPart);
         });
     }
@@ -108,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const addElementButton = document.getElementById('add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
     
-        document.getElementById('add-element').addEventListener('click', function() {
+        document.getElementById('add-element').addEventListener('click', function () {
             const elementType = document.getElementById('element-type').value;
             const elementText = document.getElementById('element-text').value;
             let elementHtml = '';
@@ -178,31 +201,29 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('element-text').value = ''; // Clear the input field
     
             const newElement = document.querySelector('#elements-container .element:last-child');
-            newElement.querySelector('.btn-delete-element').addEventListener('click', function() {
+            newElement.querySelector('.btn-delete-element').addEventListener('click', function () {
                 deleteElement(newElement);
             });
         });
     
-        // Remove previous event listeners for save and cancel buttons
-        const savePartButton = document.getElementById('save-part');
-        savePartButton.replaceWith(savePartButton.cloneNode(true));
+        // Handle form submission
+        const partForm = document.getElementById('part-form');
+        partForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
     
-        const cancelPartButton = document.getElementById('cancel-part');
-        cancelPartButton.replaceWith(cancelPartButton.cloneNode(true));
-    
-        document.getElementById('save-part').addEventListener('click', function() {
             const title = document.getElementById('part-title').value;
-            const elements = Array.from(document.querySelectorAll('.part-form .element')).map(element => ({
+            const elements = Array.from(document.querySelectorAll('#elements-container .element')).map(element => ({
                 icon: element.querySelector('ion-icon').getAttribute('name'),
                 text: element.querySelector('p').innerText,
                 description: element.querySelector('.element-description') ? element.querySelector('.element-description').innerText : '',
                 date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : ''
             }));
+    
             createPart(title, elements);
-            modal.style.display = 'none';
+            modal.style.display = 'none'; // Close the modal
         });
     
-        document.getElementById('cancel-part').addEventListener('click', function() {
+        document.getElementById('cancel-part').addEventListener('click', function () {
             modal.style.display = 'none';
         });
     }
@@ -265,6 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function deleteElement(element) {
+        //add pop up to confirm removal
+        const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
+        if (!confirmDelete) return;
+
+
         const nextElement = element.nextElementSibling;
         if (nextElement && nextElement.classList.contains('ligne-gris')) {
             nextElement.remove();
