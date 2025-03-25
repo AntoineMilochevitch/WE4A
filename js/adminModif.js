@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contentDiv.innerHTML = ''; // Clear previous content
 
         const createButton = document.createElement('button');
-        createButton.className = 'btn-create bten-action';
+        createButton.className = 'btn-create btn-action';
         createButton.style.float = 'right';
         createButton.textContent = 'Creer';
         createButton.onclick = function() {showCreateModal(false);};

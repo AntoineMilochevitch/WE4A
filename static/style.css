@@ -469,7 +469,7 @@ header .user ul li a:hover ion-icon {
 }
 
 .content-display {
-    padding: 20px;
+    width: 90%;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -495,7 +495,7 @@ header .user ul li a:hover ion-icon {
 }
 
 .btn-create {
-    padding: 5px 10px;
+    padding: 10px 15px;
     background-color: #007BC0;
     color: white;
     border: none;
@@ -519,8 +519,12 @@ header .user ul li a:hover ion-icon {
 
 .content-display ul {
     list-style-type: none; /* Enlever les points */
-    padding-left: 20px; /* Garder l'indentation */
+    padding-left: 30px; /* Garder l'indentation */
     margin-top: 40px;
+}
+
+.content-display h2 {
+    padding-left: 20px;
 }
 
 .content-display ul li {
@@ -555,9 +559,8 @@ header .user ul li a:hover ion-icon {
 
 .content-display .btn-create {
     position: absolute;
-    top: 10px;
+    top: 30px;
     right: 10px; 
-    z-index: 10;
 }
 /* Déjà présent plus bas, à régler
 .modal {
