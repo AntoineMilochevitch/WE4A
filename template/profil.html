@@ -44,6 +44,11 @@
                         <div class="profil-name">
                             <h2>Moi ENcoremoi</h2>
                             <h3>Statut</h3>
+                            <h3>emailTest@utbm.fr</h3>
+                            <h3>Classement :    </h3>
+                        </div>
+                        <div class="profil-action">
+                            <button class="btn-modif-profil">Modifier le profil</button>
                         </div>
                     </div>
                     <div class="snake">
@@ -106,6 +111,30 @@
                 </div>
             </div>
         </div>
+        <!-- Modal for editing profile -->
+        <div id="edit-profile-modal" class="modal">
+            <div class="modal-content">
+                <div class="part-form">
+                    <h2>Modifier le profil</h2>
+                    <label for="profile-email">Email:</label>
+                    <input type="email" id="profile-email" name="profile-email" placeholder="Entrez votre email">
+
+                    <label for="profile-password">Mot de passe:</label>
+                    <input type="password" id="profile-password" name="profile-password" placeholder="Entrez un nouveau mot de passe">
+
+                    <label for="profile-avatar">Avatar:</label>
+                    <div>
+                        <label for="profile-avatar" class="custom-file-label">Choisir un fichier</label>
+                        <input type="file" id="profile-avatar" name="profile-avatar" accept="image/*" style="display: none;">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" id="save-profile">Enregistrer</button>
+                        <button type="button" id="cancel-profile">Annuler</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="notificationPanel" class="notification-panel">
             <div class="notification-header">
                 <h2>Notifications</h2>
@@ -126,6 +155,36 @@
                 </div>
             </div>
         </div>
+        <script>
+            const editProfileModal = document.getElementById("edit-profile-modal");
+            const editProfileButton = document.querySelector(".btn-modif-profil");
+            const cancelProfileButton = document.getElementById("cancel-profile");
+
+            const fileInput = document.getElementById("profile-avatar");
+            const fileLabel = document.querySelector(".custom-file-label");
+
+            fileInput.addEventListener("change", (event) => {
+                const fileName = event.target.files[0]?.name || "Choisir un fichier";
+                fileLabel.textContent = fileName;
+            });
+        
+            // Open the modal
+            editProfileButton.addEventListener("click", () => {
+                editProfileModal.style.display = "block";
+            });
+        
+            // Close the modal
+            cancelProfileButton.addEventListener("click", () => {
+                editProfileModal.style.display = "none";
+            });
+        
+            // Close the modal when clicking outside of it
+            window.addEventListener("click", (event) => {
+                if (event.target === editProfileModal) {
+                    editProfileModal.style.display = "none";
+                }
+            });
+        </script>
         <script>
             const canvas = document.getElementById("snakeGame");
             const ctx = canvas.getContext("2d");
