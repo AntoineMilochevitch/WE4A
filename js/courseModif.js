@@ -10,6 +10,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function createPart(title, elements) {
+        const courseContent = document.querySelector('.course-content');
+        if (!courseContent) {
+            console.error('Element .course-content introuvable.');
+            return;
+        }
+    
         const newPart = document.createElement('div');
         newPart.classList.add('part');
         newPart.innerHTML = `
@@ -36,8 +42,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="button" class="btn-add-element" style="display: none;">Ajouter un élément</button>
             </div>
         `;
-        document.querySelector('.course-content').appendChild(newPart);
     
+        courseContent.appendChild(newPart);
+    
+        // Ajoutez les événements nécessaires
         newPart.querySelector('.part-header').addEventListener('click', function() {
             togglePartContent(this);
         });
@@ -108,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const addElementButton = document.getElementById('add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
     
-        document.getElementById('add-element').addEventListener('click', function() {
+        document.getElementById('add-element').addEventListener('click', function () {
             const elementType = document.getElementById('element-type').value;
             const elementText = document.getElementById('element-text').value;
             let elementHtml = '';
@@ -178,31 +186,29 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('element-text').value = ''; // Clear the input field
     
             const newElement = document.querySelector('#elements-container .element:last-child');
-            newElement.querySelector('.btn-delete-element').addEventListener('click', function() {
+            newElement.querySelector('.btn-delete-element').addEventListener('click', function () {
                 deleteElement(newElement);
             });
         });
     
-        // Remove previous event listeners for save and cancel buttons
-        const savePartButton = document.getElementById('save-part');
-        savePartButton.replaceWith(savePartButton.cloneNode(true));
+        // Handle form submission
+        const partForm = document.getElementById('part-form');
+        partForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
     
-        const cancelPartButton = document.getElementById('cancel-part');
-        cancelPartButton.replaceWith(cancelPartButton.cloneNode(true));
-    
-        document.getElementById('save-part').addEventListener('click', function() {
             const title = document.getElementById('part-title').value;
-            const elements = Array.from(document.querySelectorAll('.part-form .element')).map(element => ({
+            const elements = Array.from(document.querySelectorAll('#elements-container .element')).map(element => ({
                 icon: element.querySelector('ion-icon').getAttribute('name'),
                 text: element.querySelector('p').innerText,
                 description: element.querySelector('.element-description') ? element.querySelector('.element-description').innerText : '',
                 date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : ''
             }));
+    
             createPart(title, elements);
-            modal.style.display = 'none';
+            modal.style.display = 'none'; // Close the modal
         });
     
-        document.getElementById('cancel-part').addEventListener('click', function() {
+        document.getElementById('cancel-part').addEventListener('click', function () {
             modal.style.display = 'none';
         });
     }

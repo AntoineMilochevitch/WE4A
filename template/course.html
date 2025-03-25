@@ -48,35 +48,38 @@
                     <button class="btn-add-part">Ajouter une partie</button>
                 </div>
                 <div class="ligne-gris"></div>
-                <div class="course-content">
-                </div>
+                <div class="course-content"></div>
             </div>
         </div>
 
         <!-- Modal -->
         <div id="part-modal" class="modal">
             <div class="modal-content">
-                <div class="part-form">
-                    <label for="part-title">Titre de la partie:</label>
-                    <input type="text" id="part-title" name="part-title">
-                    <div id="elements-container"></div>
-                    <div class="element-form">
-                        <label for="element-type">Type d'élément:</label>
-                        <select id="element-type" name="element-type">
-                            <option value="" disabled selected>Choisir un type d'élément</option>
-                            <option value="text">Texte</option>
-                            <option value="file">Fichier</option>
-                            <option value="depot">Dépot</option>
-                        </select>
-                        <div id="element-fields">
-                            <label for="element-text">Nom de l'élément:</label>
-                            <input type="text" id="element-text" name="element-text">
+                <form id="part-form">
+                    <div class="part-form">
+                        <label for="part-title">Titre de la partie:</label>
+                        <input type="text" id="part-title" name="part-title" required>
+                        <div id="elements-container"></div>
+                        <div class="element-form">
+                            <label for="element-type">Type d'élément:</label>
+                            <select id="element-type" name="element-type" required>
+                                <option value="" disabled selected>Choisir un type d'élément</option>
+                                <option value="text">Texte</option>
+                                <option value="file">Fichier</option>
+                                <option value="depot">Dépot</option>
+                            </select>
+                            <div id="element-fields">
+                                <label for="element-text">Nom de l'élément:</label>
+                                <input type="text" id="element-text" name="element-text" required>
+                            </div>
+                            <button type="button" id="add-element">Ajouter un élément</button>
                         </div>
-                        <button type="button" id="add-element">Ajouter un élément</button>
+                        <div class="form-actions">
+                            <button type="submit" id="save-part">Enregistrer la partie</button>
+                            <button type="button" id="cancel-part">Annuler</button>
+                        </div>
                     </div>
-                    <button type="button" id="save-part">Enregistrer la partie</button>
-                    <button type="button" id="cancel-part">Annuler</button>
-                </div>
+                </form>
             </div>
         </div>
         <div id="notificationPanel" class="notification-panel">
