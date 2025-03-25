@@ -16,6 +16,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
     
+        // Vérifier si une partie avec le même titre existe déjà
+        const existingPart = Array.from(courseContent.querySelectorAll('.part h2')).find(
+            h2 => h2.innerText === title
+        );
+        if (existingPart) {
+            console.warn(`Une partie avec le titre "${title}" existe déjà.`);
+            return;
+        }
+    
         const newPart = document.createElement('div');
         newPart.classList.add('part');
         newPart.innerHTML = `
@@ -45,27 +54,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
         courseContent.appendChild(newPart);
     
-        // Ajoutez les événements nécessaires
-        newPart.querySelector('.part-header').addEventListener('click', function() {
+        // Ajout des événements nécessaires
+        const partHeader = newPart.querySelector('.part-header');
+        partHeader.addEventListener('click', function () {
             togglePartContent(this);
         });
     
-        newPart.querySelector('.btn-edit-part').addEventListener('click', function() {
+        const editButton = newPart.querySelector('.btn-edit-part');
+        editButton.addEventListener('click', function () {
             editPart(newPart, this);
             togglePartContent(newPart.querySelector('.part-header'));
         });
     
-        newPart.querySelector('.btn-delete-part').addEventListener('click', function() {
+        const deleteButton = newPart.querySelector('.btn-delete-part');
+        deleteButton.addEventListener('click', function () {
+            const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
+            if (!confirmDelete) return;
             newPart.remove();
         });
     
         newPart.querySelectorAll('.btn-delete-element').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 deleteElement(btn.parentElement.parentElement);
             });
         });
     
-        newPart.querySelector('.btn-add-element').addEventListener('click', function() {
+        const addElementButton = newPart.querySelector('.btn-add-element');
+        addElementButton.addEventListener('click', function () {
             showElementForm(newPart);
         });
     }
@@ -271,6 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function deleteElement(element) {
+        //add pop up to confirm removal
+        const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
+        if (!confirmDelete) return;
+
+
         const nextElement = element.nextElementSibling;
         if (nextElement && nextElement.classList.contains('ligne-gris')) {
             nextElement.remove();
