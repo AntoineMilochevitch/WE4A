@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <!-- Modal -->
+        <!-- Modal ajout partie-->
         <div id="part-modal" class="modal">
             <div class="modal-content">
                 <form id="part-form">
@@ -62,7 +62,7 @@
                         <div id="elements-container"></div>
                         <div class="element-form">
                             <label for="element-type">Type d'élément:</label>
-                            <select id="element-type" name="element-type" required>
+                            <select id="element-type" name="element-type">
                                 <option value="" disabled selected>Choisir un type d'élément</option>
                                 <option value="text">Texte</option>
                                 <option value="file">Fichier</option>
@@ -77,6 +77,33 @@
                         <div class="form-actions">
                             <button type="submit" id="save-part">Enregistrer la partie</button>
                             <button type="button" id="cancel-part">Annuler</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- Modal ajout element-->
+        <div id="element-modal" class="modal">
+            <div class="modal-content">
+                <form id="element-form">
+                    <div class="part-form">
+                        <div id="elements-container"></div>
+                        <div class="element-form">
+                            <label for="element-type">Type d'élément:</label>
+                            <select id="element-type" name="element-type">
+                                <option value="" disabled selected>Choisir un type d'élément</option>
+                                <option value="text">Texte</option>
+                                <option value="file">Fichier</option>
+                                <option value="depot">Dépot</option>
+                            </select>
+                            <div id="element-fields">
+                                <label for="element-text">Nom de l'élément:</label>
+                                <input type="text" id="element-text" name="element-text" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" id="save-element">Ajouter l'élément</button>
+                            <button type="button" id="cancel-element">Annuler</button>
                         </div>
                     </div>
                 </form>

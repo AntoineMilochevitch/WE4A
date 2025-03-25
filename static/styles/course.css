@@ -105,6 +105,21 @@
     color: #005f8a;
 }
 
+/* Add element button styling */
+.part-header .btn-add-element {
+    margin-right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #28a745; /* Green color for the add button */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Add element button hover effect */
+.part-header .btn-add-element:hover {
+    color: #218838; /* Darker green on hover */
+    transform: scale(1.2);
+}
+
 /* Part content container styling */
 .part-content {
     display: none;
@@ -186,6 +201,28 @@
     margin-right: 10px;
 }
 
+/* Part form button hover effect */
+.part-form button:hover {
+    background-color: #005f8a;
+}
+
+.form-actions #cancel-part {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.form-actions #cancel-part:hover {
+    background-color: #c0392b;
+}
+
+.form-actions #cancel-element {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.form-actions #cancel-element:hover {
+    background-color: #c0392b;
+}
 /* Element form styling */
 .element-form {
     margin-bottom: 20px;

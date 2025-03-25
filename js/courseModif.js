@@ -33,6 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2 contenteditable="false">${title}</h2>
                 <ion-icon name="create-outline" class="btn-edit-part" title="Modifier"></ion-icon>
                 <ion-icon name="trash-outline" class="btn-delete-part" title="Supprimer"></ion-icon>
+                <ion-icon name="add-circle-outline" class="btn-add-element" title="Ajouter un élément"></ion-icon>
             </div>
             <div class="part-content" style="display: none;">
                 ${elements.map(element => `
@@ -220,7 +221,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }));
     
             createPart(title, elements);
+            // Fermer la modale après l'enregistrement
+            const modal = document.getElementById('part-modal');
             modal.style.display = 'none'; // Close the modal
+
         });
     
         document.getElementById('cancel-part').addEventListener('click', function () {
@@ -276,13 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 deleteElement(newElement);
             });
         });
-
-        const cancelElementButton = document.getElementById('cancel-element-modal');
-        cancelElementButton.replaceWith(cancelElementButton.cloneNode(true));
-
-        document.getElementById('cancel-element-modal').addEventListener('click', function() {
-            modal.style.display = 'none';
-        });
     }
 
     function deleteElement(element) {
@@ -333,11 +330,17 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
     });
+    
 
     document.querySelectorAll('.part-header').forEach(header => {
         header.addEventListener('click', function() {
             togglePartContent(this);
         });
+    });
+
+    document.getElementById('cancel-element').addEventListener('click', function () {
+        const modal = document.getElementById('element-modal');
+        modal.style.display = 'none'; // Ferme la modal des éléments
     });
 
     document.querySelector('.btn-add-part').addEventListener('click', function() {
