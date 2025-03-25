@@ -1,0 +1,220 @@
+
+/* Profil page styling */
+.profil-content {
+    display: flex;
+    flex-direction: row;
+    align-self: flex-start;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-right: 20px;
+    padding: 10px;
+    width: 100%;
+}
+
+.perso-info {
+    display: flex;
+    align-items: center;
+    margin-top: 6em;
+}
+
+.profil-pic img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.profil-name h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    margin-left: 0.5em;
+}
+
+.profil-name h3 {
+    margin: 5px 0 0 0;
+    font-size: 18px;
+    color: #555;
+    margin-left: 1.5em;
+}
+
+.profil-action {
+    position: absolute;
+    top : 75%;
+    left: 10%;
+}
+
+.btn-modif-profil {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+    align-self: flex-start;
+}
+
+.btn-modif-profil:hover {
+    background-color: #005f8a;
+}
+
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+}
+
+.modal-content input {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.modal-content button:hover {
+    background-color: #005f8a;
+}
+
+
+.custom-file-label {
+    display: inline-block;
+    padding: 5px 20px;
+    width: 50%;
+    background-color: white; /* Fond blanc */
+    color: #007BC0; /* Texte bleu */
+    border: 2px solid #007BC0; /* Contour bleu */
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 20px; /* Espacement avec les autres boutons */
+}
+
+.custom-file-label:hover {
+    background-color: #007BC0; /* Fond bleu au survol */
+    color: white; /* Texte blanc au survol */
+}
+
+.button-group {
+    display: flex;
+    margin-top: 20px;
+}
+
+.snake {
+    margin-right: 8em;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.snake h2 {
+    text-align: center;
+}
+
+#snakeGame {
+    border: 1px solid #ddd;
+    background-color: #F7F7F7;
+}
+
+#startButton {
+    display: none;
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#startButton:hover {
+    background-color: #005f8a;
+}
+
+#instructions {
+    font-size: 16px;
+    color: #555;
+    text-align: center;
+    position: absolute;
+    top: 40%;
+    left: 15%;
+}
+
+.emploi-du-temps {
+    width: 100%;
+}
+
+.emploi-du-temps h1 {
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+.edt table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.edt th, .edt td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    width: 15em;
+}
+
+.edt th.heure_edt, .edt td.heure_edt {
+    width: 5em;
+}
+
+
+.edt th {
+    background-color: #007BC0;
+    color: white;
+}
+
+.edt td {
+    background-color: #f7f7f7;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.edt tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
