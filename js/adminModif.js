@@ -344,13 +344,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes
     function confirm(button) {
-        alert('confirm');
         if (button.classList.contains('btn-cancel')){
             closeModal();
         } else if (button.classList.contains('btn-confirm')) {
             const modalTitle = document.getElementById('modal-title').textContent;
-            if (modalTitle.includes('Creer')) {
-                alert('confirmCreate'); // Ne fonctionne pas, à finir
+            if (modalTitle.includes('Créer')) {
                 confirmCreate(button);
             }
             else if (modalTitle.includes('Modifier')) {
