@@ -167,6 +167,14 @@ header .user ul li a:hover ion-icon {
     color: white; 
 }
 
+/* Gray line styling */
+.ligne-gris {
+    background-color: gray;
+    height: 1px;
+    width: 100%;
+    margin: 20px 0;
+}
+
 .selection {
     align-self: flex-start;
     display: flex;
