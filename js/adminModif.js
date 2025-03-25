@@ -22,7 +22,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const utilisateurs = [
         { name: 'Utilisateur 1', description: 'Description 1' },
         { name: 'Utilisateur 2', description: 'Description 2' },
-        { name: 'Utilisateur 3', description: 'Description 3' }
+        { name: 'Utilisateur 3', description: 'Description 3' },
+        { name: 'Utilisateur 4', description: 'Description 4' },
+        { name: 'Utilisateur 5', description: 'Description 5' },
+        { name: 'Utilisateur 6', description: 'Description 6' },
+        { name: 'Utilisateur 7', description: 'Description 7' },
+        { name: 'Utilisateur 8', description: 'Description 8' },
+        { name: 'Utilisateur 9', description: 'Description 9' }
+        
     ];
 
     const ue = [
@@ -59,13 +66,13 @@ document.addEventListener('DOMContentLoaded', function() {
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
-            editButton.className = 'btn-action btn-modify';
+            editButton.className = 'btn-edit btn-action';
             editButton.textContent = 'Modifier';
             editButton.onclick = function() { showEditModal(this); };
             li.appendChild(editButton);
 
             const deleteButton = document.createElement('button');
-            deleteButton.className = 'btn-action btn-delete';
+            deleteButton.className = 'btn-delete btn-action';
             deleteButton.textContent = 'Supprimer';
             deleteButton.onclick = function() { showDeleteModal(this); };
             li.appendChild(deleteButton);
@@ -108,13 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
-            editButton.className = 'btn-action btn-modify';
+            editButton.className = 'btn-edit btn-action';
             editButton.textContent = 'Modifier';
             editButton.onclick = function() { showEditModal(this); };
             li.appendChild(editButton);
 
             const deleteButton = document.createElement('button');
-            deleteButton.className = 'btn-action btn-delete';
+            deleteButton.className = 'btn-delete btn-action';
             deleteButton.textContent = 'Supprimer';
             deleteButton.onclick = function() { showDeleteModal(this); };
             li.appendChild(deleteButton);
@@ -190,11 +197,29 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('modal-content').innerHTML = '<p>Êtes-vous sûr de vouloir supprimer cet élément ?</p><button onclick="confirmDelete(this)">Confirmer</button> <button onclick="closeModal()">Annuler</button>';
     }
 
-    function closeModal() {
-        const modal = document.getElementById('modal');
-        modal.style.display = 'none';
+    showUtilisateurs(); // Pour initialiser la page avec la liste des users
+
+
+
+    /* Rajouter ici des fonctions qui reprennent les éléments ci dessus */
+
+
+    /*
+    // Fonction qui permet d'afficher le formulaire de création d'un élément dans l'une des listes
+    function showCreateModal(isUser) {
     }
 
+    // Fonction qui permet d'afficher le formulaire de modification d'un élément d'une des listes
+    function showEditModal(button) {
+    }
+
+    // Fonction qui permet d'afficher le formulaire de suppression d'un élément d'une des listes
+    function showDeleteModal(button) {
+    }
+    */
+
+
+    // Fonction qui permet de confirmer la création d'un élément dans l'une des listes
     function confirmCreate() {
         const name = document.getElementById('new-name').value;
         const description = document.getElementById('new-description').value;
@@ -208,32 +233,65 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Fonction qui permet de confirmer la modification d'un élément d'une des listes
     function confirmEdit() {
         const listItem = button.parentElement.parentElement;
         const name = document.getElementById('edit-name').value;
         const description = document.getElementById('edit-description').value;
         listItem.querySelector('.item-name').textContent = name;
         listItem.querySelector('.item-description').textContent = description;
-        closeModal();
     }
 
+    // Fonction qui permet de confirmer la suppression d'un élément d'une des listes
     function confirmDelete() {
         const listItem = button.parentElement.parentElement;
         listItem.remove();
-        closeModal();
     }
 
-    showUtilisateurs(); // Pour initialiser la page avec la liste des users
+    // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes
+    function confirm(button) {
+        if (button.classList.contains('btn-cancel')){
+            closeModal();
+        } else if (button.classList.contains('btn-validate')) {
+            const modalTitle = document.getElementById('modal-title').textContent;
+            if (modalTitle.includes('Creer')) {
+                confirmCreate();
+            }
+            else if (modalTitle.includes('Modifier')) {
+                confirmEdit();
+            }
+            else if (modalTitle.includes('Supprimer')) {
+                confirmDelete();
+            }
+            closeModal();
+        }
+    }
 
+    // Fonction qui permet de fermer le formulaire
+    function closeModal() {
+        const modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+    window.closeModal = closeModal;
 
-
-    /* Rajouter ici des fonctions qui reprennent les éléments ci dessus */
-
-
+    // Fonction appelé lorsqu'on clique sur les boutons creer, modifier et supprimer
+    // Renvoie vers la fonction affichant le formulaire correspondant
+    function showForm(button) {
+        if (button.classList.contains('btn-create')) {
+            const isUser = utilisateursButton.disabled; // Vérifie si on est dans la liste des utilisateurs ou des UE
+            showCreateModal(isUser);
+        } else if (button.classList.contains('btn-edit')) {
+            showEditModal(button);
+        } else if (button.classList.contains('btn-delete')) {
+            showDeleteModal(button);
+        }
+    }
 
     // Fonction qui permet d'afficher le formulaire (fonction showForm) lorsque l'on clique surles boutons creer, modifier et supprimer
-    document.querySelector('.btn-action').addEventListener('click', function() {
-        showForm();
+    document.querySelectorAll('.btn-action').forEach(button => {
+        button.addEventListener('click', function(event) {
+            showForm(event.target);
+        });
     });
 
     // Fonction qui permet de fermer le formulaire quand on clique en dehors de celui-ci
@@ -241,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modals = document.querySelectorAll('.modal');
         modals.forEach(modal => {
             if (event.target == modal) {
-                modal.style.display = 'none';
+                closeModal();
             }
         });
     }
