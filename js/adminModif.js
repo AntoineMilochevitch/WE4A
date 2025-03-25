@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Fonction qui permet d'afficher le formulaire de modification d'un élément d'une des listes
-    function showEditModal(button) {
+    function showEditModal(isUser, button) {
         const listItem = button.parentElement;
         const name = listItem.querySelector('.item-name').textContent;
         const description = listItem.querySelector('.item-description').textContent;
@@ -218,8 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Modifier le titre du modal
         const modalTitle = document.getElementById('modal-title');
-        modalTitle.textContent = 'Modifier';
-    
+        modalTitle.textContent = isUser ? 'Modifier un utilisateur' : 'Modifier un cours';
+
         // Effacer le contenu précédent du modal
         const modalContent = document.getElementById('modal-content');
         modalContent.innerHTML = '';
@@ -229,7 +229,6 @@ document.addEventListener('DOMContentLoaded', function() {
         nameInput.type = 'text';
         nameInput.id = 'edit-name';
         nameInput.value = name;
-        nameInput.placeholder = 'Nom';
         modalContent.appendChild(nameInput);
         modalContent.appendChild(document.createElement('br'));
     
@@ -238,7 +237,6 @@ document.addEventListener('DOMContentLoaded', function() {
         descriptionInput.type = 'text';
         descriptionInput.id = 'edit-description';
         descriptionInput.value = description;
-        descriptionInput.placeholder = 'Description';
         modalContent.appendChild(descriptionInput);
         modalContent.appendChild(document.createElement('br'));
     
@@ -246,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirmer';
         confirmButton.className = 'btn-confirm btn-answer';
+        confirmButton.setAttribute('data-list-item-id', listItem.id);
         confirmButton.onclick = function () {
             confirm(this);
         };
@@ -263,7 +262,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     // Fonction qui permet d'afficher le formulaire de suppression d'un élément d'une des listes
-    function showDeleteModal(button) {
+    function showDeleteModal(isUser, button) {
         const listItem = button.parentElement;
 
         const modal = document.getElementById('modal');
@@ -271,7 +270,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Modifier le titre du modal
         const modalTitle = document.getElementById('modal-title');
-        modalTitle.textContent = 'Supprimer';
+        modalTitle.textContent = isUser ? 'Supprimer un utilisateur' : 'Supprimer un cours';
+
 
         // Effacer le contenu précédent du modal
         const modalContent = document.getElementById('modal-content');
@@ -306,6 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction qui permet de confirmer la création d'un élément dans l'une des listes
     function confirmCreate(button) {
+        alert('confirmCreate');
         const name = document.getElementById('new-name').value;
         const description = document.getElementById('new-description').value;
         const list = utilisateursButton.disabled ? utilisateurs : ue;
@@ -320,12 +321,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction qui permet de confirmer la modification d'un élément d'une des listes
     function confirmEdit(button) {
-        alert('Element modifié');
-        const listItem = button.parentElement.parentElement;
-        const name = document.getElementById('edit-name').value;
-        const description = document.getElementById('edit-description').value;
-        listItem.querySelector('.item-name').textContent = name;
-        listItem.querySelector('.item-description').textContent = description;
+        const listItemId = button.getAttribute('data-list-item-id');
+        const listItem = document.getElementById(listItemId);
+
+        const newName = document.getElementById('edit-name').value;
+        const newDescription = document.getElementById('edit-description').value;
+
+        const nameSpan = listItem.querySelector('.item-name');
+        const descriptionSpan = listItem.querySelector('.item-description');
+
+
+        if (nameSpan) nameSpan.textContent = newName;
+        if (descriptionSpan) descriptionSpan.textContent = newDescription;
     }
 
     // Fonction qui permet de confirmer la suppression d'un élément d'une des listes
@@ -337,11 +344,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes
     function confirm(button) {
+        alert('confirm');
         if (button.classList.contains('btn-cancel')){
             closeModal();
         } else if (button.classList.contains('btn-confirm')) {
             const modalTitle = document.getElementById('modal-title').textContent;
             if (modalTitle.includes('Creer')) {
+                alert('confirmCreate'); // Ne fonctionne pas, à finir
                 confirmCreate(button);
             }
             else if (modalTitle.includes('Modifier')) {
@@ -364,13 +373,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction appelé lorsqu'on clique sur les boutons creer, modifier et supprimer
     // Renvoie vers la fonction affichant le formulaire correspondant
     function showForm(button) {
+        const isUser = utilisateursButton.disabled; // Vérifie si on est dans la liste des utilisateurs ou des UE
         if (button.classList.contains('btn-create')) {
-            const isUser = utilisateursButton.disabled; // Vérifie si on est dans la liste des utilisateurs ou des UE
             showCreateModal(isUser);
         } else if (button.classList.contains('btn-edit')) {
-            showEditModal(button);
+            showEditModal(isUser, button);
         } else if (button.classList.contains('btn-delete')) {
-            showDeleteModal(button);
+            showDeleteModal(isUser, button);
         }
     }
 
