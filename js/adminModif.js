@@ -305,13 +305,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     // Fonction qui permet de confirmer la création d'un élément dans l'une des listes
-    function confirmCreate(button) {
-        alert('confirmCreate');
+    function confirmCreate() {
         const name = document.getElementById('new-name').value;
         const description = document.getElementById('new-description').value;
+        
+        if (!name || !description) {
+            alert('Veuillez remplir tous les champs avant de confirmer.');
+            return;
+        }
+        
         const list = utilisateursButton.disabled ? utilisateurs : ue;
         list.push({ name, description });
         closeModal();
+
+        // Rafraichissement de la liste, à remplacer par du Ajax plus tard
         if (utilisateursButton.disabled) {
             showUtilisateurs();
         } else {
@@ -327,9 +334,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const newName = document.getElementById('edit-name').value;
         const newDescription = document.getElementById('edit-description').value;
 
+        if (!newName || !newDescription) {
+            alert('Veuillez remplir tous les champs avant de confirmer.');
+            return;
+        }
+
         const nameSpan = listItem.querySelector('.item-name');
         const descriptionSpan = listItem.querySelector('.item-description');
-
 
         if (nameSpan) nameSpan.textContent = newName;
         if (descriptionSpan) descriptionSpan.textContent = newDescription;
@@ -349,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (button.classList.contains('btn-confirm')) {
             const modalTitle = document.getElementById('modal-title').textContent;
             if (modalTitle.includes('Créer')) {
-                confirmCreate(button);
+                confirmCreate();
             }
             else if (modalTitle.includes('Modifier')) {
                 confirmEdit(button);
