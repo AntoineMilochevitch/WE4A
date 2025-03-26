@@ -10,6 +10,36 @@
         <link rel="stylesheet" type="text/css" href="../static/styles/course.css">
         <script src="../js/courseModif.js"></script>
         <script src="../js/notification.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const courseContent = document.querySelector(".course-content");
+                const participantsContent = document.querySelector(".participants-content");
+                const courseMenuItems = document.querySelectorAll(".course-menu-li a");
+                const addPartButton = document.querySelector(".btn-add-part");
+
+                courseMenuItems.forEach((item) => {
+                    item.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        const text = item.textContent.trim();
+
+                        // Gérer l'affichage des contenus
+                        if (text === "Cours") {
+                            courseContent.style.display = "block";
+                            participantsContent.style.display = "none";
+                            addPartButton.style.display = "inline-block";
+                        } else if (text === "Participants") {
+                            courseContent.style.display = "none";
+                            participantsContent.style.display = "block";
+                            addPartButton.style.display = "none";
+                        }
+
+                        // Gérer la classe active
+                        courseMenuItems.forEach((link) => link.classList.remove("active"));
+                        item.classList.add("active");
+                    });
+                });
+            });
+        </script>
     </head>
     <header>
         <div class="logo">
@@ -41,14 +71,49 @@
                 <h1>Titre du cours</h1>
                 <div class="course-menu">
                     <ul>
-                        <li><a href="#">Cours</a></li>
-                        <li><a href="#">Participants</a></li>
-                        <li><a href="#">Notes</a></li>
+                        <div class="course-menu-li"><li><a href="#" class="active">Cours</a></li></div>
+                        <div class="course-menu-li"><li><a href="#">Participants</a></li></div>
+                        <div class="course-menu-li"><li><a href="#">Notes</a></li></div>
                     </ul>
                     <button class="btn-add-part">Ajouter une partie</button>
                 </div>
                 <div class="ligne-gris"></div>
                 <div class="course-content"></div>
+                <div class="participants-content" style="display: none;">
+                    <div class="professors">
+                        <div class="part-header collapsed">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                            <h2>Professeurs</h2>
+                        </div>
+                        <div class="part-content" style="display: none;">
+                            <div class="participant">
+                                <img src="../static/images/profil_pic1.jpg" alt="Photo de profil" class="profile-pic">
+                                <span class="participant-name">Nom</span>
+                                <span class="participant-firstname">Prénom</span>
+                            </div>
+                            <div class="ligne-gris"></div>
+                            <div class="participant">
+                                <img src="../static/images/profil_pic3.jpg" alt="Photo de profil" class="profile-pic">
+                                <span class="participant-name">Nom</span>
+                                <span class="participant-firstname">Prénom</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="students">
+                        <div class="part-header collapsed">
+                            <ion-icon name="chevron-down-outline"></ion-icon>
+                            <h2>Élèves</h2>
+                        </div>
+                        <div class="part-content" style="display: none;">
+                            <div class="participant">
+                                <img src="../static/images/profil_pic2.jpg" alt="Photo de profil" class="profile-pic">
+                                <span class="participant-name">Nom</span>
+                                <span class="participant-firstname">Prénom</span>
+                            </div>
+                            <div class="ligne-gris"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

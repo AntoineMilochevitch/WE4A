@@ -1,41 +1,49 @@
 /* Course menu styling */
 .course-menu {
     display: flex;
-    justify-content: left;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
+    background-color: #fff;
     width: 100%;
-    margin-top: 10px;
 }
 
 /* Course menu list styling */
 .course-menu ul {
     display: flex;
+    flex-direction: row;
     list-style: none;
     padding: 0;
-    margin: 10px 0;
+    margin: 0;
+    flex-grow: 1;
 }
 
 /* Course menu list items styling */
 .course-menu ul li {
     margin: 0;
-    padding: 0 10px;
+    padding: 15px 10px;
+    text-align: center;
+    flex-grow: 1;
 }
 
 /* Course menu links styling */
 .course-menu ul li a {
     color: #007BC0;
     text-decoration: none;
+    width: 100%;
+    height: 100%;
 }
 
-/* Course menu links hover effect */
-.course-menu ul li a:hover {
-    text-decoration: underline;
+/* Hover effect for menu items */
+.course-menu ul li:hover {
+    background-color: #f0f0f0; /* Couleur grisée */
+    border-radius: 5px;
 }
 
 .course-menu button{
     margin-left: auto;
-    margin-top: 10px;
+    margin-top: 0px;
 }
 
 /* Course content container styling */
@@ -349,3 +357,34 @@
     border: 1px dashed #007BC0;
     padding: 2px;
 }
+
+.participants-content {
+    margin-top: 20px;
+    width: 97%;
+}
+
+.participant {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.participant-name,
+.participant-firstname {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.course-menu ul li a.active {
+    font-weight: bold;
+    color: #005f8a; 
+    border-bottom: 2px solid #007BC0;
+}
+
