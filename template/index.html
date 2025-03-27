@@ -6,36 +6,22 @@
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" type="text/css" href="../static/styles/style_index.css">
-    <link rel="stylesheet" type="text/css" href="../static/styles/style.css">
     <script src="../js/notification.js"></script>
     <script src="../js/index.js"></script>
 </head>
-<header>
-    <div class="logo">
-        <a href="index.html">
-            <img src="../static/images/logo_UTBM_blanc.png" alt="MyMoodle">
-        </a>
-    </div>
-    <div class="menu">
-        <ul>
-            <li><a href="myCourses.html">Mes cours</a></li>
-            <li><a href="#">Recherche de cours</a></li>
-        </ul>
-    </div>
-    <div class="user">
-        <ul>
-            <li>
-                <a href="#">
-                    <ion-icon name="notifications-outline"></ion-icon>
-                    <span class="notification-count">3</span>
-                </a>
-            </li>
-            <li><a href="profil.html"><ion-icon name="person-circle-outline"></ion-icon></a></li>
-        </ul>
-    </div>
 
-</header>
 <body>
+
+    <!-- Header pareil pour toutes les pages -->
+    <div id="header-container"></div>
+    <script>
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+            });
+    </script>
+
     <div class="content">
         <div class="container">
             <div class="cards-wrapper">
