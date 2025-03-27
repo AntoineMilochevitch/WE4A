@@ -13,8 +13,16 @@
 
 .perso-info {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 2em;
+    gap: 1em;
+}
+
+.profil-info {
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    margin-top: 6em;
 }
 
 .profil-pic img {
@@ -40,9 +48,7 @@
 }
 
 .profil-action {
-    position: absolute;
-    top : 75%;
-    left: 10%;
+   margin-top: 1em;
 }
 
 .btn-modif-profil {
@@ -53,7 +59,6 @@
     cursor: pointer;
     border-radius: 5px;
     margin-top: 20px;
-    align-self: flex-start;
 }
 
 .btn-modif-profil:hover {
@@ -110,6 +115,13 @@
     background-color: #005f8a;
 }
 
+.modal-content #cancel-profile {
+    background-color: #f44336;
+}
+
+.modal-content #cancel-profile:hover {
+    background-color: #d32f2f;
+}
 
 .custom-file-label {
     display: inline-block;
@@ -140,6 +152,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    margin-top: -2em;
 }
 
 .snake h2 {
