@@ -13,4 +13,34 @@ class MainController extends AbstractController
     {
         return $this->render('index.html.twig');
     }
+
+    #[Route('/my-courses', name: 'my_courses')]
+    public function myCourses(): Response
+    {
+        return $this->render('myCourses.html.twig');
+    }
+
+    #[Route('/profile', name: 'profile')]
+    public function profile(): Response
+    {
+        return $this->render('profil.html.twig');
+    }
+
+    #[Route('/login', name: 'login')]
+    public function login(): Response
+    {
+        return $this->render('login.html.twig');
+    }
+
+    #[Route('/admin', name: 'admin')]
+    public function admin(): Response
+    {
+        return $this->render('admin.html.twig');
+    }
+
+    #[Route('/course', name: 'course')]
+    public function course(): Response
+    {
+        return $this->render('course.html.twig');
+    }
 }

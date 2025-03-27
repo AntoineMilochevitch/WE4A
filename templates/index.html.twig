@@ -5,8 +5,7 @@
     <title>MyMoodle</title>
 
     <!-- Ionicons -->
-    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('css/style_index.css') }}">
@@ -26,7 +25,7 @@
         </div>
         <div class="menu">
             <ul>
-                <li><a href="#">Mes cours</a></li>
+                <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
                 <li><a href="#">Recherche de cours</a></li>
             </ul>
         </div>
@@ -38,7 +37,7 @@
                         <span class="notification-count">3</span>
                     </a>
                 </li>
-                <li><a href="#"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+                <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
             </ul>
         </div>
     </header>
@@ -71,6 +70,11 @@
                     {% endfor %}
                 </div>
             </div>
+
+            <!--  Barre de progression ajoutée ici -->
+<div class="progress-bar-container">
+    <div id="progressBar" class="progress-bar"></div>
+</div>
 
             <hr class="separator">
 

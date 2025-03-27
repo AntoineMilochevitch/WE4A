@@ -1,24 +1,23 @@
-<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>Moodle</title>
-    <link rel="stylesheet" href="../static/styles/index.css">
+    <link rel="stylesheet" href="{{ asset('css/index.css') }}">
 </head>
 <body>
 
 <div class="hbox">
     <!-- Login Section -->
     <div class="login-container">
-        <img src="../static/images/utbmlogo.jpg" alt="Logo UTBM" width="200">
+        <img src="{{ asset('images/utbmlogo.jpg') }}" alt="Logo UTBM" width="200">
 
-        <form action="index.html" method="POST">
+        <form action="{{ path('home') }}" method="POST">
             <input id="prenom" name="username" type="text" placeholder="Nom d’utilisateur" required>
 
             <div class="password-container">
                 <input id="password" name="password" type="password" placeholder="Mot de passe" required>
-                <img id="togglePassword" src="../static/images/password_hide.png" alt="Afficher/Masquer le mot de passe">
+                <img id="togglePassword" src="{{ asset('images/password_hide.png') }}" alt="Afficher/Masquer le mot de passe">
             </div>
 
             <input id="connexion" name="connexion" type="submit" value="Connexion">
@@ -32,26 +31,23 @@
         <h2>Statistiques</h2>
 
         <div class="stat-item">
-            <img src="../static/images/student.png" alt="Icone">
+            <img src="{{ asset('images/student.png') }}" alt="Icone">
             <span>Étudiants : <strong>4500</strong></span>
         </div>
         <div class="stat-item">
-            <img src="../static/images/prof.png" alt="Icone">
+            <img src="{{ asset('images/prof.png') }}" alt="Icone">
             <span>Enseignants : <strong>300</strong></span>
         </div>
         <div class="stat-item">
-            <img src="../static/images/cours.png" alt="Icone">
+            <img src="{{ asset('images/cours.png') }}" alt="Icone">
             <span>Cours disponibles : <strong>50</strong></span>
         </div>
         <div class="stat-item">
-            <img src="../static/images/post.png" alt="Icone">
+            <img src="{{ asset('images/post.png') }}" alt="Icone">
             <span>Nombre de posts : <strong>1000</strong></span>
         </div>
     </div>
 </div>
-
-</body>
-</html>
 
 <script>
     document.getElementById("togglePassword").addEventListener("click", function () {
@@ -60,10 +56,13 @@
 
         if (passwordField.type === "password") {
             passwordField.type = "text";
-            icon.src = "../static/image-login/password_show.png"; // Icône pour "montrer" le mdp
+            icon.src = "{{ asset('images/password_show.png') }}";
         } else {
             passwordField.type = "password";
-            icon.src = "../static/image-login/password_hide.png"; // Icône pour "cacher" le mdp
+            icon.src = "{{ asset('images/password_hide.png') }}";
         }
     });
 </script>
+
+</body>
+</html>
