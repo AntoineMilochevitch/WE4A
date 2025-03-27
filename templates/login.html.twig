@@ -1,0 +1,69 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Moodle</title>
+    <link rel="stylesheet" href="../static/styles/index.css">
+</head>
+<body>
+
+<div class="hbox">
+    <!-- Login Section -->
+    <div class="login-container">
+        <img src="../static/images/utbmlogo.jpg" alt="Logo UTBM" width="200">
+
+        <form action="index.html" method="POST">
+            <input id="prenom" name="username" type="text" placeholder="Nom d’utilisateur" required>
+
+            <div class="password-container">
+                <input id="password" name="password" type="password" placeholder="Mot de passe" required>
+                <img id="togglePassword" src="../static/images/password_hide.png" alt="Afficher/Masquer le mot de passe">
+            </div>
+
+            <input id="connexion" name="connexion" type="submit" value="Connexion">
+        </form>
+
+        <a href="https://moodle.utbm.fr/login/forgot_password.php">Mot de passe perdu ?</a>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="login-container-stat">
+        <h2>Statistiques</h2>
+
+        <div class="stat-item">
+            <img src="../static/images/student.png" alt="Icone">
+            <span>Étudiants : <strong>4500</strong></span>
+        </div>
+        <div class="stat-item">
+            <img src="../static/images/prof.png" alt="Icone">
+            <span>Enseignants : <strong>300</strong></span>
+        </div>
+        <div class="stat-item">
+            <img src="../static/images/cours.png" alt="Icone">
+            <span>Cours disponibles : <strong>50</strong></span>
+        </div>
+        <div class="stat-item">
+            <img src="../static/images/post.png" alt="Icone">
+            <span>Nombre de posts : <strong>1000</strong></span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script>
+    document.getElementById("togglePassword").addEventListener("click", function () {
+        var passwordField = document.getElementById("password");
+        var icon = document.getElementById("togglePassword");
+
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            icon.src = "../static/image-login/password_show.png"; // Icône pour "montrer" le mdp
+        } else {
+            passwordField.type = "password";
+            icon.src = "../static/image-login/password_hide.png"; // Icône pour "cacher" le mdp
+        }
+    });
+</script>
