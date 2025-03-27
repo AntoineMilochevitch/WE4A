@@ -1,4 +1,5 @@
 let isEditing = false;
+let activePart = null; // Variable pour stocker la partie active
 
 document.addEventListener('DOMContentLoaded', function() {
     function togglePartContent(header) {
@@ -9,7 +10,24 @@ document.addEventListener('DOMContentLoaded', function() {
         header.classList.toggle('collapsed', !isCollapsed);
     }
 
+    // Créer une nouvelle partie
     function createPart(title, elements) {
+        const courseContent = document.querySelector('.course-content');
+        if (!courseContent) {
+            console.error('Element .course-content introuvable.');
+            return;
+        }
+    
+        // Vérifier si une partie avec le même titre existe déjà
+        const existingPart = Array.from(courseContent.querySelectorAll('.part h2')).find(
+            h2 => h2.innerText === title
+        );
+        if (existingPart) {
+            console.warn(`Une partie avec le titre "${title}" existe déjà.`);
+            return;
+        }
+        
+        // Créer la nouvelle partie en html
         const newPart = document.createElement('div');
         newPart.classList.add('part');
         newPart.innerHTML = `
@@ -18,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h2 contenteditable="false">${title}</h2>
                 <ion-icon name="create-outline" class="btn-edit-part" title="Modifier"></ion-icon>
                 <ion-icon name="trash-outline" class="btn-delete-part" title="Supprimer"></ion-icon>
+                <ion-icon name="add-circle-outline" class="btn-add-element" title="Ajouter un élément"></ion-icon>
             </div>
             <div class="part-content" style="display: none;">
                 ${elements.map(element => `
@@ -36,37 +55,48 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button type="button" class="btn-add-element" style="display: none;">Ajouter un élément</button>
             </div>
         `;
-        document.querySelector('.course-content').appendChild(newPart);
     
-        newPart.querySelector('.part-header').addEventListener('click', function() {
+        // Ajouter la nouvelle partie à la fin du contenu du cours
+        courseContent.appendChild(newPart);
+    
+        // Ajouter les événements aux boutons de la nouvelle partie
+        const partHeader = newPart.querySelector('.part-header');
+        partHeader.addEventListener('click', function () {
             togglePartContent(this);
         });
     
-        newPart.querySelector('.btn-edit-part').addEventListener('click', function() {
+        const editButton = newPart.querySelector('.btn-edit-part');
+        editButton.addEventListener('click', function () {
             editPart(newPart, this);
             togglePartContent(newPart.querySelector('.part-header'));
         });
     
-        newPart.querySelector('.btn-delete-part').addEventListener('click', function() {
+        const deleteButton = newPart.querySelector('.btn-delete-part');
+        deleteButton.addEventListener('click', function () {
+            const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
+            if (!confirmDelete) return;
             newPart.remove();
         });
     
         newPart.querySelectorAll('.btn-delete-element').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function () {
                 deleteElement(btn.parentElement.parentElement);
             });
         });
     
-        newPart.querySelector('.btn-add-element').addEventListener('click', function() {
+        const addElementButton = newPart.querySelector('.btn-add-element');
+        addElementButton.addEventListener('click', function () {
             showElementForm(newPart);
         });
     }
 
+    // Modifier une partie
     function editPart(part, editButton) {
         const header = part.querySelector('.part-header');
         const title = header.querySelector('h2');
         const elements = part.querySelectorAll('.element p');
     
+        // Toggle the edit mode
         if (title.isContentEditable) {
             title.contentEditable = 'false';
             elements.forEach(element => element.contentEditable = 'false');
@@ -94,25 +124,28 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // View the form to add a new part
     function showPartForm() {
         const modal = document.getElementById('part-modal');
         modal.style.display = 'block';
     
         // Clear previous form data
         document.getElementById('part-title').value = '';
-        document.getElementById('elements-container').innerHTML = '';
-        document.getElementById('element-type').value = '';
-        document.getElementById('element-fields').innerHTML = '';
+        document.getElementById('part-elements-container').innerHTML = '';
+        document.getElementById('part-element-type').value = '';
+        document.getElementById('part-element-fields').innerHTML = '';
     
         // Remove previous event listeners
-        const addElementButton = document.getElementById('add-element');
+        const addElementButton = document.getElementById('part-add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
     
-        document.getElementById('add-element').addEventListener('click', function() {
-            const elementType = document.getElementById('element-type').value;
+        // Handle adding a new element to the form
+        document.getElementById('part-add-element').addEventListener('click', function () {
+            const elementType = document.getElementById('part-element-type').value;
             const elementText = document.getElementById('element-text').value;
             let elementHtml = '';
     
+            // Create dynamic html based on the element type
             if (elementType === 'text') {
                 const elementDate = new Date().toLocaleString();
                 const elementDescription = document.getElementById('element-description').value;
@@ -131,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else if (elementType === 'file') {
                 const elementDate = new Date().toLocaleString();
                 const elementDescription = document.getElementById('element-description').value;
-                const elementFile = document.getElementById('element-file').files[0];
+                const elementFile = document.getElementById('part-element-file').files[0];
                 const fileType = elementFile.type.split('/')[1];
                 const fileIcon = getFileIcon(fileType);
                 elementHtml = `
@@ -174,39 +207,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
             }
     
-            document.getElementById('elements-container').insertAdjacentHTML('beforeend', elementHtml);
+            // Add the new element to the form
+            document.getElementById('part-elements-container').insertAdjacentHTML('beforeend', elementHtml);
             document.getElementById('element-text').value = ''; // Clear the input field
-    
-            const newElement = document.querySelector('#elements-container .element:last-child');
-            newElement.querySelector('.btn-delete-element').addEventListener('click', function() {
-                deleteElement(newElement);
-            });
         });
     
-        // Remove previous event listeners for save and cancel buttons
-        const savePartButton = document.getElementById('save-part');
-        savePartButton.replaceWith(savePartButton.cloneNode(true));
+        // Handle form submission
+        const partForm = document.getElementById('part-form');
+        partForm.addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
     
-        const cancelPartButton = document.getElementById('cancel-part');
-        cancelPartButton.replaceWith(cancelPartButton.cloneNode(true));
-    
-        document.getElementById('save-part').addEventListener('click', function() {
             const title = document.getElementById('part-title').value;
-            const elements = Array.from(document.querySelectorAll('.part-form .element')).map(element => ({
+            const elements = Array.from(document.querySelectorAll('#part-elements-container .element')).map(element => ({
                 icon: element.querySelector('ion-icon').getAttribute('name'),
                 text: element.querySelector('p').innerText,
                 description: element.querySelector('.element-description') ? element.querySelector('.element-description').innerText : '',
                 date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : ''
             }));
-            createPart(title, elements);
-            modal.style.display = 'none';
-        });
     
-        document.getElementById('cancel-part').addEventListener('click', function() {
+            // Create the new part
+            createPart(title, elements);
+            const modal = document.getElementById('part-modal');
+            modal.style.display = 'none'; // Close the modal
+
+        });
+
+
+        // Handle cancel button
+        document.getElementById('cancel-part').addEventListener('click', function () {
             modal.style.display = 'none';
         });
     }
     
+    // Get the icon name based on the file type
     function getFileIcon(fileType) {
         switch (fileType) {
             case 'pdf':
@@ -224,47 +257,112 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Display the form to add a new element
     function showElementForm(part) {
+        activePart = part;
+        console.log('Active part:', activePart);
         const modal = document.getElementById('element-modal');
         modal.style.display = 'block';
 
         // Clear previous form data
-        document.getElementById('element-type').value = 'document-outline';
-        document.getElementById('element-text').value = '';
+        document.getElementById('ele-element-type').value = 'document-outline';
+        document.getElementById('ele-element-text').value = '';
+        document.getElementById('ele-element-fields').innerHTML = `
+            <label for="element-text">Nom de l'élément:</label>
+            <input type="text" id="ele-element-text" name="element-text">
+        `;
 
         // Remove previous event listeners
         const addElementButton = document.getElementById('add-element-modal');
+        if (!addElementButton) {
+            console.error('Bouton "add-element-modal" introuvable.');
+            return;
+        }
         addElementButton.replaceWith(addElementButton.cloneNode(true));
-
-        document.getElementById('add-element-modal').addEventListener('click', function() {
-            const elementType = document.getElementById('element-type').value;
-            const elementText = document.getElementById('element-text').value;
-            const elementHtml = `
-                <div class="element">
-                    <ion-icon name="${elementType}"></ion-icon>
-                    <p>${elementText}</p>
-                    <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
-                </div>
-                <div class="ligne-gris"></div>
-            `;
-            part.querySelector('.part-content').insertAdjacentHTML('beforeend', elementHtml);
-            modal.style.display = 'none';
-
-            const newElement = part.querySelector('.part-content .element:last-child');
-            newElement.querySelector('.btn-delete-element').addEventListener('click', function() {
-                deleteElement(newElement);
-            });
-        });
-
-        const cancelElementButton = document.getElementById('cancel-element-modal');
-        cancelElementButton.replaceWith(cancelElementButton.cloneNode(true));
-
-        document.getElementById('cancel-element-modal').addEventListener('click', function() {
-            modal.style.display = 'none';
+        document.getElementById('add-element-modal').addEventListener('click', function(event) {
+            event.preventDefault(); // Empêche le rechargement de la page
+            addElementToPart();
         });
     }
 
+    function addElementToPart() {
+        if (!activePart) {
+            console.error('Aucune partie active définie.');
+            return;
+        }
+    
+        const partContent = activePart.querySelector('.part-content');
+        if (!partContent) {
+            console.error('Impossible de trouver .part-content dans la partie active.');
+            return;
+        }
+    
+        const elementType = document.getElementById('ele-element-type').value || 'text'; // Default icon
+        const elementText = document.getElementById('ele-element-text').value;
+        const elementDescription = document.getElementById('ele-element-description') 
+            ? document.getElementById('ele-element-description').value 
+            : '';
+        const elementDate = new Date().toLocaleString();
+
+        // Déterminer l'icône en fonction du type d'élément
+        let iconName = '';
+        switch (elementType) {
+            case 'text':
+                iconName = 'document-text-outline';
+                break;
+            case 'file':
+                iconName = 'document-outline';
+                break;
+            case 'depot':
+                iconName = 'cloud-upload-outline';
+                break;
+            default:
+                iconName = 'help-outline'; // Icône par défaut
+        }
+    
+        // Créer le HTML de l'élément
+        const elementHtml = `
+            <div class="element">
+                <div class="element-header">
+                    <ion-icon name="${iconName}"></ion-icon>
+                    <p>${elementText}</p>
+                    <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
+                </div>
+                ${elementDescription ? `<p class="element-description">${elementDescription}</p>` : ''}
+                <p class="element-date">${elementDate}</p>
+            </div>
+            <div class="ligne-gris"></div>
+        `;
+    
+        // Ajouter l'élément à la partie active
+        partContent.insertAdjacentHTML('beforeend', elementHtml);
+    
+        // Fermer la modal
+        const modal = document.getElementById('element-modal');
+        if (modal) {
+            console.log('Modal trouvée :', modal);
+            modal.style.display = 'none';
+        } else {
+            console.error('Modal introuvable');
+        }
+    
+        activePart.querySelectorAll('.btn-delete-element').forEach(btn => {
+            btn.addEventListener('click', function () {
+                deleteElement(btn.parentElement.parentElement);
+            });
+        });
+
+        // Réinitialiser les champs du formulaire
+        document.getElementById('ele-element-text').value = '';
+        document.getElementById('ele-element-description').value = '';
+    }
+
     function deleteElement(element) {
+        //add pop up to confirm removal
+        const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
+        if (!confirmDelete) return;
+
+
         const nextElement = element.nextElementSibling;
         if (nextElement && nextElement.classList.contains('ligne-gris')) {
             nextElement.remove();
@@ -272,9 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
         element.remove();
     }
 
-    document.getElementById('element-type').addEventListener('change', function() {
+    document.getElementById('part-element-type').addEventListener('change', function() {
         const elementType = this.value;
-        const elementFields = document.getElementById('element-fields');
+        const elementFields = document.getElementById('part-element-fields');
         elementFields.innerHTML = '';
 
         if (elementType === 'text') {
@@ -307,11 +405,53 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
     });
+    
+    document.getElementById('ele-element-type').addEventListener('change', function() {
+        const elementType = this.value;
+        const elementFields = document.getElementById('ele-element-fields');
+        elementFields.innerHTML = '';
+    
+        if (elementType === 'text') {
+            elementFields.innerHTML = `
+                <label for="ele-element-text">Nom de l'élément:</label>
+                <input type="text" id="ele-element-text" name="element-text">
+                <label for="ele-element-description">Description:</label>
+                <textarea id="ele-element-description" name="element-description"></textarea>
+            `;
+        } else if (elementType === 'file') {
+            elementFields.innerHTML = `
+                <label for="ele-element-text">Nom de l'élément:</label>
+                <input type="text" id="ele-element-text" name="element-text">
+                <label for="ele-element-description">Description:</label>
+                <textarea id="ele-element-description" name="element-description"></textarea>
+                <label for="element-file">Fichier:</label>
+                <input type="file" id="element-file" name="element-file">
+            `;
+        } else if (elementType === 'depot') {
+            elementFields.innerHTML = `
+                <label for="ele-element-text">Nom de l'élément:</label>
+                <input type="text" id="ele-element-text" name="element-text">
+                <label for="ele-element-description">Description:</label>
+                <textarea id="ele-element-description" name="element-description"></textarea>
+            `;
+        } else {
+            elementFields.innerHTML = `
+                <label for="ele-element-text">Nom de l'élément:</label>
+                <input type="text" id="ele-element-text" name="element-text">
+            `;
+        }
+    });
 
+    // Ajouter les événements aux boutons de chaque partie
     document.querySelectorAll('.part-header').forEach(header => {
         header.addEventListener('click', function() {
             togglePartContent(this);
         });
+    });
+
+    document.getElementById('cancel-element').addEventListener('click', function () {
+        const modal = document.getElementById('element-modal');
+        modal.style.display = 'none'; // Ferme la modal des éléments
     });
 
     document.querySelector('.btn-add-part').addEventListener('click', function() {
