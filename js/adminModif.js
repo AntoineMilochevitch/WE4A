@@ -173,6 +173,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalContent = document.getElementById('modal-content');
         modalContent.innerHTML = ''; // Efface le contenu précédent
         
+        const confirmationMessage = document.createElement('p');
+        confirmationMessage.textContent = 'Veuillez remplir les champs ci-dessus.';
+        modalContent.appendChild(confirmationMessage);
+
         // Ajouter les champs de saisie
         const nameInput = document.createElement('input');
         nameInput.type = 'text';
@@ -187,6 +191,8 @@ document.addEventListener('DOMContentLoaded', function() {
         descriptionInput.placeholder = isUser ? 'Prénom' : 'Description';
         modalContent.appendChild(descriptionInput);
         modalContent.appendChild(document.createElement('br'));
+
+        modalContent.appendChild(document.createElement('p'));
 
         // Ajouter les boutons
         const confirmButton = document.createElement('button');
@@ -223,6 +229,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Effacer le contenu précédent du modal
         const modalContent = document.getElementById('modal-content');
         modalContent.innerHTML = '';
+
+        const confirmationMessage = document.createElement('p');
+        confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessus.';
+        modalContent.appendChild(confirmationMessage);
     
         // Ajouter le champ pour le nom
         const nameInput = document.createElement('input');
@@ -239,7 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
         descriptionInput.value = description;
         modalContent.appendChild(descriptionInput);
         modalContent.appendChild(document.createElement('br'));
-    
+
+        modalContent.appendChild(document.createElement('p'));
+
         // Ajouter le bouton "Confirmer"
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirmer';
