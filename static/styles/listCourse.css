@@ -175,6 +175,12 @@
     height: 100px;
 }
 
+.list-mode .case-cours:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+}
+
 /* List mode course link styling */
 .list-mode .case-cours a {
     width: 100%;
