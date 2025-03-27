@@ -52,7 +52,7 @@
 
 .btn-create {
     padding: 10px 15px;
-    background-color: #007BC0;
+    background-color: #04a346;
     color: white;
     border: none;
     cursor: pointer;
@@ -62,7 +62,7 @@
 }
 
 .btn-create:hover {
-    background-color: #005f8a;
+    background-color: #028b3b;
 }
 
 .btn-delete {
@@ -130,12 +130,12 @@
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4); 
-    padding-top: 10px; 
+    padding-top: 100px; 
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; 
+    margin: 5% auto; 
     padding: 20px;
     border: 1px solid #888;
     width: 80%; 
