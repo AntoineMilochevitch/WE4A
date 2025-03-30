@@ -32,10 +32,10 @@ class MainController extends AbstractController
         return $this->render('login/login.html.twig');
     }
 
-    #[Route('/admin', name: 'admin/admin')]
+    #[Route('/admin', name: 'admin')]
     public function admin(): Response
     {
-        return $this->render('admin.html.twig');
+        return $this->render('admin/admin.html.twig');
     }
 
     #[Route('/course', name: 'course')]
