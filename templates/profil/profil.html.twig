@@ -1,0 +1,263 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/profil.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<body>
+    <div class="content">
+        <div class="container">
+            <h1>Profil</h1>
+            <div class="profil-content">
+                <div class="perso-info">
+                    <div class="profil-info">
+                        <div class="profil-pic">
+                            <img src="{{ asset('images/profil_pic1.jpg') }}" alt="Profil">
+                        </div>
+                        <div class="profil-name">
+                            <h2>Moi ENcoremoi</h2>
+                            <h3>Statut</h3>
+                            <h3>emailTest@utbm.fr</h3>
+                            <h3>Classement :</h3>
+                        </div>
+                    </div>
+                    <div class="profil-action">
+                        <button class="btn-modif-profil">Modifier le profil</button>
+                    </div>
+                </div>
+
+                <div class="snake">
+                    <h2>Snake 🐍</h2>
+                    <p id="instructions">Utilisez les touches ZQSD pour jouer</p>
+                    <button id="startButton" onclick="startGame()">Commencer</button>
+                    <canvas id="snakeGame" width="400" height="400"></canvas>
+                </div>
+            </div>
+
+            <div class="emploi-du-temps">
+                <h1>Emploi du temps</h1>
+                <div class="edt">
+                    <table id="edtTable">
+                        <thead>
+                            <tr>
+                                <th class="heure_edt">Heure</th>
+                                <th>Lundi</th>
+                                <th>Mardi</th>
+                                <th>Mercredi</th>
+                                <th>Jeudi</th>
+                                <th>Vendredi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in 1..4 %}
+                            <tr>
+                                <td>{{ i * 2 + 6 }}h-{{ i * 2 + 8 }}h</td>
+                                <td>Mathématiques</td>
+                                <td>Physique</td>
+                                <td>Anglais</td>
+                                <td>Mathématiques</td>
+                                <td>Physique</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modifier le profil -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <form id="edit-profile-form">
+                <div class="part-form">
+                    <h2>Modifier le profil</h2>
+                    <label for="profile-email">Email:</label>
+                    <input type="email" id="profile-email" name="profile-email" placeholder="Entrez votre email" required>
+
+                    <label for="profile-password">Mot de passe:</label>
+                    <input type="password" id="profile-password" name="profile-password" placeholder="Entrez un nouveau mot de passe" required>
+
+                    <label for="profile-avatar">Avatar:</label>
+                    <div>
+                        <label for="profile-avatar" class="custom-file-label">Choisir un fichier</label>
+                        <input type="file" id="profile-avatar" name="profile-avatar" accept="image/*" style="display: none;">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" id="save-profile">Enregistrer</button>
+                        <button type="button" id="cancel-profile">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h2>Notifications</h2>
+            <span class="close-btn" id="closeNotificationPanel">&times;</span>
+        </div>
+        <div class="notification-content">
+            <div class="notification-item important">
+                <p>Notification importante</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item warning">
+                <p>Notification d'avertissement</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item info">
+                <p>Notification d'information</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+        </div>
+    </div>
+
+    {% block javascript %}
+    <!-- JS Profil et Snake -->
+    <script>
+            const editProfileModal = document.getElementById("edit-profile-modal");
+            const editProfileButton = document.querySelector(".btn-modif-profil");
+            const cancelProfileButton = document.getElementById("cancel-profile");
+
+            const fileInput = document.getElementById("profile-avatar");
+            const fileLabel = document.querySelector(".custom-file-label");
+
+            fileInput.addEventListener("change", (event) => {
+                const fileName = event.target.files[0]?.name || "Choisir un fichier";
+                fileLabel.textContent = fileName;
+            });
+        
+            // Open the modal
+            editProfileButton.addEventListener("click", () => {
+                editProfileModal.style.display = "block";
+            });
+        
+            // Close the modal
+            cancelProfileButton.addEventListener("click", () => {
+                editProfileModal.style.display = "none";
+            });
+        
+            // Close the modal when clicking outside of it
+            window.addEventListener("click", (event) => {
+                if (event.target === editProfileModal) {
+                    editProfileModal.style.display = "none";
+                }
+            });
+        </script>
+        <script>
+            const canvas = document.getElementById("snakeGame");
+            const ctx = canvas.getContext("2d");
+            const startButton = document.getElementById("startButton");
+            const instructions = document.getElementById("instructions");
+        
+            const box = 20;
+            let snake;
+            let food;
+            let score;
+            let d;
+            let game;
+        
+            function startGame() {
+                snake = [];
+                snake[0] = { x: 9 * box, y: 10 * box };
+        
+                food = {
+                    x: Math.floor(Math.random() * 19 + 1) * box,
+                    y: Math.floor(Math.random() * 19 + 1) * box
+                };
+        
+                score = 0;
+                d = null;
+        
+                document.addEventListener("keydown", direction);
+        
+                if (game) clearInterval(game);
+                game = setInterval(draw, 110);
+                startButton.style.display = "none";
+                instructions.style.display = "none";
+            }
+        
+            function direction(event) {
+                if (event.keyCode == 90 && d != "DOWN") {
+                    d = "UP";
+                } else if (event.keyCode == 83 && d != "UP") {
+                    d = "DOWN";
+                } else if (event.keyCode == 81 && d != "RIGHT") {
+                    d = "LEFT";
+                } else if (event.keyCode == 68 && d != "LEFT") {
+                    d = "RIGHT";
+                }
+            }
+        
+            function collision(newHead, array) {
+                for (let i = 0; i < array.length; i++) {
+                    if (newHead.x == array[i].x && newHead.y == array[i].y) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        
+            function draw() {
+                ctx.fillStyle = "#F7F7F7";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+                for (let i = 0; i < snake.length; i++) {
+                    ctx.fillStyle = (i == 0) ? "#007BC0" : "#005f8a";
+                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                    ctx.strokeStyle = "#F7F7F7";
+                    ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+                }
+        
+                ctx.fillStyle = "#FF0000";
+                ctx.fillRect(food.x, food.y, box, box);
+        
+                let snakeX = snake[0].x;
+                let snakeY = snake[0].y;
+        
+                if (d == "LEFT") snakeX -= box;
+                if (d == "UP") snakeY -= box;
+                if (d == "RIGHT") snakeX += box;
+                if (d == "DOWN") snakeY += box;
+        
+                if (snakeX == food.x && snakeY == food.y) {
+                    score++;
+                    food = {
+                        x: Math.floor(Math.random() * 19 + 1) * box,
+                        y: Math.floor(Math.random() * 19 + 1) * box
+                    };
+                } else {
+                    snake.pop();
+                }
+        
+                let newHead = {
+                    x: snakeX,
+                    y: snakeY
+                };
+        
+                if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                    clearInterval(game);
+                    startButton.style.display = "block";
+                    instructions.style.display = "block";
+                }
+        
+                snake.unshift(newHead);
+        
+                ctx.fillStyle = "#000";
+                ctx.font = "20px Arial";
+                ctx.fillText("Score: " + score, 2 * box, 1.5 * box);
+            }
+        
+            startButton.style.display = "block";
+        </script>
+    {% endblock %}
+</body>
+{% endblock %}
