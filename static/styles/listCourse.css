@@ -115,7 +115,7 @@
 /* Card mode course styling */
 .carte-mode .case-cours {
     width: calc(33.333% - 20px);
-    background-color: #f7f7f7;
+    background: linear-gradient(-45deg, #ffffff 0%, #007bff 100%);;
     border: 1px solid #ddd;
     border-radius: 5px;
     overflow: hidden;
