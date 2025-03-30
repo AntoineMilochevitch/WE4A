@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ JS chargé !");
 
   // === GESTION DES CARTES SCROLLABLES ===
   const scrollContainer = document.getElementById("scrollContainer");

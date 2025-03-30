@@ -1,17 +1,50 @@
-<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+        <title>{% block title %}MyMoodle{% endblock %}</title>
         {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
         {% endblock %}
-
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+            <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+
+
+            <script src="{{ asset('js/notification.js') }}"></script>
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <header>
+            <div class="logo">
+                <a href="{{ path('home') }}">
+                    <img src="{{ asset('images/logo_UTBM_blanc.png') }}" alt="MyMoodle">
+                </a>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
+                    <li><a href="#">Recherche de cours</a></li>
+                </ul>
+            </div>
+            <div class="user">
+                <ul>
+                    <li>
+                        <a href="#">
+                            <ion-icon name="notifications-outline"></ion-icon>
+                            <span class="notification-count">3</span>
+                        </a>
+                    </li>
+                    <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+                    <button class="Btn" onclick="window.location.href='{{ path('login') }}'">
+                        <div class="sign">
+                            <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
+                        </div>
+                        <div class="text">Login</div>
+                    </button>
+                </ul>
+            </div>
+        </header>
+        {% block body %}
+        {% endblock %}
     </body>
 </html>

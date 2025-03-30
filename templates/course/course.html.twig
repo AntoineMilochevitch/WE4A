@@ -1,0 +1,179 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Course{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/course.css') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/courseModif.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const courseContent = document.querySelector(".course-content");
+            const participantsContent = document.querySelector(".participants-content");
+            const courseMenuItems = document.querySelectorAll(".course-menu-li a");
+            const addPartButton = document.querySelector(".btn-add-part");
+
+            courseMenuItems.forEach((item) => {
+                item.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    const text = item.textContent.trim();
+
+                    if (text === "Cours") {
+                        courseContent.style.display = "block";
+                        participantsContent.style.display = "none";
+                        addPartButton.style.display = "inline-block";
+                    } else if (text === "Participants") {
+                        courseContent.style.display = "none";
+                        participantsContent.style.display = "block";
+                        addPartButton.style.display = "none";
+                    }
+
+                    courseMenuItems.forEach((link) => link.classList.remove("active"));
+                    item.classList.add("active");
+                });
+            });
+        });
+    </script>
+{% endblock %}
+    
+{% block body %}
+<body>
+    <div class="content">
+        <div class="container">
+            <h1>Titre du cours</h1>
+            <div class="course-menu">
+                <ul>
+                    <div class="course-menu-li"><li><a href="#" class="active">Cours</a></li></div>
+                    <div class="course-menu-li"><li><a href="#">Participants</a></li></div>
+                    <div class="course-menu-li"><li><a href="#">Notes</a></li></div>
+                </ul>
+                <button class="btn-add-part">Ajouter une partie</button>
+            </div>
+            <div class="ligne-gris"></div>
+
+            <div class="course-content"></div>
+
+            <div class="participants-content" style="display: none;">
+                <div class="professors">
+                    <div class="part-header collapsed">
+                        <ion-icon name="chevron-down-outline"></ion-icon>
+                        <h2>Professeurs</h2>
+                    </div>
+                    <div class="part-content" style="display: none;">
+                        <div class="participant">
+                            <img src="{{ asset('images/profil_pic1.jpg') }}" alt="Photo de profil" class="profile-pic">
+                            <span class="participant-name">Nom</span>
+                            <span class="participant-firstname">Prénom</span>
+                        </div>
+                        <div class="ligne-gris"></div>
+                        <div class="participant">
+                            <img src="{{ asset('images/profil_pic3.jpg') }}" alt="Photo de profil" class="profile-pic">
+                            <span class="participant-name">Nom</span>
+                            <span class="participant-firstname">Prénom</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="students">
+                    <div class="part-header collapsed">
+                        <ion-icon name="chevron-down-outline"></ion-icon>
+                        <h2>Élèves</h2>
+                    </div>
+                    <div class="part-content" style="display: none;">
+                        <div class="participant">
+                            <img src="{{ asset('images/profil_pic2.jpg') }}" alt="Photo de profil" class="profile-pic">
+                            <span class="participant-name">Nom</span>
+                            <span class="participant-firstname">Prénom</span>
+                        </div>
+                        <div class="ligne-gris"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Modal ajout partie #}
+    <div id="part-modal" class="modal">
+        <div class="modal-content">
+            <form id="part-form">
+                <div class="part-form">
+                    <label for="part-title">Titre de la partie:</label>
+                    <input type="text" id="part-title" name="part-title" required>
+                    <div id="part-elements-container"></div>
+                    <div class="element-form">
+                        <label for="element-type">Type d'élément:</label>
+                        <select id="part-element-type" name="element-type">
+                            <option value="" disabled selected>Choisir un type d'élément</option>
+                            <option value="text">Texte</option>
+                            <option value="file">Fichier</option>
+                            <option value="depot">Dépot</option>
+                        </select>
+                        <div id="part-element-fields">
+                            <label for="element-text">Nom de l'élément:</label>
+                            <input type="text" id="element-text" name="element-text" required>
+                        </div>
+                        <button type="button" id="part-add-element">Ajouter un élément</button>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="save-part">Enregistrer la partie</button>
+                        <button type="button" id="cancel-part">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {# Modal ajout élément #}
+    <div id="element-modal" class="modal">
+        <div class="modal-content">
+            <form id="element-form">
+                <div class="part-form">
+                    <div id="ele-elements-container"></div>
+                    <div class="element-form">
+                        <label for="element-type">Type d'élément:</label>
+                        <select id="ele-element-type" name="element-type">
+                            <option value="" disabled selected>Choisir un type d'élément</option>
+                            <option value="text">Texte</option>
+                            <option value="file">Fichier</option>
+                            <option value="depot">Dépot</option>
+                        </select>
+                        <div id="ele-element-fields">
+                            <label for="ele-element-text">Nom de l'élément:</label>
+                            <input type="text" id="ele-element-text" name="element-text" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="add-element-modal">Ajouter l'élément</button>
+                        <button type="button" id="cancel-element">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="notificationPanel" class="notification-panel">
+        <div class="notification-header">
+            <h2>Notifications</h2>
+            <span class="close-btn" id="closeNotificationPanel">&times;</span>
+        </div>
+        <div class="notification-content">
+            <div class="notification-item important">
+                <p>Notification importante</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item warning">
+                <p>Notification d'avertissement</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+            <div class="notification-item info">
+                <p>Notification d'information</p>
+                <span class="delete-btn">&times;</span>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

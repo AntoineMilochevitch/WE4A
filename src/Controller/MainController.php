@@ -17,22 +17,22 @@ class MainController extends AbstractController
     #[Route('/my-courses', name: 'my_courses')]
     public function myCourses(): Response
     {
-        return $this->render('myCourses.html.twig');
+        return $this->render('myCourses/myCourses.html.twig');
     }
 
     #[Route('/profile', name: 'profile')]
     public function profile(): Response
     {
-        return $this->render('profil.html.twig');
+        return $this->render('profil/profil.html.twig');
     }
 
     #[Route('/login', name: 'login')]
     public function login(): Response
     {
-        return $this->render('login.html.twig');
+        return $this->render('login/login.html.twig');
     }
 
-    #[Route('/admin', name: 'admin')]
+    #[Route('/admin', name: 'admin/admin')]
     public function admin(): Response
     {
         return $this->render('admin.html.twig');
@@ -41,6 +41,6 @@ class MainController extends AbstractController
     #[Route('/course', name: 'course')]
     public function course(): Response
     {
-        return $this->render('course.html.twig');
+        return $this->render('course/course.html.twig');
     }
 }
