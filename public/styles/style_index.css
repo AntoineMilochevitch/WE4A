@@ -294,3 +294,7 @@
     text-decoration: line-through;
     font-style: italic;
 }
+
+.info-item.read {
+    background-color: #d3d3d3; /* Gris */
+}
