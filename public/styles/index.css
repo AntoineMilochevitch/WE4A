@@ -22,9 +22,10 @@ body {
 input {
 	width: 100%;
 	padding: 10px;
-	margin: 20px -10px;
+	margin: 10px 0; /* Suppression du décalage horizontal */
 	border: 1px solid #ccc;
 	border-radius: 5px;
+	display: block; /* Garantit un bon alignement */
 }
 
 
@@ -44,6 +45,11 @@ input {
 	display: flex;
 	align-items: center;
 	width: 100%;
+	gap: 10px;
+}
+
+.password-container input {
+	flex: 1; /* Le champ prend tout l’espace disponible */
 }
 
 .password-container img {
@@ -53,6 +59,7 @@ input {
 	height: 25px;
 	cursor: pointer;
 }
+
 
 #connexion {
 	border: none;
@@ -89,14 +96,9 @@ input {
 	flex-direction: column;
 	justify-content: space-between;
 	width: 50%;
-	background-image: url('../images/background-stat.jpg');
-	background-size: cover; /* L'image remplit le conteneur */
-	background-position: center; /* Centre l'image */
-	background-repeat: no-repeat; /* Empêche la répétition */
 	gap: 15px;
 	padding: 20px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	color: #0400ff;
+	color: #ffffff;
 }
 
 .stat-item {
@@ -121,7 +123,8 @@ input {
 	border-radius: 10px;
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 	transition: transform 0.3s ease-in-out; /* Animation fluide */
-	width: 45%;
+	width: 750px;
+	height: 380px;
 }
 
 .hbox:hover {
@@ -133,4 +136,11 @@ input {
 	background: rgba(255, 255, 255, 0.3);
 	border-radius: 10px;
 	transform: translateY(-5px); /* Faire monter l'image légèrement */
+}
+
+h2{
+	text-align: center;
+	font-size: 35px;
+	margin: 0px;
+	color: #ffffff;
 }
