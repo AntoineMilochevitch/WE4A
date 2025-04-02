@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/find.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div class="content-display">
+        <div class="search">
+            <input type="text" id="searchInput" placeholder="Rechercher un cours">
+            <button id="searchButton"><ion-icon name="search-outline"></ion-icon></button>
+        </div>
+
+        <!-- Tableau des cours -->
+        <table id="coursesTable">
+            <thead>
+            <tr>
+                <th>Nom du cours</th>
+                <th>Professeur</th>
+                <th>Durée</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Les cours seront ajoutés ici via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script src="{{ asset('js/find.js') }}"></script> <!-- Ajout du fichier JS -->
+{% endblock %}

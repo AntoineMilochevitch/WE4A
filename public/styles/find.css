@@ -1,0 +1,65 @@
+/* Barre de recherche */
+.search {
+    display: flex;
+    justify-content: center !important;
+    align-items: center!important;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.search input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+}
+
+.search button {
+    padding: 10px;
+    background-color: #007BC0;
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search button:hover {
+    background-color: #005f8a;
+}
+
+/* Tableau des cours */
+.content-display {
+    width: 90%;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+#coursesTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#coursesTable thead {
+    background-color: #007BC0;
+    color: white;
+}
+
+#coursesTable th,
+#coursesTable td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#coursesTable tbody tr:hover {
+    background-color: #f1f1f1;
+}
