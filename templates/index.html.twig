@@ -30,7 +30,7 @@
                     {% for i in 1..6 %}
                         <a href="#">
                             <div class="card">
-                                <img src="{{ asset('images/image_logo.png') }}" alt="Card Logo" class="card__image">
+                                <img src="{{ asset('images/course_image.png') }}" alt="Card Logo" class="card__image">
                                 <div class="card__content">
                                     <p class="card__title">UE</p>
                                     <p class="card__description">
@@ -105,27 +105,5 @@
             </div>
         </div>
     </div>
-
-    <div id="notificationPanel" class="notification-panel">
-        <div class="notification-header">
-            <h2>Notifications</h2>
-            <span class="close-btn" id="closeNotificationPanel">&times;</span>
-        </div>
-        <div class="notification-content">
-            <div class="notification-item important">
-                <p>Notification importante</p>
-                <span class="delete-btn">&times;</span>
-            </div>
-            <div class="notification-item warning">
-                <p>Notification d'avertissement</p>
-                <span class="delete-btn">&times;</span>
-            </div>
-            <div class="notification-item info">
-                <p>Notification d'information</p>
-                <span class="delete-btn">&times;</span>
-            </div>
-        </div>
-    </div>
-
 </body>
 {% endblock %}
