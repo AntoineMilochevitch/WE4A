@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
     const courses = [
-        { name: "Mathématiques", professor: "M. Dupont", duration: "3 mois" },
-        { name: "Physique", professor: "Mme Leblanc", duration: "4 mois" },
-        { name: "Informatique", professor: "M. Martin", duration: "5 mois" },
-        { name: "Histoire", professor: "Mme Durand", duration: "2 mois" },
-        { name: "Anglais", professor: "M. Smith", duration: "6 mois" },
+        { code: "MTH101", name: "Mathématiques", description: "Cours sur l'algèbre et l'analyse." },
+        { code: "PHY202", name: "Physique", description: "Étude des lois fondamentales de la physique." },
+        { code: "INF103", name: "Informatique", description: "Introduction aux algorithmes et à la programmation." },
+        { code: "HIS104", name: "Histoire", description: "Exploration des grandes périodes historiques." },
+        { code: "ENG105", name: "Anglais", description: "Cours d’anglais général et technique." },
     ];
 
     const tableBody = document.querySelector("#coursesTable tbody");
@@ -16,9 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const row = document.createElement("tr");
 
             row.innerHTML = `
+                <td>${course.code}</td>
                 <td>${course.name}</td>
-                <td>${course.professor}</td>
-                <td>${course.duration}</td>
+                <td>${course.description}</td>
+                <td><button class="info-btn">+ Infos</button></td>
             `;
 
             tableBody.appendChild(row);
@@ -27,15 +28,4 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Afficher tous les cours au chargement
     displayCourses();
-
-    // Gestion de la recherche
-    document.getElementById("searchButton").addEventListener("click", function () {
-        const searchText = document.getElementById("searchInput").value.toLowerCase();
-
-        const filteredCourses = courses.filter(course =>
-            course.name.toLowerCase().includes(searchText)
-        );
-
-        displayCourses(filteredCourses);
-    });
 });
