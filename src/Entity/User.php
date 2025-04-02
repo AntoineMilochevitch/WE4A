@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -42,6 +44,13 @@ class User
     #[ORM\ManyToMany(targetEntity: Ue::class, inversedBy: 'users')]
     #[ORM\JoinTable(name: 'user_ue')]
     private Collection $ue;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+        $this->userNotifications = new ArrayCollection();
+        $this->ue = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -216,6 +225,4 @@ class User
 
         return $this;
     }
-
-    
 }
