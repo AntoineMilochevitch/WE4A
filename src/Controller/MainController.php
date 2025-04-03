@@ -43,4 +43,10 @@ class MainController extends AbstractController
     {
         return $this->render('course/course.html.twig');
     }
+
+    #[Route('/find', name: 'find')]
+    public function find(): Response
+    {
+        return $this->render('find/find.html.twig');
+    }
 }

@@ -1,31 +1,39 @@
+/* =================== */
+/* === WRAPPER ZONE === */
+/* =================== */
+
 .cards-wrapper {
     width: 100%;
     max-width: 1240px;
     margin: auto;
     overflow: hidden;
-    position: relative; /* Nécessaire pour positionner les flèches par-dessus */
+    position: relative; /* Pour positionner les flèches par-dessus */
     padding-bottom: 10px;
     z-index: 0;
 }
 
+/* =========================== */
+/* === SCROLLABLE CARDS ZONE === */
+/* =========================== */
 
-/* SCROLLABLE CARDS CONTAINER */
 .cards-container {
     display: flex;
-    overflow-x: auto; /* Enables horizontal scrolling */
-    white-space: nowrap; /* Prevents wrapping */
+    overflow-x: auto;
+    white-space: nowrap;
     gap: 30px;
     padding: 20px;
-    scroll-snap-type: x mandatory; /* Smooth scrolling */
-    scrollbar-width: none; /* Hides scrollbar on Firefox */
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
 }
 
-/* Hide scrollbar for Webkit (Chrome, Safari) */
 .cards-container::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome, Safari */
 }
 
-/* CARD STYLES */
+/* =================== */
+/* === CARD STYLES === */
+/* =================== */
+
 .card {
     flex: 0 0 auto;
     width: 300px;
@@ -36,7 +44,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     scroll-snap-align: start;
     perspective: 10000px;
 }
@@ -47,25 +55,22 @@
 }
 
 .card img {
-    width: 50px;  /* Adjust the width */
-    height: auto; /* Maintains aspect ratio */
+    width: 50px;
+    height: auto;
     display: block;
-    margin: 0 auto; /* Centers the image */
+    margin: 0 auto;
 }
 
-/* CARD ICON */
 .card svg {
     width: 48px;
     fill: #333;
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .card:hover svg {
-    scale: 0;
-    transform: rotate(-45deg);
+    transform: rotate(-45deg) scale(0);
 }
 
-/* CARD CONTENT */
 .card__content {
     position: absolute;
     top: 50%;
@@ -77,14 +82,14 @@
     box-sizing: border-box;
     background-color: #fff;
     opacity: 0;
-    transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
-    backface-visibility: hidden; /* Prevents flickering */
+    transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    backface-visibility: hidden;
 }
 
 .card:hover .card__content {
     transform: translate(-50%, -50%) rotate(0deg);
     opacity: 1;
-    pointer-events: auto; /* Allows clicks on the card content */
+    pointer-events: auto;
 }
 
 .card__title {
@@ -99,10 +104,13 @@
     font-size: 14px;
     color: #777;
     line-height: 1.4;
-    word-wrap: break-word; /* Ensures that long words wrap to the next line */
-    white-space: normal; /* Ensures the text is allowed to wrap */
+    word-wrap: break-word;
+    white-space: normal;
 }
 
+/* =================== */
+/* === ARROWS === */
+/* =================== */
 
 .card-arrows {
     position: absolute;
@@ -112,8 +120,8 @@
     display: flex;
     justify-content: space-between;
     transform: translateY(-50%);
-    z-index: 10; /* S'assure que c’est au-dessus des cartes */
-    pointer-events: none; /* On autorisera uniquement les boutons à être cliquables */
+    z-index: 10;
+    pointer-events: none;
     padding: 0 10px;
 }
 
@@ -125,7 +133,7 @@
     font-size: 24px;
     padding: 10px;
     cursor: pointer;
-    pointer-events: auto; /* Pour que les clics soient possibles */
+    pointer-events: auto;
     transition: background 0.3s;
     display: flex;
     align-items: center;
@@ -139,30 +147,31 @@
 .card-arrows .arrow ion-icon {
     font-size: 24px;
 }
+
+/* =================== */
+/* === SECTION TITLE & SEPARATOR === */
+/* =================== */
+
 .section-title {
     text-align: center;
     color: #007bff;
     font-size: 22px;
     margin-bottom: 20px;
-  }
-  
-  .separator {
+}
+
+.separator {
     border: none;
     height: 2px;
     background: linear-gradient(to right, #007bff, transparent);
     margin: 40px auto 20px;
     width: 80%;
-  }
+}
 
-  .section-title {
-    text-align: center;
-    color: #007bff;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-  
-  /* Le conteneur principal des notifications */
-  .info-container {
+/* =================== */
+/* === NOTIFICATIONS === */
+/* =================== */
+
+.info-container {
     width: 600px;
     max-height: 500px;
     overflow-y: auto;
@@ -172,13 +181,10 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-  
     background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
-  }
-  
-  
-  /* Chaque notification */
-  .info-item {
+}
+
+.info-item {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -188,29 +194,26 @@
     height: 80px;
     box-sizing: border-box;
     flex-shrink: 0;
-  }
-  
-  /* Bloc contenant le titre + description */
-  .info-content {
+}
+
+.info-content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
     flex: 1;
     overflow: hidden;
-  }
-  
-  /* Titre de la notification */
-  .info-title {
+}
+
+.info-title {
     font-weight: bold;
     color: #007bff;
     text-transform: uppercase;
     font-size: 14px;
     line-height: 1.2;
-  }
-  
-  /* Description */
-  .info-description {
+}
+
+.info-description {
     font-size: 13px;
     color: #333;
     line-height: 1.2;
@@ -218,57 +221,80 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
-  }
-  
-  /* Couleurs selon importance */
-  .info-item.important {
+}
+
+/* Importance color variations */
+.info-item.important {
     background-color: #ffdddd;
-  }
-  .info-item.warning {
+}
+
+.info-item.warning {
     background-color: #fff4cc;
-  }
-  .info-item.info {
+}
+
+.info-item.info {
     background-color: #ddf4ff;
-  }
-  
-  /* Menu à droite */
-  .menu-container {
+}
+
+/* ================ */
+/* === MENU POPUP === */
+/* ================ */
+
+.menu-container {
     position: relative;
-  }
-  .menu-dots {
-    font-size: 20px;
-    color: #007bff;
-    padding: 4px 8px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-  }
-  .menu-dots:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  .menu-popup {
+}
+
+.menu-popup {
     display: none;
+    background: transparent;
+    border: none;
+    box-shadow: none;
     position: absolute;
-    top: 30px;
+    top: 100%;
     right: 0;
-    background-color: #ffffff;
-    color: #333;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    z-index: 10;
-  }
-  .menu-popup p {
-    margin: 0;
-    font-size: 13px;
-  }
-  
-  /* Lecture */
-  .info-item.read .info-title,
-  .info-item.read .info-description {
+    min-width: 150px;
+    z-index: 1000;
+}
+
+.menu-dots {
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none;
+}
+
+.menu-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: linear-gradient(to right, #007bff, #4ce3f7);
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    border-radius: 4px;
+    margin: 5px 0;
+}
+
+.menu-button:hover {
+    background: linear-gradient(to right, #0056b3, #009dff);
+    transform: scale(1.03);
+    color: #fff;
+}
+
+.menu-popup .menu-button + .menu-button {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* État "lu" */
+.info-item.read .info-title,
+.info-item.read .info-description {
     color: #888 !important;
     text-decoration: line-through;
     font-style: italic;
-  }
-  
+}
+
+.info-item.read {
+    background-color: #d3d3d3; /* Gris */
+}

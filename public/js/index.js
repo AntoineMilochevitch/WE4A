@@ -48,31 +48,52 @@ document.addEventListener("DOMContentLoaded", function () {
 
   menuDots.forEach(dot => {
     const popup = dot.nextElementSibling;
-    const markAsReadBtn = popup?.querySelector('p');
 
     dot.addEventListener('click', function (event) {
       event.stopPropagation();
       event.preventDefault();
 
+      // Fermer tous les autres popups ouverts
       document.querySelectorAll('.menu-popup').forEach(otherPopup => {
         if (otherPopup !== popup) {
           otherPopup.style.display = 'none';
         }
       });
 
-      popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+      // Basculer l'affichage du popup actuel
+      if (popup) {
+        popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+      }
     });
 
-    markAsReadBtn?.addEventListener('click', () => {
+    // Gestion des boutons dans le popup
+    const markAsReadBtn = popup?.querySelector('.mark-read-btn');
+    const deleteBtn = popup?.querySelector('.delete-btn');
+
+    markAsReadBtn?.addEventListener('click', function (e) {
+      e.stopPropagation();
       const infoItem = dot.closest('.info-item');
-      infoItem?.classList.add('read');
-      popup.style.display = 'none';
+      if (infoItem) {
+        infoItem.classList.add('read');
+      }
+      if (popup) popup.style.display = 'none';
+    });
+
+    deleteBtn?.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const infoItem = dot.closest('.info-item');
+      if (infoItem) {
+        infoItem.remove();
+      }
+      if (popup) popup.style.display = 'none';
     });
   });
 
+  // Fermer les popups si clic en dehors
   document.addEventListener('click', () => {
     document.querySelectorAll('.menu-popup').forEach(popup => {
       popup.style.display = 'none';
     });
   });
+
 });

@@ -6,10 +6,9 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('styles/listCourse.css') }}">
 {% endblock %}
-    
+
 {% block javascripts %}
     {{ parent() }}
-    <!-- Script inline -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const courseContainer = document.querySelector('.cours');
@@ -18,29 +17,39 @@
             let currentPage = 1;
             let courses = [];
 
-            function generateCourses(numberOfCourses) {
-                for (let i = 0; i < numberOfCourses; i++) {
-                    const courseElement = document.createElement('div');
-                    courseElement.classList.add('case-cours');
-                    courseElement.innerHTML = `
-                        <a href="{{ path('course') }}">
-                            <div class="course-image">
-                                <img src="{{ asset('images/image_logo.png') }}" alt="Course Image">
-                            </div>
-                            <div class="course-title">
-                                <p>Titre du cours</p>
-                            </div>
-                        </a>
-                    `;
-                    courses.push(courseElement);
-                }
+            function fetchCourses() {
+                fetch('/api/my-courses')
+                    .then(response => response.json())
+                    .then(data => {
+                        courses = data;
+                        displayCourses(currentPage, itemsPerPage);
+                        updatePagination();
+                    })
+                    .catch(error => console.error('Error fetching courses:', error));
             }
 
             function displayCourses(page, itemsPerPage) {
                 courseContainer.innerHTML = '';
                 const start = (page - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
-                courses.slice(start, end).forEach(course => courseContainer.appendChild(course));
+                courses.slice(start, end).forEach(course => {
+                    const courseElement = document.createElement('div');
+                    courseElement.classList.add('case-cours');
+                    courseElement.innerHTML = `
+                        <a href="/course/${course.id}">
+                            <div class="course-image">
+                                <img src="/images/${course.image}" alt="Course Image">
+                            </div>
+                            <div class="course-title">
+                                <p>${course.nom} (${course.code})</p>
+                                <div class="course-description">
+                                    <p>${course.description}</p>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    courseContainer.appendChild(courseElement);
+                });
             }
 
             function updatePagination() {
@@ -70,9 +79,7 @@
                 paginationContainer.appendChild(nextButton);
             }
 
-            generateCourses(15);
-            displayCourses(currentPage, itemsPerPage);
-            updatePagination();
+            fetchCourses();
 
             document.querySelectorAll('.tri-cours-5 .dropdown-item').forEach(item => {
                 item.addEventListener('click', (event) => {
@@ -90,12 +97,30 @@
                     const mode = event.target.textContent.toLowerCase();
                     if (mode === 'carte') {
                         courseContainer.classList.add('carte-mode');
-                        courseContainer.classList.remove('list-mode');
+                        courseContainer.classList.remove('list-mode', 'description-mode');
                     } else if (mode === 'liste') {
                         courseContainer.classList.add('list-mode');
-                        courseContainer.classList.remove('carte-mode');
+                        courseContainer.classList.remove('carte-mode', 'description-mode');
+                    } else if (mode === 'résumé') {
+                        courseContainer.classList.add('description-mode');
+                        courseContainer.classList.remove('carte-mode', 'list-mode');
                     }
                     document.querySelector('.tri-cours-4 button').innerHTML = `${event.target.textContent} <ion-icon name="caret-down-outline"></ion-icon>`;
+                });
+            });
+
+            document.querySelectorAll('.tri-cours-3 .dropdown-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const sortBy = event.target.textContent.toLowerCase();
+                    if (sortBy === 'trier par nom de cours') {
+                        courses.sort((a, b) => a.nom.localeCompare(b.nom));
+                    } else if (sortBy === 'trier par dernier accès') {
+                        courses.sort((a, b) => new Date(b.dateDernierAcces) - new Date(a.dateDernierAcces));
+                    }
+                    document.querySelector('.tri-cours-3 button').innerHTML = `${event.target.textContent} <ion-icon name="caret-down-outline"></ion-icon>`;
+                    currentPage = 1;
+                    displayCourses(currentPage, itemsPerPage);
+                    updatePagination();
                 });
             });
         });
@@ -160,25 +185,6 @@
     </div>
 </div>
 
-<div id="notificationPanel" class="notification-panel">
-    <div class="notification-header">
-        <h2>Notifications</h2>
-        <span class="close-btn" id="closeNotificationPanel">&times;</span>
-    </div>
-    <div class="notification-content">
-        <div class="notification-item important">
-            <p>Notification importante</p>
-            <span class="delete-btn">&times;</span>
-        </div>
-        <div class="notification-item warning">
-            <p>Notification d'avertissement</p>
-            <span class="delete-btn">&times;</span>
-        </div>
-        <div class="notification-item info">
-            <p>Notification d'information</p>
-            <span class="delete-btn">&times;</span>
-        </div>
-    </div>
-</div>
+
 </body>
 {% endblock %}

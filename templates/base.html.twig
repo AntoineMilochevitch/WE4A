@@ -24,7 +24,7 @@
                 <ul>
                     <li><a href="{{ path('admin') }}">Admin</a></li>
                     <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
-                    <li><a href="#">Recherche de cours</a></li>
+                    <li><a href="{{ path('find') }}">Recherche de cours</a></li>
                 </ul>
             </div>
             <div class="user">
@@ -45,6 +45,26 @@
                 </ul>
             </div>
         </header>
+        <div id="notificationPanel" class="notification-panel">
+            <div class="notification-header">
+                <h2>Notifications</h2>
+                <span class="close-btn" id="closeNotificationPanel">&times;</span>
+            </div>
+            <div class="notification-content">
+                <div class="notification-item important">
+                    <p>Notification importante</p>
+                    <span class="delete-btn">&times;</span>
+                </div>
+                <div class="notification-item warning">
+                    <p>Notification d'avertissement</p>
+                    <span class="delete-btn">&times;</span>
+                </div>
+                <div class="notification-item info">
+                    <p>Notification d'information</p>
+                    <span class="delete-btn">&times;</span>
+                </div>
+            </div>
+        </div>
         {% block body %}
         {% endblock %}
     </body>

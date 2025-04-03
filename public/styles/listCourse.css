@@ -157,10 +157,28 @@
     font-weight: bold;
 }
 
+.cours .case-cours a{
+    text-decoration: none;
+}
+
+/* Remove underline from course titles */
+/* Remove underline from course titles and descriptions */
+.carte-mode .course-title p,
+.list-mode .course-title p,
+.description-mode .course-title p,
+.description-mode .course-description p {
+    text-decoration: none;
+    border-bottom: none;
+}
+
 .carte-mode .case-cours:hover {
     transform: scale(1.05); /* Agrandit légèrement la carte */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
     transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+}
+
+.carte-mode .course-description {
+    display: none;
 }
 
 /* List mode course styling */
@@ -205,11 +223,93 @@
 .list-mode .course-title {
     flex: 1;
     display: flex;
-    align-items: left;
+    align-items: flex-start;
     justify-content: left;
     background-color: white;
     height: 100%;
     padding: 10px;
+}
+
+.list-mode .course-title p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.list-mode .course-description {
+    display: none;
+}
+
+/* Description mode course styling */
+/* List mode course styling */
+.description-mode .case-cours {
+    width: 100%;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    height: 100px;
+}
+
+.description-mode .case-cours:hover {
+    transform: scale(1.05); /* Agrandit légèrement la carte */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+}
+
+/* List mode course link styling */
+.description-mode .case-cours a {
+    width: 100%;
+    display: flex;
+}
+
+/* List mode course image styling */
+.description-mode .course-image {
+    width: 200px;
+    height: 100%;
+    flex: none;
+}
+
+/* List mode course image size */
+.description-mode .course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* List mode course title styling */
+.description-mode .course-title {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: left;
+    background-color: white;
+    height: 100%;
+    padding: 10px;
+}
+
+.description-mode .course-title p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.description-mode .course-description {
+    display: block;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+/* Description styling */
+.description-mode .course-description p {
+    margin: 0;
+    font-size: 12px;
+    color: gray;
 }
 
 /* Pagination container styling */
