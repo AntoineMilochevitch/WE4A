@@ -19,33 +19,33 @@ document.addEventListener('DOMContentLoaded', function() {
     // Création du div
     const contentDiv = document.querySelector('.content-display');
 
-    const utilisateurs = [
-        { name: 'MOLIERES', first_name: 'Samuel', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4A']},
-        { name: 'EL ANDALOUSSI BENBRAHIM', first_name: 'Nizar', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4B']},
-        { name: 'MILOCHEVITCH', first_name: 'Antoine', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
-        { name: 'CORREARD', first_name: 'Alexis', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
-        { name: 'BOOL', first_name: 'George', role: 'Etudiant' ,departement: 'MECA', inscription: ['MT3F', 'MAA1', 'PS25']},
-        { name: 'LOVELACE', first_name: 'Ada', role: 'Etudiant' ,departement: 'IMSI', inscription: ['MT3F', 'PS25', 'CM1A', 'CM1B']},
-        { name: 'HAMILTON', first_name: 'Margaret', role: 'Etudiant' ,departement: 'ENERGIE', inscription: ['PS22', 'AP4A', 'MT3F']},
-        { name: 'TURING', first_name: 'Alan', role: 'Etudiant' ,departement: 'EDIM', inscription: ['PS25', 'MT3F', 'MAA1', 'CM1A']},
-        { name: 'PROF1', first_name: 'Prof1', role: 'Professeur' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40']},
-        { name: 'PROF2', first_name: 'Prof2', role: 'Professeur' ,departement: 'INFO', inscription: ['IA41', 'AP4A', 'AP4B']},
-        { name: 'PROF3', first_name: 'Prof3', role: 'Professeur' ,departement: 'MECA', inscription: ['MT3F', 'PS25', 'MAA1', 'CM1A', 'CM1B']},
+    utilisateurs = [
+        { id: 1, name: 'MOLIERES', first_name: 'Samuel', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4A']},
+        { id: 2, name: 'EL ANDALOUSSI BENBRAHIM', first_name: 'Nizar', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4B']},
+        { id: 3, name: 'MILOCHEVITCH', first_name: 'Antoine', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
+        { id: 4, name: 'CORREARD', first_name: 'Alexis', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
+        { id: 5, name: 'BOOL', first_name: 'George', role: 'Etudiant' ,departement: 'MECA', inscription: ['MT3F', 'MAA1', 'PS25']},
+        { id: 6, name: 'LOVELACE', first_name: 'Ada', role: 'Etudiant' ,departement: 'IMSI', inscription: ['MT3F', 'PS25', 'CM1A', 'CM1B']},
+        { id: 7, name: 'HAMILTON', first_name: 'Margaret', role: 'Etudiant' ,departement: 'ENERGIE', inscription: ['PS22', 'AP4A', 'MT3F']},
+        { id: 8, name: 'TURING', first_name: 'Alan', role: 'Etudiant' ,departement: 'EDIM', inscription: ['PS25', 'MT3F', 'MAA1', 'CM1A']},
+        { id: 9, name: 'PROF1', first_name: 'Prof1', role: 'Professeur' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40']},
+        { id: 10, name: 'PROF2', first_name: 'Prof2', role: 'Professeur' ,departement: 'INFO', inscription: ['IA41', 'AP4A', 'AP4B']},
+        { id: 11, name: 'PROF3', first_name: 'Prof3', role: 'Professeur' ,departement: 'MECA', inscription: ['MT3F', 'PS25', 'MAA1', 'CM1A', 'CM1B']},
     ];
 
-    const ue = [
-        { code: 'WE4A', libelle: 'Technologies et programmation WEB', description: 'Maîtriser les technologies Web permettant de créer des sites Web modernes'},
-        { code: 'WE4B', libelle: 'Technologies WEB avancées', description: 'Comprendre et appliquer une architecture web avancée à l\'aide d\'un Framework'},
-        { code: 'SI40', libelle: 'Systèmes d\'information', description: 'Mettre en œuvre des outils de conception de systèmes d\'information permettant la mise en application des méthodes associées'},
-        { code: 'IA41', libelle: 'Intelligence artificielle', description: 'Acquérir les compétences sur les principaux concepts et outils logiciels dédiés à l\'Intelligence Artificielle (IA)'},
-        { code: 'AP4A', libelle: 'Programmation Orientée Objet', description: 'Acquérir les compétences pour analyser et concevoir des applications en utilisant les principes de la POO'},
-        { code: 'AP4B', libelle: 'Programmation Orientée Objet', description: 'Programmation Orientée Objet: Modélisation UML et langage Java'},
-        { code: 'MT3F', libelle: 'Algèbre et analyse', description: 'Acquérir l\'essentiel des connaissances fondamentales en algèbre et en analyse, utiles à l\'ingénieur'},
-        { code: 'MAA1', libelle: 'Structure et propriétés des matériaux ', description: 'Appréhender et comprendre la structure des matériaux'},
-        { code: 'CM1A', libelle: 'Organisation de la matière - partie I', description: 'Connaître les grands principes de base pour la chimie des matériaux'},
-        { code: 'CM1B', libelle: 'Organisation de la matière - partie II', description: 'Décrire les concepts de base de la chimie générale : Solubilité, oxydo-réduction, cinétique chimique'},
-        { code: 'PS22', libelle: 'Electronique analogique', description: 'Donner les bases tant théoriques que pratiques de l\'électronique analogique'},
-        { code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
+    ue = [
+        { id: 1, code: 'WE4A', libelle: 'Technologies et programmation WEB', description: 'Maîtriser les technologies Web permettant de créer des sites Web modernes'},
+        { id: 2, code: 'WE4B', libelle: 'Technologies WEB avancées', description: 'Comprendre et appliquer une architecture web avancée à l\'aide d\'un Framework'},
+        { id: 3, code: 'SI40', libelle: 'Systèmes d\'information', description: 'Mettre en œuvre des outils de conception de systèmes d\'information permettant la mise en application des méthodes associées'},
+        { id: 4, code: 'IA41', libelle: 'Intelligence artificielle', description: 'Acquérir les compétences sur les principaux concepts et outils logiciels dédiés à l\'Intelligence Artificielle (IA)'},
+        { id: 5, code: 'AP4A', libelle: 'Programmation Orientée Objet', description: 'Acquérir les compétences pour analyser et concevoir des applications en utilisant les principes de la POO'},
+        { id: 6, code: 'AP4B', libelle: 'Programmation Orientée Objet', description: 'Programmation Orientée Objet: Modélisation UML et langage Java'},
+        { id: 7, code: 'MT3F', libelle: 'Algèbre et analyse', description: 'Acquérir l\'essentiel des connaissances fondamentales en algèbre et en analyse, utiles à l\'ingénieur'},
+        { id: 8, code: 'MAA1', libelle: 'Structure et propriétés des matériaux ', description: 'Appréhender et comprendre la structure des matériaux'},
+        { id: 9, code: 'CM1A', libelle: 'Organisation de la matière - partie I', description: 'Connaître les grands principes de base pour la chimie des matériaux'},
+        { id: 10, code: 'CM1B', libelle: 'Organisation de la matière - partie II', description: 'Décrire les concepts de base de la chimie générale : Solubilité, oxydo-réduction, cinétique chimique'},
+        { id: 11, code: 'PS22', libelle: 'Electronique analogique', description: 'Donner les bases tant théoriques que pratiques de l\'électronique analogique'},
+        { id: 12, code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
     ];
 
     function showUtilisateurs() {
@@ -278,9 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction qui permet d'afficher le formulaire de modification d'un élément d'une des listes
     function showEditModal(isUser, button) {
         const listItem = button.parentElement;
-        const name = listItem.querySelector('.item-name').textContent;
-        const description = listItem.querySelector('.item-description').textContent;
-    
+
         const modal = document.getElementById('modal');
         modal.style.display = 'block';
     
@@ -295,22 +293,66 @@ document.addEventListener('DOMContentLoaded', function() {
         const confirmationMessage = document.createElement('p');
         confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessus.';
         modalContent.appendChild(confirmationMessage);
-    
-        // Ajouter le champ pour le nom
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.id = 'edit-name';
-        nameInput.value = name;
-        modalContent.appendChild(nameInput);
-        modalContent.appendChild(document.createElement('br'));
-    
-        // Ajouter le champ pour la description
-        const descriptionInput = document.createElement('input');
-        descriptionInput.type = 'text';
-        descriptionInput.id = 'edit-description';
-        descriptionInput.value = description;
-        modalContent.appendChild(descriptionInput);
-        modalContent.appendChild(document.createElement('br'));
+
+        if (isUser) {
+            const editName = listItem.querySelector('.item-name').textContent;
+            const editFirst_name = listItem.querySelector('.item-first_name').textContent;
+            const editRole = listItem.querySelector('.item-role').textContent;
+            const editDepartement = listItem.querySelector('.item-departement').textContent;
+            //const editInscription = listItem.querySelector('.item-inscription').textContent;
+
+            // Ajouter le champ pour le nom
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = 'edit-name';
+            nameInput.value = editName;
+            modalContent.appendChild(nameInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const first_nameInput = document.createElement('input');
+            first_nameInput.type = 'text';
+            first_nameInput.id = 'edit-first_name';
+            first_nameInput.value = editFirst_name;
+            modalContent.appendChild(first_nameInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const roleInput = document.createElement('input');
+            roleInput.type = 'text';
+            roleInput.id = 'edit-role';
+            roleInput.value = editRole;
+            modalContent.appendChild(roleInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            // Ajouter le champ pour le departement
+            const departementInput = document.createElement('input');
+            departementInput.type = 'text';
+            departementInput.id = 'edit-departement';
+            departementInput.value = editDepartement;
+            modalContent.appendChild(departementInput);
+            modalContent.appendChild(document.createElement('br'));
+        }
+        else {
+            const editCode = listItem.querySelector('.item-code').textContent;
+            const editLibelle = listItem.querySelector('.item-libelle').textContent;
+            //const editDescription = listItem.querySelector('.item-description').textContent;
+
+
+            // Ajouter le champ pour le nom
+            const codeInput = document.createElement('input');
+            codeInput.type = 'text';
+            codeInput.id = 'edit-code';
+            codeInput.value = editCode;
+            modalContent.appendChild(codeInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            // Ajouter le champ pour la description
+            const libelleInput = document.createElement('input');
+            libelleInput.type = 'text';
+            libelleInput.id = 'edit-libelle';
+            libelleInput.value = editLibelle;
+            modalContent.appendChild(libelleInput);
+            modalContent.appendChild(document.createElement('br'));
+        }
 
         modalContent.appendChild(document.createElement('p'));
 
@@ -421,19 +463,61 @@ document.addEventListener('DOMContentLoaded', function() {
         const listItemId = button.getAttribute('data-list-item-id');
         const listItem = document.getElementById(listItemId);
 
-        const newName = document.getElementById('edit-name').value;
-        const newDescription = document.getElementById('edit-description').value;
+        if (utilisateursButton.disabled) {
+            const newName = document.getElementById('edit-name').value;
+            const newFirst_name = document.getElementById('edit-first_name').value;
+            const newRole = document.getElementById('edit-role').value;
+            const newDepartement = document.getElementById('edit-departement').value;
 
-        if (!newName || !newDescription) {
-            alert('Veuillez remplir tous les champs avant de confirmer.');
-            return;
+            if (!newName || !newFirst_name || !newRole || !newDepartement) {
+                alert('Veuillez remplir tous les champs avant de confirmer.');
+                return;
+            }
+
+            const nameSpan = listItem.querySelector('.item-name');
+            const first_nameSpan = listItem.querySelector('.item-first_name');
+            const roleSpan = listItem.querySelector('.item-role');
+            const departementSpan = listItem.querySelector('.item-departement');
+
+            if (nameSpan) nameSpan.textContent = newName;
+            if (first_nameSpan) first_nameSpan.textContent = newFirst_name;
+            if (roleSpan) roleSpan.textContent = newRole;
+            if (departementSpan) departementSpan.textContent = newDepartement;
+
+            utilisateurs.forEach(user => {
+                if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
+                    user.name = newName;
+                    user.first_name = newFirst_name;
+                    user.role = newRole;
+                    user.departement = newDepartement;
+                }
+            })
         }
+        else {
+            const newCode = document.getElementById('edit-code').value;
+            const newLibelle = document.getElementById('edit-libelle').value;
+            //const newDescription = document.getElementById('edit-description').value;
 
-        const nameSpan = listItem.querySelector('.item-name');
-        const descriptionSpan = listItem.querySelector('.item-description');
+            if (!newCode || !newLibelle) {
+                alert('Veuillez remplir tous les champs avant de confirmer.');
+                return;
+            }
 
-        if (nameSpan) nameSpan.textContent = newName;
-        if (descriptionSpan) descriptionSpan.textContent = newDescription;
+            const codeSpan = listItem.querySelector('.item-code');
+            const libelleSpan = listItem.querySelector('.item-libelle');
+            //const descriptionSpan = listItem.querySelector('.item-description');
+
+            if (codeSpan) codeSpan.textContent = newCode;
+            if (libelleSpan) libelleSpan.textContent = newLibelle;
+            //if (descriptionSpan) descriptionSpan.textContent = newDescription;
+
+            ue.forEach(course => {
+                if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
+                    course.code = newCode;
+                    course.libelle = newLibelle
+                }
+            })
+        }
     }
 
     // Fonction qui permet de confirmer la suppression d'un élément d'une des listes
