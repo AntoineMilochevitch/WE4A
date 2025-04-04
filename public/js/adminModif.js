@@ -188,33 +188,73 @@ document.addEventListener('DOMContentLoaded', function() {
     function showCreateModal(isUser) {
         const modal = document.getElementById('modal');
         modal.style.display = 'block';
-    
+
         const modalTitle = document.getElementById('modal-title');
         modalTitle.textContent = isUser ? 'Créer un utilisateur' : 'Créer un cours';
-    
+
         const modalContent = document.getElementById('modal-content');
         modalContent.innerHTML = ''; // Efface le contenu précédent
-        
+
         const confirmationMessage = document.createElement('p');
         confirmationMessage.textContent = 'Veuillez remplir les champs ci-dessus.';
         modalContent.appendChild(confirmationMessage);
 
-        // Ajouter les champs de saisie
-        const nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.id = 'new-name';
-        nameInput.placeholder = isUser ? 'Nom' : 'Code';
-        modalContent.appendChild(nameInput);
-        modalContent.appendChild(document.createElement('br'));
+        if (isUser) {
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.id = 'new-name';
+            nameInput.placeholder =  'Nom';
+            modalContent.appendChild(nameInput);
+            modalContent.appendChild(document.createElement('br'));
 
-        const descriptionInput = document.createElement('input');
-        descriptionInput.type = 'text';
-        descriptionInput.id = 'new-description';
-        descriptionInput.placeholder = isUser ? 'Prénom' : 'Description';
-        modalContent.appendChild(descriptionInput);
-        modalContent.appendChild(document.createElement('br'));
+            const firstNameInput = document.createElement('input');
+            firstNameInput.type = 'text';
+            firstNameInput.id = 'new-first_name';
+            firstNameInput.placeholder =  'Prénom';
+            modalContent.appendChild(firstNameInput);
+            modalContent.appendChild(document.createElement('br'));
 
-        modalContent.appendChild(document.createElement('p'));
+            const roleInput = document.createElement('input');
+            roleInput.type = 'text';
+            roleInput.id = 'new-role';
+            roleInput.placeholder =  'Rôle';
+            modalContent.appendChild(roleInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const departementInput = document.createElement('input');
+            departementInput.type = 'text';
+            departementInput.id = 'new-departement';
+            departementInput.placeholder = 'Departement';
+            modalContent.appendChild(departementInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            modalContent.appendChild(document.createElement('p'));
+
+        } else {
+            // Ajouter les champs de saisie
+            const codeInput = document.createElement('input');
+            codeInput.type = 'text';
+            codeInput.id = 'new-code';
+            codeInput.placeholder = 'Code';
+            modalContent.appendChild(codeInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const libelleInput = document.createElement('input');
+            libelleInput.type = 'text';
+            libelleInput.id = 'new-libelle';
+            libelleInput.placeholder = 'Libellé';
+            modalContent.appendChild(libelleInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const descriptionInput = document.createElement('input');
+            descriptionInput.type = 'text';
+            descriptionInput.id = 'new-description';
+            descriptionInput.placeholder = 'Description';
+            modalContent.appendChild(descriptionInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            modalContent.appendChild(document.createElement('p'));
+        }
 
         // Ajouter les boutons
         const confirmButton = document.createElement('button');
@@ -340,16 +380,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction qui permet de confirmer la création d'un élément dans l'une des listes
     function confirmCreate() {
-        const name = document.getElementById('new-name').value;
-        const description = document.getElementById('new-description').value;
-        
-        if (!name || !description) {
-            alert('Veuillez remplir tous les champs avant de confirmer.');
-            return;
+        if (utilisateursButton.disabled) {
+            const name = document.getElementById('new-name').value;
+            const first_name = document.getElementById('new-first_name').value;
+            const role = document.getElementById('new-role').value;
+            const departement = document.getElementById('new-departement').value;
+
+            if (!name  || !first_name || !role || !departement) {
+                alert('Veuillez remplir tous les champs avant de confirmer.');
+                return;
+            }
+
+            utilisateurs.push({ name, first_name, role, departement });
         }
-        
-        const list = utilisateursButton.disabled ? utilisateurs : ue;
-        list.push({ name, description });
+        else {
+            const code = document.getElementById('new-code').value;
+            const libelle = document.getElementById('new-libelle').value;
+            const description = document.getElementById('new-description').value;
+
+            if (!code || !libelle || !description) {
+                alert('Veuillez remplir tous les champs avant de confirmer.');
+                return;
+            }
+
+            ue.push({ code, libelle, description });
+        }
+
         closeModal();
 
         // Rafraichissement de la liste, à remplacer par du Ajax plus tard
