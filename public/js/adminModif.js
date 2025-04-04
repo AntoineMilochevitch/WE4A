@@ -20,22 +20,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentDiv = document.querySelector('.content-display');
 
     const utilisateurs = [
-        { name: 'Utilisateur 1', description: 'Description 1' },
-        { name: 'Utilisateur 2', description: 'Description 2' },
-        { name: 'Utilisateur 3', description: 'Description 3' },
-        { name: 'Utilisateur 4', description: 'Description 4' },
-        { name: 'Utilisateur 5', description: 'Description 5' },
-        { name: 'Utilisateur 6', description: 'Description 6' },
-        { name: 'Utilisateur 7', description: 'Description 7' },
-        { name: 'Utilisateur 8', description: 'Description 8' },
-        { name: 'Utilisateur 9', description: 'Description 9' }
-        
+        { name: 'MOLIERES', first_name: 'Samuel', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4A']},
+        { name: 'EL ANDALOUSSI BENBRAHIM', first_name: 'Nizar', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4B']},
+        { name: 'MILOCHEVITCH', first_name: 'Antoine', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
+        { name: 'CORREARD', first_name: 'Alexis', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
+        { name: 'BOOL', first_name: 'George', role: 'Etudiant' ,departement: 'MECA', inscription: ['MT3F', 'MAA1', 'PS25']},
+        { name: 'LOVELACE', first_name: 'Ada', role: 'Etudiant' ,departement: 'IMSI', inscription: ['MT3F', 'PS25', 'CM1A', 'CM1B']},
+        { name: 'HAMILTON', first_name: 'Margaret', role: 'Etudiant' ,departement: 'ENERGIE', inscription: ['PS22', 'AP4A', 'MT3F']},
+        { name: 'TURING', first_name: 'Alan', role: 'Etudiant' ,departement: 'EDIM', inscription: ['PS25', 'MT3F', 'MAA1', 'CM1A']},
+        { name: 'PROF1', first_name: 'Prof1', role: 'Professeur' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40']},
+        { name: 'PROF2', first_name: 'Prof2', role: 'Professeur' ,departement: 'INFO', inscription: ['IA41', 'AP4A', 'AP4B']},
+        { name: 'PROF3', first_name: 'Prof3', role: 'Professeur' ,departement: 'MECA', inscription: ['MT3F', 'PS25', 'MAA1', 'CM1A', 'CM1B']},
     ];
 
     const ue = [
-        { name: 'UE 1', description: 'Description 1' },
-        { name: 'UE 2', description: 'Description 2' },
-        { name: 'UE 3', description: 'Description 3' }
+        { code: 'WE4A', libelle: 'Technologies et programmation WEB', description: 'Maîtriser les technologies Web permettant de créer des sites Web modernes'},
+        { code: 'WE4B', libelle: 'Technologies WEB avancées', description: 'Comprendre et appliquer une architecture web avancée à l\'aide d\'un Framework'},
+        { code: 'SI40', libelle: 'Systèmes d\'information', description: 'Mettre en œuvre des outils de conception de systèmes d\'information permettant la mise en application des méthodes associées'},
+        { code: 'IA41', libelle: 'Intelligence artificielle', description: 'Acquérir les compétences sur les principaux concepts et outils logiciels dédiés à l\'Intelligence Artificielle (IA)'},
+        { code: 'AP4A', libelle: 'Programmation Orientée Objet', description: 'Acquérir les compétences pour analyser et concevoir des applications en utilisant les principes de la POO'},
+        { code: 'AP4B', libelle: 'Programmation Orientée Objet', description: 'Programmation Orientée Objet: Modélisation UML et langage Java'},
+        { code: 'MT3F', libelle: 'Algèbre et analyse', description: 'Acquérir l\'essentiel des connaissances fondamentales en algèbre et en analyse, utiles à l\'ingénieur'},
+        { code: 'MAA1', libelle: 'Structure et propriétés des matériaux ', description: 'Appréhender et comprendre la structure des matériaux'},
+        { code: 'CM1A', libelle: 'Organisation de la matière - partie I', description: 'Connaître les grands principes de base pour la chimie des matériaux'},
+        { code: 'CM1B', libelle: 'Organisation de la matière - partie II', description: 'Décrire les concepts de base de la chimie générale : Solubilité, oxydo-réduction, cinétique chimique'},
+        { code: 'PS22', libelle: 'Electronique analogique', description: 'Donner les bases tant théoriques que pratiques de l\'électronique analogique'},
+        { code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
     ];
 
     function showUtilisateurs() {
@@ -59,15 +69,26 @@ document.addEventListener('DOMContentLoaded', function() {
         utilisateurs.forEach(utilisateur => {
             const li = document.createElement('li');
             li.id = `liUser-${i}`;
+
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
             nameSpan.textContent = utilisateur.name;
             li.appendChild(nameSpan);
 
-            const descriptionSpan = document.createElement('span');
-            descriptionSpan.className = 'item-description';
-            descriptionSpan.textContent = utilisateur.description;
-            li.appendChild(descriptionSpan);
+            const firstNameSpan = document.createElement('span');
+            firstNameSpan.className = 'item-first_name';
+            firstNameSpan.textContent = utilisateur.first_name;
+            li.appendChild(firstNameSpan);
+
+            const roleSpan = document.createElement('span');
+            roleSpan.className = 'item-role';
+            roleSpan.textContent = utilisateur.role;
+            li.appendChild(roleSpan);
+
+            const departementSpan = document.createElement('span');
+            departementSpan.className = 'item-departement';
+            departementSpan.textContent = utilisateur.departement;
+            li.appendChild(departementSpan);
 
             const editButton = document.createElement('button');
             editButton.className = 'btn-edit btn-action';
@@ -119,14 +140,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ue.forEach(course => {
             const li = document.createElement('li');
             li.id = `liUE-${i}`;
+
             const nameSpan = document.createElement('span');
-            nameSpan.className = 'item-name';
-            nameSpan.textContent = course.name;
+            nameSpan.className = 'item-code';
+            nameSpan.textContent = course.code;
             li.appendChild(nameSpan);
 
             const descriptionSpan = document.createElement('span');
-            descriptionSpan.className = 'item-description';
-            descriptionSpan.textContent = course.description;
+            descriptionSpan.className = 'item-libelle';
+            descriptionSpan.textContent = course.libelle;
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');

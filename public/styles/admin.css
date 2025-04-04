@@ -93,7 +93,12 @@
     border-bottom: none; 
 }
 
-.content-display .item-name, .content-display .item-description {
+.content-display .item-name, .content-display .item-first_name, .content-display .item-role, .content-display .item-departement {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.content-display .item-code, .content-display .item-libelle {
     display: inline-block;
     margin-right: 20px;
 }
