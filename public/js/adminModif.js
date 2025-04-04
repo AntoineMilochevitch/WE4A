@@ -524,7 +524,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function confirmDelete(button) {
         const listItemId = button.getAttribute('data-list-item-id');
         const listItem = document.getElementById(listItemId);
+
         listItem.remove();
+
+        if (utilisateursButton.disabled) {
+            utilisateurs.forEach(user => {
+                if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
+                    utilisateurs.splice(utilisateurs.indexOf(user), 1);
+                }
+            })
+        }
+        else {
+            ue.forEach(course => {
+                if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
+                    ue.splice(ue.indexOf(course), 1);
+                }
+            })
+        }
     }
 
     // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes
