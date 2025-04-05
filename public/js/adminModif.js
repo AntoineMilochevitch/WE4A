@@ -389,6 +389,14 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         modalContent.appendChild(ulUE);
 
+        const addButton = document.createElement('button');
+        addButton.className = 'btn-add btn-action';
+        addButton.textContent = 'Ajouter';
+        addButton.id = 'addButton';
+        addButton.onclick = function () {
+
+        }
+        modalContent.appendChild(addButton);
 
         modalContent.appendChild(document.createElement('p'));
 
