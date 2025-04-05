@@ -262,3 +262,13 @@ ul#ue-list li:last-child {
     color: #333; /* Couleur du texte */
     word-break: break-word; /* Prévenir les dépassements si le texte est trop long */
 }
+
+#edit-description {
+    width: 100%;
+    height: 100px;
+    text-align: left;
+    vertical-align: top;
+    padding: 5px;
+    box-sizing: border-box;
+    resize: none;
+}
