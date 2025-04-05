@@ -257,6 +257,21 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('p'));
         }
 
+        const messageUE = document.createElement('p');
+        messageUE.textContent = 'Ajouter des inscriptions :';
+        modalContent.appendChild(messageUE);
+
+        const addButton = document.createElement('button');
+        addButton.className = 'btn-add btn-action';
+        addButton.textContent = 'Ajouter';
+        addButton.id = 'addButton';
+        addButton.onclick = function () {
+
+        }
+        modalContent.appendChild(addButton);
+
+        modalContent.appendChild(document.createElement('p'));
+
         // Ajouter les boutons
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirmer';
@@ -296,6 +311,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalContent.appendChild(confirmationMessage);
 
         let editInscription;
+        let editDescription;
         if (isUser) {
             const editName = listItem.querySelector('.item-name').textContent;
             const editFirst_name = listItem.querySelector('.item-first_name').textContent;
@@ -332,8 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             departementInput.value = editDepartement;
             modalContent.appendChild(departementInput);
             modalContent.appendChild(document.createElement('br'));
-        }
-        else {
+        } else {
             const editCode = listItem.querySelector('.item-code').textContent;
             const editLibelle = listItem.querySelector('.item-libelle').textContent;
             editInscription = [];
@@ -342,8 +357,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     editInscription.push(user.name);
                 }
             })
+            let editDescription;
+            ue.forEach(course => {
+                if (course.code === editCode) {
+                    editDescription = course.description;
+                }
+            })
 
-            // Ajouter le champ pour le nom
+            // Ajouter le champ pour le code
             const codeInput = document.createElement('input');
             codeInput.type = 'text';
             codeInput.id = 'edit-code';
@@ -351,12 +372,23 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(codeInput);
             modalContent.appendChild(document.createElement('br'));
 
-            // Ajouter le champ pour la description
+            // Ajouter le champ pour le libelle
             const libelleInput = document.createElement('input');
             libelleInput.type = 'text';
             libelleInput.id = 'edit-libelle';
             libelleInput.value = editLibelle;
             modalContent.appendChild(libelleInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = 'Description de l\'UE';
+            modalContent.appendChild(confirmationMessage);
+
+            const descriptionInput = document.createElement('textarea');
+            descriptionInput.type = 'text';
+            descriptionInput.id = 'edit-description';
+            descriptionInput.value = editDescription;
+            modalContent.appendChild(descriptionInput);
             modalContent.appendChild(document.createElement('br'));
         }
 
@@ -540,20 +572,20 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
             const newCode = document.getElementById('edit-code').value;
             const newLibelle = document.getElementById('edit-libelle').value;
-            //const newDescription = document.getElementById('edit-description').value;
+            const newDescription = document.getElementById('edit-description').value;
 
-            if (!newCode || !newLibelle) {
+            if (!newCode || !newLibelle || !newDescription) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
             const codeSpan = listItem.querySelector('.item-code');
             const libelleSpan = listItem.querySelector('.item-libelle');
-            //const descriptionSpan = listItem.querySelector('.item-description');
+            const descriptionSpan = listItem.querySelector('.item-description');
 
             if (codeSpan) codeSpan.textContent = newCode;
             if (libelleSpan) libelleSpan.textContent = newLibelle;
-            //if (descriptionSpan) descriptionSpan.textContent = newDescription;
+            if (descriptionSpan) descriptionSpan.textContent = newDescription;
 
             ue.forEach(course => {
                 if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
