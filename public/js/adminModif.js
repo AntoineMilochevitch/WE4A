@@ -294,12 +294,13 @@ document.addEventListener('DOMContentLoaded', function() {
         confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessus.';
         modalContent.appendChild(confirmationMessage);
 
+        let editInscription;
         if (isUser) {
             const editName = listItem.querySelector('.item-name').textContent;
             const editFirst_name = listItem.querySelector('.item-first_name').textContent;
             const editRole = listItem.querySelector('.item-role').textContent;
             const editDepartement = listItem.querySelector('.item-departement').textContent;
-            //const editInscription = listItem.querySelector('.item-inscription').textContent;
+            editInscription = utilisateurs.find(user => user.name === editName).inscription;
 
             // Ajouter le champ pour le nom
             const nameInput = document.createElement('input');
@@ -334,8 +335,12 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
             const editCode = listItem.querySelector('.item-code').textContent;
             const editLibelle = listItem.querySelector('.item-libelle').textContent;
-            //const editDescription = listItem.querySelector('.item-description').textContent;
-
+            editInscription = [];
+            utilisateurs.forEach(user => {
+                if (user.inscription.includes(editCode)) {
+                    editInscription.push(user.name);
+                }
+            })
 
             // Ajouter le champ pour le nom
             const codeInput = document.createElement('input');
@@ -353,6 +358,36 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
         }
+
+        const messageUE = document.createElement('p');
+        messageUE.textContent = 'Modifier les inscriptions :';
+        modalContent.appendChild(messageUE);
+
+        const ulUE = document.createElement('ul');
+        ulUE.id = 'ue-list';
+        editInscription.forEach(inscription => {
+            const liUE = document.createElement('li');
+            liUE.id = `liInscr-${inscription}`;
+
+            const inscriptionSpan = document.createElement('span');
+            inscriptionSpan.className = 'item-inscription';
+            inscriptionSpan.textContent = inscription;
+            liUE.appendChild(inscriptionSpan);
+
+            const removeButton = document.createElement('button');
+            removeButton.className = 'btn-remove btn-action';
+            removeButton.textContent = 'Enlever';
+            removeButton.id = `removeButton-${inscription}`;
+            removeButton.onclick = function () {
+
+            };
+            liUE.appendChild(removeButton);
+
+            ulUE.appendChild(liUE);
+
+        })
+        modalContent.appendChild(ulUE);
+
 
         modalContent.appendChild(document.createElement('p'));
 

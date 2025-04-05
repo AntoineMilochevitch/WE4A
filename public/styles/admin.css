@@ -151,7 +151,7 @@
     overflow: auto;
     background-color: rgb(0,0,0);
     background-color: rgba(0,0,0,0.4); 
-    padding-top: 100px; 
+    padding-top: 10px;
 }
 
 .modal-content {
@@ -208,4 +208,45 @@
     margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+}
+
+.btn-remove {
+    padding: 5px 10px;
+    font-size: 14px;
+    background-color: #e74c3c; /* Rouge pour alerte */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px; /* Coins arrondis */
+    transition: background-color 0.3s ease;
+}
+
+.btn-remove:hover {
+    background-color: #c0392b;
+}
+
+ul#ue-list, ul {
+    list-style-type: none; /* Suppression des puces */
+    margin: 0;
+    padding: 0;
+}
+
+ul#ue-list li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+ul#ue-list li:last-child {
+    border-bottom: none;
+}
+
+
+.item-inscription {
+    font-size: 16px; /* Taille de la police */
+    color: #333; /* Couleur du texte */
+    word-break: break-word; /* Prévenir les dépassements si le texte est trop long */
 }
