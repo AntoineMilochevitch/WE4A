@@ -263,7 +263,7 @@ ul#ue-list li:last-child {
     word-break: break-word; /* Prévenir les dépassements si le texte est trop long */
 }
 
-#edit-description {
+#edit-description, #new-description {
     width: 100%;
     height: 100px;
     text-align: left;

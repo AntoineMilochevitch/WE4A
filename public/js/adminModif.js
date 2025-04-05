@@ -247,7 +247,11 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const descriptionInput = document.createElement('input');
+            const confirmationMessage = document.createElement('p');
+            confirmationMessage.textContent = 'Description de l\'UE';
+            modalContent.appendChild(confirmationMessage);
+
+            const descriptionInput = document.createElement('textarea');
             descriptionInput.type = 'text';
             descriptionInput.id = 'new-description';
             descriptionInput.placeholder = 'Description';
