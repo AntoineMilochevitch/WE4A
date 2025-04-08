@@ -36,7 +36,7 @@
                     const courseElement = document.createElement('div');
                     courseElement.classList.add('case-cours');
                     courseElement.innerHTML = `
-                        <a href="/course/${course.id}">
+                        <a href="/course?id=${encodeURIComponent(course.id)}">
                             <div class="course-image">
                                 <img src="/images/${course.image}" alt="Course Image">
                             </div>
