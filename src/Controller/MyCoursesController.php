@@ -23,24 +23,6 @@ class MyCoursesController extends AbstractController
         // Récupérer les cours auxquels l'utilisateur est inscrit
         $courses = $user->getUe();
 
-        /* Utilisation de cours statiques
-        $courses = [
-            (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 3, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 4, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 3, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 4, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-        ];*/
-
         return $this->render('myCourses/myCourses.html.twig', [
             'courses' => $courses,
         ]);
@@ -71,25 +53,5 @@ class MyCoursesController extends AbstractController
         }
 
         return new JsonResponse($courseData);
-
-        /* Utilisation de cours statiques
-        $courses = [
-            (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 3, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 4, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 3, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 4, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-            (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
-            (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-        ];
-
-        return new JsonResponse($courses);*/
     }
 }

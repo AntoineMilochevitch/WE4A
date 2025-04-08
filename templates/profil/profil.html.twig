@@ -17,12 +17,12 @@
                 <div class="perso-info">
                     <div class="profil-info">
                         <div class="profil-pic">
-                            <img src="{{ asset('images/profil_pic1.jpg') }}" alt="Profil">
+                            <img src="" alt="Profil">
                         </div>
                         <div class="profil-name">
-                            <h2>Moi ENcoremoi</h2>
-                            <h3>Statut</h3>
-                            <h3>emailTest@utbm.fr</h3>
+                            <h2></h2>
+                            <h3></h3>
+                            <h3></h3>
                             <h3>Classement :</h3>
                         </div>
                     </div>
@@ -97,143 +97,196 @@
             </form>
         </div>
     </div>
-    {% block javascript %}
-    <!-- JS Profil et Snake -->
+
+  {% block javascript %}
     <script>
-            const editProfileModal = document.getElementById("edit-profile-modal");
-            const editProfileButton = document.querySelector(".btn-modif-profil");
-            const cancelProfileButton = document.getElementById("cancel-profile");
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileName = document.querySelector('.profil-name h2');
+            const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
+            const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
+            const profileRank = document.querySelector('.profil-name h3:nth-child(4)');
+            const profilePic = document.querySelector('.profil-pic img');
+            // Appeler la fonction toutes les 5 secondes
+            setInterval(fetchProfileData, 5000000);
+            // Appel initial
+            fetchProfileData();
+        });
 
-            const fileInput = document.getElementById("profile-avatar");
-            const fileLabel = document.querySelector(".custom-file-label");
+        const editProfileModal = document.getElementById("edit-profile-modal");
+        const editProfileButton = document.querySelector(".btn-modif-profil");
+        const cancelProfileButton = document.getElementById("cancel-profile");
 
-            fileInput.addEventListener("change", (event) => {
-                const fileName = event.target.files[0]?.name || "Choisir un fichier";
-                fileLabel.textContent = fileName;
-            });
-        
-            // Open the modal
-            editProfileButton.addEventListener("click", () => {
-                editProfileModal.style.display = "block";
-            });
-        
-            // Close the modal
-            cancelProfileButton.addEventListener("click", () => {
+        const fileInput = document.getElementById("profile-avatar");
+        const fileLabel = document.querySelector(".custom-file-label");
+
+        fileInput.addEventListener("change", (event) => {
+            const fileName = event.target.files[0]?.name || "Choisir un fichier";
+            fileLabel.textContent = fileName;
+        });
+
+        // Open the modal
+        editProfileButton.addEventListener("click", () => {
+            editProfileModal.style.display = "block";
+        });
+
+        // Close the modal
+        cancelProfileButton.addEventListener("click", () => {
+            editProfileModal.style.display = "none";
+        });
+
+        // Close the modal when clicking outside of it
+        window.addEventListener("click", (event) => {
+            if (event.target === editProfileModal) {
                 editProfileModal.style.display = "none";
-            });
-        
-            // Close the modal when clicking outside of it
-            window.addEventListener("click", (event) => {
-                if (event.target === editProfileModal) {
-                    editProfileModal.style.display = "none";
+            }
+        });
+
+        const canvas = document.getElementById("snakeGame");
+        const ctx = canvas.getContext("2d");
+        const startButton = document.getElementById("startButton");
+        const instructions = document.getElementById("instructions");
+
+        const box = 20;
+        let snake;
+        let food;
+        let score;
+        let d;
+        let game;
+
+        function startGame() {
+            snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box };
+
+            food = {
+                x: Math.floor(Math.random() * 19 + 1) * box,
+                y: Math.floor(Math.random() * 19 + 1) * box
+            };
+
+            score = 0;
+            d = null;
+
+            document.addEventListener("keydown", direction);
+
+            if (game) clearInterval(game);
+            game = setInterval(draw, 110);
+            startButton.style.display = "none";
+            instructions.style.display = "none";
+        }
+
+        function direction(event) {
+            if (event.keyCode == 90 && d != "DOWN") {
+                d = "UP";
+            } else if (event.keyCode == 83 && d != "UP") {
+                d = "DOWN";
+            } else if (event.keyCode == 81 && d != "RIGHT") {
+                d = "LEFT";
+            } else if (event.keyCode == 68 && d != "LEFT") {
+                d = "RIGHT";
+            }
+        }
+
+        function collision(newHead, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (newHead.x == array[i].x && newHead.y == array[i].y) {
+                    return true;
                 }
-            });
-        </script>
-        <script>
-            const canvas = document.getElementById("snakeGame");
-            const ctx = canvas.getContext("2d");
-            const startButton = document.getElementById("startButton");
-            const instructions = document.getElementById("instructions");
-        
-            const box = 20;
-            let snake;
-            let food;
-            let score;
-            let d;
-            let game;
-        
-            function startGame() {
-                snake = [];
-                snake[0] = { x: 9 * box, y: 10 * box };
-        
+            }
+            return false;
+        }
+
+        function fetchProfileData() {
+            fetch('/api/profile')
+                .then(response => response.json())
+                .then(data => {
+                    const profileName = document.querySelector('.profil-name h2');
+                    const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
+                    const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
+                    const profileRank = document.querySelector('.profil-name h3:nth-child(4)');
+                    const profilePic = document.querySelector('.profil-pic img');
+
+                    // Update profile information
+                    profileName.textContent = `${data.prenom} ${data.nom}`;
+                    profileEmail.textContent = data.email;
+                    profileRank.textContent = `Classement : ${data.classement}`;
+                    profileRole.textContent = data.role;
+                    profilePic.src = data.avatar ? `/images/${data.avatar}` : '/images/profil_pic1.jpg';
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données du profil :', error));
+        }
+
+        function sendScoreToServer(score) {
+            const formData = new FormData();
+            formData.append('score', score);
+
+            fetch('/api/profile/update_score', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Score mis à jour avec succès:', data.message);
+                } else if (data.error) {
+                    console.error('Erreur lors de la mise à jour du score:', data.error);
+                }
+            })
+            .catch(error => console.error('Erreur réseau:', error));
+        }
+
+        function draw() {
+            ctx.fillStyle = "#F7F7F7";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < snake.length; i++) {
+                ctx.fillStyle = (i == 0) ? "#007BC0" : "#005f8a";
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+                ctx.strokeStyle = "#F7F7F7";
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+            }
+
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(food.x, food.y, box, box);
+
+            let snakeX = snake[0].x;
+            let snakeY = snake[0].y;
+
+            if (d == "LEFT") snakeX -= box;
+            if (d == "UP") snakeY -= box;
+            if (d == "RIGHT") snakeX += box;
+            if (d == "DOWN") snakeY += box;
+
+            if (snakeX == food.x && snakeY == food.y) {
+                score++;
                 food = {
                     x: Math.floor(Math.random() * 19 + 1) * box,
                     y: Math.floor(Math.random() * 19 + 1) * box
                 };
-        
-                score = 0;
-                d = null;
-        
-                document.addEventListener("keydown", direction);
-        
-                if (game) clearInterval(game);
-                game = setInterval(draw, 110);
-                startButton.style.display = "none";
-                instructions.style.display = "none";
+            } else {
+                snake.pop();
             }
-        
-            function direction(event) {
-                if (event.keyCode == 90 && d != "DOWN") {
-                    d = "UP";
-                } else if (event.keyCode == 83 && d != "UP") {
-                    d = "DOWN";
-                } else if (event.keyCode == 81 && d != "RIGHT") {
-                    d = "LEFT";
-                } else if (event.keyCode == 68 && d != "LEFT") {
-                    d = "RIGHT";
-                }
+
+            let newHead = {
+                x: snakeX,
+                y: snakeY
+            };
+
+            if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
+                clearInterval(game);
+                startButton.style.display = "block";
+                instructions.style.display = "block";
+
+                sendScoreToServer(score);
+                fetchProfileData();
             }
-        
-            function collision(newHead, array) {
-                for (let i = 0; i < array.length; i++) {
-                    if (newHead.x == array[i].x && newHead.y == array[i].y) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        
-            function draw() {
-                ctx.fillStyle = "#F7F7F7";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-                for (let i = 0; i < snake.length; i++) {
-                    ctx.fillStyle = (i == 0) ? "#007BC0" : "#005f8a";
-                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                    ctx.strokeStyle = "#F7F7F7";
-                    ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-                }
-        
-                ctx.fillStyle = "#FF0000";
-                ctx.fillRect(food.x, food.y, box, box);
-        
-                let snakeX = snake[0].x;
-                let snakeY = snake[0].y;
-        
-                if (d == "LEFT") snakeX -= box;
-                if (d == "UP") snakeY -= box;
-                if (d == "RIGHT") snakeX += box;
-                if (d == "DOWN") snakeY += box;
-        
-                if (snakeX == food.x && snakeY == food.y) {
-                    score++;
-                    food = {
-                        x: Math.floor(Math.random() * 19 + 1) * box,
-                        y: Math.floor(Math.random() * 19 + 1) * box
-                    };
-                } else {
-                    snake.pop();
-                }
-        
-                let newHead = {
-                    x: snakeX,
-                    y: snakeY
-                };
-        
-                if (snakeX < 0 || snakeX >= canvas.width || snakeY < 0 || snakeY >= canvas.height || collision(newHead, snake)) {
-                    clearInterval(game);
-                    startButton.style.display = "block";
-                    instructions.style.display = "block";
-                }
-        
-                snake.unshift(newHead);
-        
-                ctx.fillStyle = "#000";
-                ctx.font = "20px Arial";
-                ctx.fillText("Score: " + score, 2 * box, 1.5 * box);
-            }
-        
-            startButton.style.display = "block";
+
+            snake.unshift(newHead);
+
+            ctx.fillStyle = "#000";
+            ctx.font = "20px Arial";
+            ctx.fillText("Score: " + score, 2 * box, 1.5 * box);
+        }
+
+        startButton.style.display = "block";
         </script>
     {% endblock %}
 </body>
