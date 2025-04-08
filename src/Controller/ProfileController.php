@@ -65,4 +65,70 @@ class ProfileController extends AbstractController
 
         return new JsonResponse(['error' => 'Score non fourni'], 400);
     }
+
+    #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
+    public function updateProfile(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $user = $entityManager->getRepository(User::class)->find(1); // ID de l'utilisateur actuel
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
+        }
+
+        $email = $request->request->get('profile-email');
+        $mdp = $request->request->get('profile-password');
+        $mdp_confirm = $request->request->get('profile-password-confirm');
+        $uploadedFile = $request->files->get('profile-avatar'); // Récupérer le fichier
+
+        if ($uploadedFile) {
+            // Vérifier si l'utilisateur a déjà un avatar
+            $currentAvatar = $user->getAvatar();
+            $excludedFiles = ['profil_pic1.jpg', 'profil_pic2.jpg', 'profil_pic3.jpg', 'profil_pic4.jpg', 'profil_pic5.jpg', 'profil_pic6.jpg', 'profil_pic7.jpg', 'profil_pic8.jpg'];
+
+            if ($currentAvatar && !in_array($currentAvatar, $excludedFiles)) {
+                $currentAvatarPath = $this->getParameter('kernel.project_dir') . '/public/images/' . $currentAvatar;
+
+                // Supprimer l'ancienne image si elle existe
+                if (file_exists($currentAvatarPath)) {
+                    unlink($currentAvatarPath);
+                }
+            }
+
+            // Vérifier le type de fichier
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!in_array($uploadedFile->getMimeType(), $allowedMimeTypes)) {
+                return new JsonResponse(['error' => 'Type de fichier non valide'], 400);
+            }
+
+            // Générer un nom unique pour le fichier
+            $newFilename = uniqid() . '.' . $uploadedFile->guessExtension();
+
+            // Déplacer le fichier dans le dossier public/images
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/images';
+            $uploadedFile->move($uploadDir, $newFilename);
+
+            // Mettre à jour l'avatar de l'utilisateur
+            $user->setAvatar($newFilename);
+        }
+
+        if ($email !== null && $email !== '') {
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $user->setEmail($email);
+            } else {
+                return new JsonResponse(['error' => 'Adresse email invalide'], 400);
+            }
+        }
+        if ($mdp !== null && $mdp_confirm !== null && $mdp !== '' && $mdp_confirm !== '') {
+            if ($mdp === $mdp_confirm) {
+                $user->setMdp(password_hash($mdp, PASSWORD_BCRYPT)); // Hachage du mot de passe
+            } else {
+                return new JsonResponse(['error' => 'Les mots de passe ne correspondent pas'], 400);
+            }
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return new JsonResponse(['message' => 'Profil mis à jour avec succès']);
+    }
 }
