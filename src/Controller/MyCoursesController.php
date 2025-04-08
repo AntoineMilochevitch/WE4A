@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MyCoursesController extends AbstractController
 {
-    #[Route('/my-courses', name: 'my_courses')]
+    /*#[Route('/my-courses', name: 'my_courses')]
     public function index(EntityManagerInterface $entityManager): \Symfony\Component\HttpFoundation\Response
     {
         // Récupérer l'utilisateur avec l'ID 1
@@ -26,7 +26,7 @@ class MyCoursesController extends AbstractController
         return $this->render('myCourses/myCourses.html.twig', [
             'courses' => $courses,
         ]);
-    }
+    }*/
 
     #[Route('/api/my-courses', name: 'api_my_courses')]
     public function getCourses(EntityManagerInterface $entityManager): JsonResponse
