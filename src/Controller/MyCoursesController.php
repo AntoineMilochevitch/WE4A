@@ -14,16 +14,16 @@ class MyCoursesController extends AbstractController
     public function index(EntityManagerInterface $entityManager): \Symfony\Component\HttpFoundation\Response
     {
         // Récupérer l'utilisateur avec l'ID 1
-        // $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(User::class)->find(1);
 
-        // if (!$user) {
-        //     throw $this->createNotFoundException('Utilisateur non trouvé');
-        // }
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
 
         // Récupérer les cours auxquels l'utilisateur est inscrit
-        // $courses = $user->getUe();
+        $courses = $user->getUe();
 
-        // Utilisation de cours statiques pour le moment
+        /* Utilisation de cours statiques
         $courses = [
             (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
             (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
@@ -39,7 +39,7 @@ class MyCoursesController extends AbstractController
             (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
             (object) ['id' => 5, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
             (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
-        ];
+        ];*/
 
         return $this->render('myCourses/myCourses.html.twig', [
             'courses' => $courses,
@@ -50,16 +50,29 @@ class MyCoursesController extends AbstractController
     public function getCourses(EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur avec l'ID 1
-        // $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(User::class)->find(1);
 
-        // if (!$user) {
-        //     return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
-        // }
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
+        }
 
         // Récupérer les cours auxquels l'utilisateur est inscrit
-        // $courses = $user->getUe();
+        $courses = $user->getUe();
 
-        // Utilisation de cours statiques pour le moment
+        $courseData = [];
+        foreach ($courses as $course) {
+            $courseData[] = [
+                'id' => $course->getId(),
+                'nom' => $course->getNom(),
+                'code' => $course->getCode(),
+                'image' => $course->getImage(),
+                'description' => $course->getDescription(),
+            ];
+        }
+
+        return new JsonResponse($courseData);
+
+        /* Utilisation de cours statiques
         $courses = [
             (object) ['id' => 1, 'nom' => 'Cours de Mathématiques', 'code' => 'MATH101', 'image' => 'course_image.png', 'description' => 'Introduction aux mathématiques.'],
             (object) ['id' => 2, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
@@ -77,6 +90,6 @@ class MyCoursesController extends AbstractController
             (object) ['id' => 6, 'nom' => 'Cours de Physique', 'code' => 'PHYS101', 'image' => 'course_image.png', 'description' => 'Introduction à la physique.'],
         ];
 
-        return new JsonResponse($courses);
+        return new JsonResponse($courses);*/
     }
 }
