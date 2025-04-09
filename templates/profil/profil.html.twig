@@ -74,6 +74,7 @@
     <!-- Modal pour modifier le profil -->
     <div id="edit-profile-modal" class="modal">
         <div class="modal-content">
+            <div id="error-message"></div>
             <form id="edit-profile-form">
                 <div class="part-form">
                     <h2>Modifier le profil</h2>
@@ -106,6 +107,7 @@
             event.preventDefault();
 
             const formData = new FormData(event.target);
+            const errorContainer = document.getElementById('error-message');
             fetch('/api/profile/update_profile', {
                 method: 'POST',
                 body: formData,
@@ -120,9 +122,16 @@
                     event.target.reset();
                 } else if (data.error) {
                     console.error('Erreur lors de la mise à jour du profil:', data.error);
+                    errorContainer.textContent = data.error;
+                    errorContainer.style.display = 'block';
                 }
             })
-            .catch(error => console.error('Erreur réseau:', error));
+            .catch(error => {
+                console.error('Erreur réseau:', error);
+                errorContainer.textContent = 'Erreur réseau. Veuillez réessayer.';
+                errorContainer.style.display = 'block';
+            });
+
         }
         document.addEventListener('DOMContentLoaded', function () {
             const profileName = document.querySelector('.profil-name h2');
