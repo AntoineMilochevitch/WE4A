@@ -1,24 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const courses = [
-        { code: "MTH101", name: "Mathématiques", description: "Cours sur l'algèbre et l'analyse." },
-        { code: "PHY202", name: "Physique", description: "Étude des lois fondamentales de la physique." },
-        { code: "INF103", name: "Informatique", description: "Introduction aux algorithmes et à la programmation." },
-        { code: "HIS104", name: "Histoire", description: "Exploration des grandes périodes historiques." },
-        { code: "ENG105", name: "Anglais", description: "Cours d’anglais général et technique." },
-    ];
-
     const tableBody = document.querySelector("#coursesTable tbody");
 
-    function displayCourses(filteredCourses = courses) {
+    function displayCourses(courses) {
         tableBody.innerHTML = ""; // Vide le tableau avant d'ajouter les cours
 
-        filteredCourses.forEach(course => {
+        courses.forEach(course => {
             const row = document.createElement("tr");
 
             row.innerHTML = `
                 <td>${course.code}</td>
                 <td>${course.name}</td>
-                <td>${course.description}</td>
+                <td>${course.description ?? ""}</td>
                 <td><button class="info-btn">+ Infos</button></td>
             `;
 
@@ -26,6 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Afficher tous les cours au chargement
-    displayCourses();
+    // Récupérer les données depuis Symfony (API)
+    fetch('/api/ue')
+        .then(response => response.json())
+        .then(data => {
+            displayCourses(data);  // Afficher les cours dynamiquement à partir de l'API
+        })
+        .catch(error => console.error("Erreur lors du chargement des cours:", error));
 });
