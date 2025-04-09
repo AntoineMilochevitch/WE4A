@@ -39,16 +39,19 @@ class MyCoursesController extends AbstractController
         }
 
         // Récupérer les cours auxquels l'utilisateur est inscrit
-        $courses = $user->getUe();
+        $userUes= $user->getUserUes();
 
         $courseData = [];
-        foreach ($courses as $course) {
+        foreach ($userUes as $userUe) {
+            $ue = $userUe->getUe();
             $courseData[] = [
-                'id' => $course->getId(),
-                'nom' => $course->getNom(),
-                'code' => $course->getCode(),
-                'image' => $course->getImage(),
-                'description' => $course->getDescription(),
+                'id' => $ue->getId(),
+                'nom' => $ue->getNom(),
+                'code' => $ue->getCode(),
+                'image' => $ue->getImage(),
+                'description' => $ue->getDescription(),
+                'favoris' => $userUe->getFavoris(),
+                'lastActivity' => $userUe->getLastVisited(),
             ];
         }
 
