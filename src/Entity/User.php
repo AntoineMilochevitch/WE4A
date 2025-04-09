@@ -41,15 +41,14 @@ class User
     #[ORM\JoinTable(name: 'user_notif')]
     private Collection $userNotifications;
 
-    #[ORM\ManyToMany(targetEntity: Ue::class, inversedBy: 'users')]
-    #[ORM\JoinTable(name: 'user_ue')]
-    private Collection $ue;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
+    private Collection $userUes;
 
     public function __construct()
     {
         $this->roles = new ArrayCollection();
         $this->userNotifications = new ArrayCollection();
-        $this->ue = new ArrayCollection();
+        $this->userUes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,31 +195,34 @@ class User
         return $this;
     }
 
-    public function getUe(): Collection
+    public function getUserUes(): Collection
     {
-        return $this->ue;
+        return $this->userUes;
     }
 
-    public function setUe(Collection $ue): static
+    public function setUserUe(Collection $ue): static
     {
-        $this->ue = $ue;
+        $this->userUes = $ue;
 
         return $this;
     }
 
-    public function addUe(Ue $ue): static
+    public function addUserUe(UserUe $userUe): static
     {
-        if (!$this->ue->contains($ue)) {
-            $this->ue[] = $ue;
+        if (!$this->userUes->contains($userUe)) {
+            $this->userUes[] = $userUe;
+            $userUe->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeUe(Ue $ue): static
+    public function removeUserUe(UserUe $userUe): static
     {
-        if ($this->ue->contains($ue)) {
-            $this->ue->removeElement($ue);
+        if ($this->userUes->removeElement($userUe)) {
+            if ($userUe->getUser() === $this) {
+                $userUe->setUser(null);
+            }
         }
 
         return $this;
