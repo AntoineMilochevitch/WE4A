@@ -41,7 +41,7 @@
                     courseElement.classList.add('case-cours');
                     courseElement.innerHTML = `
                         ${course.favoris ? '<div class="star-icon"><ion-icon name="star"></ion-icon></div>' : ''}
-                        <a href="/course?id=${encodeURIComponent(course.id)}">
+                        <a href="/course/${course.code}">
                             <div class="course-image">
                                 <img src="/images/${course.image}" alt="Course Image">
                             </div>
