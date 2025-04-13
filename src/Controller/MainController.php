@@ -7,13 +7,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Ue;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\NotificationRepository;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(): Response
+    public function index(NotificationRepository $notificationRepository): Response
     {
-        return $this->render('index.html.twig');
+        $notifications = $notificationRepository->findBy([], ['date' => 'DESC']);
+
+        return $this->render('index.html.twig', [
+            'notifications' => $notifications,
+        ]);
     }
 
     #[Route('/my-courses', name: 'my_courses')]
