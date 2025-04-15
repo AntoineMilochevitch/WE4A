@@ -26,4 +26,10 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function allUsers(): array{
+        return $this->createQueryBuilder('u')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
 }

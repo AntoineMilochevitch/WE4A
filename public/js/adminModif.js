@@ -49,6 +49,15 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 12, code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
     ];
 
+    function fetchInfo() {
+        fetch('/api/admin')
+            .then(response => response.json())
+            .then(data => {
+                const { users, courses } = data;
+            })
+            .catch(error => console.error('Error fetching courses/users:', error));
+    }
+
     function showUtilisateurs() {
         contentDiv.innerHTML = ''; // Clear previous content
 
@@ -181,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
         utilisateursButton.classList.add('btn-enabled');
     }
 
-
+    fetchInfo();
     showUtilisateurs(); // Pour initialiser la page avec la liste des users
 
     
