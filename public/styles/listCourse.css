@@ -104,19 +104,34 @@
     display: block;
 }
 
-/* Star icon styling */
-.star-icon {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 20px;
-    color: gold;
-    z-index: 10;
-    pointer-events: none; /* Prevent interaction */
-}
 
 .case-cours {
     position: relative;
+    overflow: visible;
+}
+
+.star-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px; /* Positionnez l'étoile dans le coin supérieur droit */
+    font-size: 20px;
+    color: gold;
+    z-index: 10; /* Assurez-vous que l'étoile est au-dessus */
+    visibility: hidden; /* Masque l'étoile par défaut */
+    transition: transform 0.3s ease, visibility 0.3s ease; /* Animation fluide */
+    pointer-events: auto; /* Permet les interactions avec l'étoile */
+}
+
+.case-cours:hover .star-icon {
+    visibility: visible; /* Rendre l'étoile visible */
+}
+
+.case-cours.favoris .star-icon {
+    visibility: visible;
+}
+
+.star-icon:hover {
+    transform: scale(1.2); /* Agrandit l'étoile au survol */
 }
 
 /* Course container styling */
@@ -188,9 +203,9 @@
 }
 
 .carte-mode .case-cours:hover {
-    transform: scale(1.05); /* Agrandit légèrement la carte */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .carte-mode .course-description {
@@ -210,9 +225,9 @@
 }
 
 .list-mode .case-cours:hover {
-    transform: scale(1.05); /* Agrandit légèrement la carte */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* List mode course link styling */
@@ -271,9 +286,9 @@
 }
 
 .description-mode .case-cours:hover {
-    transform: scale(1.05); /* Agrandit légèrement la carte */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ajoute une ombre */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation fluide */
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* List mode course link styling */

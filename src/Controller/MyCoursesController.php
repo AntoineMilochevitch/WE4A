@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\UserUe;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -56,5 +57,32 @@ class MyCoursesController extends AbstractController
         }
 
         return new JsonResponse($courseData);
+    }
+
+    #[Route('/api/toggle-favoris/{id}', name: 'toggle_favoris', methods: ['POST'])]
+    public function toggleFavoris(int $id, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Récupérer l'utilisateur avec l'ID 1
+        $user = $entityManager->getRepository(User::class)->find(1);
+
+        if (!$user) {
+            return new JsonResponse(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
+        }
+
+        // Récupérer l'association UserUe pour cet utilisateur et l'UE
+        $userUe = $entityManager->getRepository(UserUe::class)->findOneBy(['user' => $user, 'ue' => $id]);
+
+        if (!$userUe) {
+            return new JsonResponse(['success' => false, 'message' => 'Cours non trouvé'], 404);
+        }
+
+        // Basculer l'état des favoris
+        $userUe->setFavoris(!$userUe->getFavoris());
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'isFavoris' => $userUe->getFavoris(),
+        ]);
     }
 }
