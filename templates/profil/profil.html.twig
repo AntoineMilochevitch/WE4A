@@ -74,15 +74,17 @@
     <!-- Modal pour modifier le profil -->
     <div id="edit-profile-modal" class="modal">
         <div class="modal-content">
+            <div id="error-message"></div>
             <form id="edit-profile-form">
                 <div class="part-form">
                     <h2>Modifier le profil</h2>
                     <label for="profile-email">Email:</label>
-                    <input type="email" id="profile-email" name="profile-email" placeholder="Entrez votre email" required>
+                    <input type="email" id="profile-email" name="profile-email" placeholder="Entrez votre email">
 
                     <label for="profile-password">Mot de passe:</label>
-                    <input type="password" id="profile-password" name="profile-password" placeholder="Entrez un nouveau mot de passe" required>
-
+                    <input type="password" id="profile-password" name="profile-password" placeholder="Entrez un nouveau mot de passe">
+                    <label for="profile-password-confirm">Confirmer le mot de passe:</label>
+                    <input type="password" id="profile-password-confirm" name="profile-password-confirm" placeholder="Confirmer le mot de passe">
                     <label for="profile-avatar">Avatar:</label>
                     <div>
                         <label for="profile-avatar" class="custom-file-label">Choisir un fichier</label>
@@ -100,6 +102,37 @@
 
   {% block javascript %}
     <script>
+        document.getElementById('edit-profile-form').addEventListener('submit', sendUpdatedProfile);
+        function sendUpdatedProfile(event) {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const errorContainer = document.getElementById('error-message');
+            fetch('/api/profile/update_profile', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Profil mis à jour avec succès:', data.message);
+                    fetchProfileData();
+                    const editProfileModal = document.getElementById("edit-profile-modal");
+                    editProfileModal.style.display = "none";
+                    event.target.reset();
+                } else if (data.error) {
+                    console.error('Erreur lors de la mise à jour du profil:', data.error);
+                    errorContainer.textContent = data.error;
+                    errorContainer.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur réseau:', error);
+                errorContainer.textContent = 'Erreur réseau. Veuillez réessayer.';
+                errorContainer.style.display = 'block';
+            });
+
+        }
         document.addEventListener('DOMContentLoaded', function () {
             const profileName = document.querySelector('.profil-name h2');
             const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');

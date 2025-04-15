@@ -16,6 +16,7 @@
             let itemsPerPage = 6;
             let currentPage = 1;
             let courses = [];
+            let isFavorisActive = false;
 
             function fetchCourses() {
                 fetch('/api/my-courses')
@@ -32,11 +33,15 @@
                 courseContainer.innerHTML = '';
                 const start = (page - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
-                courses.slice(start, end).forEach(course => {
+                const filteredCourses = isFavorisActive
+                    ? courses.filter(course => course.favoris)
+                    : courses;
+                filteredCourses.slice(start, end).forEach(course => {
                     const courseElement = document.createElement('div');
                     courseElement.classList.add('case-cours');
                     courseElement.innerHTML = `
-                        <a href="/course?id=${encodeURIComponent(course.id)}">
+                        ${course.favoris ? '<div class="star-icon"><ion-icon name="star"></ion-icon></div>' : ''}
+                        <a href="/course/${course.code}">
                             <div class="course-image">
                                 <img src="/images/${course.image}" alt="Course Image">
                             </div>
@@ -54,7 +59,10 @@
 
             function updatePagination() {
                 paginationContainer.innerHTML = '';
-                const totalPages = Math.ceil(courses.length / itemsPerPage);
+                const filteredCourses = isFavorisActive
+                    ? courses.filter(course => course.favoris)
+                    : courses;
+                const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
 
                 const prevButton = document.createElement('button');
                 prevButton.classList.add('btn-pagination');
@@ -109,20 +117,18 @@
                 });
             });
 
-            document.querySelectorAll('.tri-cours-3 .dropdown-item').forEach(item => {
+            document.querySelectorAll('.tri-cours-1 .dropdown-item').forEach(item => {
                 item.addEventListener('click', (event) => {
-                    const sortBy = event.target.textContent.toLowerCase();
-                    if (sortBy === 'trier par nom de cours') {
-                        courses.sort((a, b) => a.nom.localeCompare(b.nom));
-                    } else if (sortBy === 'trier par dernier accès') {
-                        courses.sort((a, b) => new Date(b.dateDernierAcces) - new Date(a.dateDernierAcces));
-                    }
-                    document.querySelector('.tri-cours-3 button').innerHTML = `${event.target.textContent} <ion-icon name="caret-down-outline"></ion-icon>`;
+                    const selectedOption = event.target.textContent;
+                    isFavorisActive = selectedOption === 'Favoris'; // Activer/désactiver le mode favoris
+                    document.querySelector('.tri-cours-1 button').innerHTML = `${selectedOption} <ion-icon name="caret-down-outline"></ion-icon>`;
                     currentPage = 1;
                     displayCourses(currentPage, itemsPerPage);
                     updatePagination();
                 });
-            });
+            })
+
+
         });
     </script>
 {% endblock %}

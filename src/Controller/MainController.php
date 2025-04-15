@@ -5,13 +5,20 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Ue;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\NotificationRepository;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(): Response
+    public function index(NotificationRepository $notificationRepository): Response
     {
-        return $this->render('index.html.twig');
+        $notifications = $notificationRepository->findBy([], ['date' => 'DESC']);
+
+        return $this->render('index.html.twig', [
+            'notifications' => $notifications,
+        ]);
     }
 
     #[Route('/my-courses', name: 'my_courses')]
@@ -38,10 +45,18 @@ class MainController extends AbstractController
         return $this->render('admin/admin.html.twig');
     }
 
-    #[Route('/course', name: 'course')]
-    public function course(): Response
+    #[Route('/course/{code}', name: 'course')]
+    public function course(string $code, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('course/course.html.twig');
+        $course = $entityManager->getRepository(Ue::class)->findOneBy(['code' => $code]);
+
+        if (!$course) {
+            throw $this->createNotFoundException('Cours non trouvé');
+        }
+
+        return $this->render('course/course.html.twig', [
+            'course' => $course,
+        ]);
     }
 
     #[Route('/find', name: 'find')]

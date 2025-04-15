@@ -1,71 +1,70 @@
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}MyMoodle{% endblock %}</title>
-        {% block stylesheets %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MyMoodle{% endblock %}</title>
+    {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
-        {% endblock %}
-        {% block javascripts %}
-            <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-            <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-
-            <script src="{{ asset('js/notification.js') }}"></script>
-        {% endblock %}
-    </head>
-    <body>
-        <header>
-            <div class="logo">
-                <a href="{{ path('home') }}">
-                    <img src="{{ asset('images/logo_UTBM_blanc.png') }}" alt="MyMoodle">
+    {% endblock %}
+    {% block javascripts %}
+        <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <script src="{{ asset('js/notification.js') }}"></script>
+    {% endblock %}
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a href="{{ path('home') }}">
+            <img src="{{ asset('images/logo_UTBM_blanc.png') }}" alt="MyMoodle">
+        </a>
+    </div>
+    <div class="menu">
+        <ul>
+            <li><a href="{{ path('admin') }}">Admin</a></li>
+            <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
+            <li><a href="{{ path('find') }}">Recherche de cours</a></li>
+        </ul>
+    </div>
+    <div class="user">
+        <ul>
+            <li>
+                <a href="#">
+                    <ion-icon name="notifications-outline"></ion-icon>
+                    <span class="notification-count">
+                        {{ notifications|filter(n => not n.estVu)|length }}
+                    </span>
                 </a>
-            </div>
-            <div class="menu">
-                <ul>
-                    <li><a href="{{ path('admin') }}">Admin</a></li>
-                    <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
-                    <li><a href="{{ path('find') }}">Recherche de cours</a></li>
-                </ul>
-            </div>
-            <div class="user">
-                <ul>
-                    <li>
-                        <a href="#">
-                            <ion-icon name="notifications-outline"></ion-icon>
-                            <span class="notification-count">3</span>
-                        </a>
-                    </li>
-                    <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
-                    <button class="Btn" onclick="window.location.href='{{ path('login') }}'">
-                        <div class="sign">
-                            <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
-                        </div>
-                        <div class="text">Login</div>
-                    </button>
-                </ul>
-            </div>
-        </header>
-        <div id="notificationPanel" class="notification-panel">
-            <div class="notification-header">
-                <h2>Notifications</h2>
-                <span class="close-btn" id="closeNotificationPanel">&times;</span>
-            </div>
-            <div class="notification-content">
-                <div class="notification-item important">
-                    <p>Notification importante</p>
-                    <span class="delete-btn">&times;</span>
+            </li>
+            <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+            <button class="Btn" onclick="window.location.href='{{ path('login') }}'">
+                <div class="sign">
+                    <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
                 </div>
-                <div class="notification-item warning">
-                    <p>Notification d'avertissement</p>
-                    <span class="delete-btn">&times;</span>
-                </div>
-                <div class="notification-item info">
-                    <p>Notification d'information</p>
-                    <span class="delete-btn">&times;</span>
-                </div>
+                <div class="text">Login</div>
+            </button>
+        </ul>
+    </div>
+</header>
+
+
+<div id="notificationPanel" class="notification-panel">
+    <div class="notification-header">
+        <h2>Notifications</h2>
+        <span class="close-btn" id="closeNotificationPanel">&times;</span>
+    </div>
+    <div class="notification-content">
+        {% for notif in notifications %}
+            <div class="notification-item {{ notif.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
+                <p>{{ notif.message }}</p>
+                <span class="delete-btn">&times;</span>
             </div>
-        </div>
-        {% block body %}
-        {% endblock %}
-    </body>
+        {% else %}
+            <p class="no-notif">Aucune notification</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% block body %}
+{% endblock %}
+</body>
 </html>
