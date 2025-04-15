@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SectionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,7 +26,7 @@ class Section
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date;
 
-    #[ORM\Column(type : 'integer', nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $ordre = null;
 
     #[ORM\Column(type: Types::BOOLEAN)]
@@ -38,6 +40,11 @@ class Section
     #[ORM\ManyToMany(targetEntity: Element::class, inversedBy: 'section')]
     #[ORM\JoinTable(name: 'section_element')]
     private Collection $elements;
+
+    public function __construct()
+    {
+        $this->elements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -128,13 +135,6 @@ class Section
         return $this->elements;
     }
 
-    public function setElements(Collection $elements): static
-    {
-        $this->elements = $elements;
-
-        return $this;
-    }
-
     public function addElement(Element $element): static
     {
         if (!$this->elements->contains($element)) {
@@ -152,5 +152,4 @@ class Section
 
         return $this;
     }
-
 }

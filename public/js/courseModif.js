@@ -2,6 +2,30 @@ let isEditing = false;
 let activePart = null; // Variable pour stocker la partie active
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    const courseContent = document.querySelector('.course-content');
+
+    // Charger les sections depuis l'API
+    function loadSections(ueId) {
+        fetch(`/api/course/${ueId}/sections`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Données reçues de l\'API :', data);
+                courseContent.innerHTML = '';
+                data.forEach(section => {
+                    createPart(section.titre, section.elements.map(element => ({
+                        icon: element.type === 'texte' ? 'document-text-outline' : 'cloud-upload-outline',
+                        text: element.titre,
+                        description: element.description,
+                        date: element.date,
+                    })));
+                });
+            })
+            .catch(error => console.error('Erreur lors du chargement des sections :', error));
+    }
+
+    loadSections(ueId);
+
     function togglePartContent(header) {
         if (isEditing) return;
         const partContent = header.nextElementSibling;
