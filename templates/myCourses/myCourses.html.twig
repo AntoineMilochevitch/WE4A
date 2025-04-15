@@ -22,37 +22,47 @@
                 fetch('/api/my-courses')
                     .then(response => response.json())
                     .then(data => {
-                        courses = data;
+                        courses = data; // Toujours récupérer les données depuis la BDD
                         displayCourses(currentPage, itemsPerPage);
                         updatePagination();
                     })
-                    .catch(error => console.error('Error fetching courses:', error));
+                    .catch(error => console.error('Erreur lors de la récupération des cours :', error));
             }
 
             function displayCourses(page, itemsPerPage) {
                 courseContainer.innerHTML = '';
                 const start = (page - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
+
+                // Filtrer les cours en fonction du mode (Favoris ou Tout)
                 const filteredCourses = isFavorisActive
-                    ? courses.filter(course => course.favoris)
-                    : courses;
+                    ? courses.filter(course => course.favoris) // Afficher uniquement les favoris
+                    : courses; // Afficher tous les cours
+
+                // Afficher les cours de la page actuelle
                 filteredCourses.slice(start, end).forEach(course => {
                     const courseElement = document.createElement('div');
                     courseElement.classList.add('case-cours');
+                    courseElement.setAttribute('data-course-id', course.id);
+                    courseElement.setAttribute('data-favoris', course.favoris);
+
                     courseElement.innerHTML = `
-                        ${course.favoris ? '<div class="star-icon"><ion-icon name="star"></ion-icon></div>' : ''}
-                        <a href="/course/${course.code}">
-                            <div class="course-image">
-                                <img src="/images/${course.image}" alt="Course Image">
-                            </div>
-                            <div class="course-title">
-                                <p>${course.nom} (${course.code})</p>
-                                <div class="course-description">
-                                    <p>${course.description}</p>
-                                </div>
-                            </div>
-                        </a>
-                    `;
+                <div class="star-icon">
+                    <ion-icon name="${course.favoris ? 'star' : 'star-outline'}"></ion-icon>
+                </div>
+                <a href="/course/${course.code}" class="course-link">
+                    <div class="course-image">
+                        <img src="/images/${course.image}" alt="Image de ${course.nom}">
+                    </div>
+                    <div class="course-title">
+                        <p>${course.nom} (${course.code})</p>
+                        <div class="course-description">
+                            <p>${course.description}</p>
+                        </div>
+                    </div>
+                </a>
+            `;
+
                     courseContainer.appendChild(courseElement);
                 });
             }
@@ -86,8 +96,6 @@
                 });
                 paginationContainer.appendChild(nextButton);
             }
-
-            fetchCourses();
 
             document.querySelectorAll('.tri-cours-5 .dropdown-item').forEach(item => {
                 item.addEventListener('click', (event) => {
@@ -126,9 +134,58 @@
                     displayCourses(currentPage, itemsPerPage);
                     updatePagination();
                 });
-            })
+            });
 
 
+            courseContainer.addEventListener('mouseover', function (event) {
+                const starIcon = event.target.closest('.star-icon');
+                if (starIcon) {
+                    const courseLink = starIcon.closest('.case-cours').querySelector('.course-link');
+                    courseLink.style.pointerEvents = 'none'; // Désactive le clic sur le lien
+                }
+            });
+
+            courseContainer.addEventListener('mouseout', function (event) {
+                const starIcon = event.target.closest('.star-icon');
+                if (starIcon) {
+                    const courseLink = starIcon.closest('.case-cours').querySelector('.course-link');
+                    courseLink.style.pointerEvents = 'auto'; // Réactive le clic sur le lien
+                }
+            });
+
+            courseContainer.addEventListener('click', function(event) {
+                const starIcon = event.target.closest('.star-icon');
+                if (starIcon) {
+                    event.stopPropagation();
+                    const courseElement = starIcon.closest('.case-cours');
+                    const courseId = courseElement.dataset.courseId;
+
+                    fetch(`/api/toggle-favoris/${courseId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // Mettre à jour l'état des favoris dans les données locales
+                                const course = courses.find(c => c.id == courseId);
+                                if (course) {
+                                    course.favoris = data.isFavoris;
+                                }
+
+                                // Réafficher les cours en fonction du mode actuel
+                                displayCourses(currentPage, itemsPerPage);
+                                updatePagination();
+                            } else {
+                                console.error('Erreur lors de la mise à jour des favoris');
+                            }
+                        })
+                        .catch(error => console.error('Erreur AJAX :', error));
+                }
+            });
+            fetchCourses();
         });
     </script>
 {% endblock %}
