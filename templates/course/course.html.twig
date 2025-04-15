@@ -11,6 +11,8 @@
     {{ parent() }}
     <script src="{{ asset('js/courseModif.js') }}"></script>
     <script>
+        const ueId = {{ ueId }};
+        console.log('ueId:', ueId);
         document.addEventListener("DOMContentLoaded", () => {
             const courseContent = document.querySelector(".course-content");
             const participantsContent = document.querySelector(".participants-content");
@@ -49,7 +51,6 @@
                 <ul>
                     <div class="course-menu-li"><li><a href="#" class="active">Cours</a></li></div>
                     <div class="course-menu-li"><li><a href="#">Participants</a></li></div>
-                    <div class="course-menu-li"><li><a href="#">Notes</a></li></div>
                 </ul>
                 <button class="btn-add-part">Ajouter une partie</button>
             </div>
