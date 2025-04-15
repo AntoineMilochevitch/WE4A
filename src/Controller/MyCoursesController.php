@@ -11,24 +11,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MyCoursesController extends AbstractController
 {
-    /*#[Route('/my-courses', name: 'my_courses')]
-    public function index(EntityManagerInterface $entityManager): \Symfony\Component\HttpFoundation\Response
-    {
-        // Récupérer l'utilisateur avec l'ID 1
-        $user = $entityManager->getRepository(User::class)->find(1);
-
-        if (!$user) {
-            throw $this->createNotFoundException('Utilisateur non trouvé');
-        }
-
-        // Récupérer les cours auxquels l'utilisateur est inscrit
-        $courses = $user->getUe();
-
-        return $this->render('myCourses/myCourses.html.twig', [
-            'courses' => $courses,
-        ]);
-    }*/
-
     #[Route('/api/my-courses', name: 'api_my_courses')]
     public function getCourses(EntityManagerInterface $entityManager): JsonResponse
     {
