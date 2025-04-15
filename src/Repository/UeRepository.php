@@ -16,6 +16,12 @@ class UeRepository extends ServiceEntityRepository
         parent::__construct($registry, Ue::class);
     }
 
+    public function allUE(): array{
+        return $this->createQueryBuilder('ue')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
     //    /**
     //     * @return Ue[] Returns an array of Ue objects
     //     */
