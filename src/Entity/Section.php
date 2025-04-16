@@ -135,6 +135,13 @@ class Section
         return $this->elements;
     }
 
+    public function setElements(Collection $elements): static
+    {
+        $this->elements = $elements;
+
+        return $this;
+    }
+
     public function addElement(Element $element): static
     {
         if (!$this->elements->contains($element)) {
