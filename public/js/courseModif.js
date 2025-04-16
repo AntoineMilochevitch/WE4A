@@ -4,27 +4,75 @@ let activePart = null; // Variable pour stocker la partie active
 document.addEventListener('DOMContentLoaded', function() {
 
     const courseContent = document.querySelector('.course-content');
+    const participantsContent = document.querySelector('.participants-content');
 
     // Charger les sections depuis l'API
     function loadSections(ueId) {
         fetch(`/api/course/${ueId}/sections`)
             .then(response => response.json())
             .then(data => {
-                console.log('Données reçues de l\'API :', data);
                 courseContent.innerHTML = '';
                 data.forEach(section => {
-                    createPart(section.titre, section.elements.map(element => ({
-                        icon: element.type === 'texte' ? 'document-text-outline' : 'cloud-upload-outline',
-                        text: element.titre,
-                        description: element.description,
-                        date: element.date,
-                    })));
+                    createPart(
+                        section.titre,
+                        section.elements.map(element => ({
+                            id : element.id,
+                            icon: element.type === 'texte' ? 'document-text-outline' : 'cloud-upload-outline',
+                            text: element.titre,
+                            description: element.description,
+                            date: element.date,
+                        })),
+                        section.id
+                    );
                 });
             })
             .catch(error => console.error('Erreur lors du chargement des sections :', error));
     }
 
     loadSections(ueId);
+
+    // Charger les participants depuis l'API
+    function loadParticipants(ueId) {
+        fetch(`/api/course/${ueId}/users`)
+            .then(response => response.json())
+            .then(data => {
+                const professorsContainer = participantsContent.querySelector('.professors .part-content');
+                const studentsContainer = participantsContent.querySelector('.students .part-content');
+
+                // Vider les conteneurs
+                professorsContainer.innerHTML = '';
+                studentsContainer.innerHTML = '';
+
+                // Parcourir les utilisateurs et les ajouter dans les conteneurs correspondants
+                data.forEach(user => {
+                    const participantHtml = `
+                        <div class="participant">
+                            <img src="/images/${user.avatar}" alt="Photo de profil" class="profile-pic">
+                            <span class="participant-name">${user.nom}</span>
+                            <span class="participant-firstname">${user.prenom}</span>
+                        </div>
+                        <div class="ligne-gris"></div>
+                    `;
+
+                    if (user.role.includes('enseignant')) {
+                        professorsContainer.insertAdjacentHTML('beforeend', participantHtml);
+                    } else if (user.role.includes('etudiant')) {
+                        studentsContainer.insertAdjacentHTML('beforeend', participantHtml);
+                    }
+                });
+            })
+            .catch(error => console.error('Erreur lors du chargement des participants :', error));
+    }
+
+    document.querySelectorAll('.course-menu-li a').forEach(item => {
+        item.addEventListener('click', function(e) {
+            const text = this.textContent.trim();
+            if (text === 'Participants') {
+                console.log("Chargement des participants...");
+                loadParticipants(ueId);
+            }
+        });
+    });
 
     function togglePartContent(header) {
         if (isEditing) return;
@@ -34,26 +82,75 @@ document.addEventListener('DOMContentLoaded', function() {
         header.classList.toggle('collapsed', !isCollapsed);
     }
 
+    function saveSectionToServer(ueId, title, elements) {
+        fetch(`/api/course/${ueId}/add_section`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                titre: title,
+                elements: elements.map((element, index) => ({
+                    titre: element.text,
+                    description: element.description,
+                    type: element.icon === 'document-text-outline' ? 'texte' : 'fichier',
+                    ordre: index + 1,
+                })),
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.error || 'Erreur lors de l\'ajout de la section');
+                    });
+                }
+                return response.json();
+            });
+    }
+
+    function saveElementToServer(ueId, sectionId, element) {
+        console.log('Données envoyées :', {
+            sectionId: sectionId,
+            titre: element.text,
+            type: element.icon === 'depot' ? 'texte' : 'fichier',
+            description: element.description
+        });
+        fetch(`/api/course/${ueId}/add_element`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                sectionId: sectionId,
+                titre: element.text,
+                type: element.icon === 'depot' ? 'texte' : 'fichier', // Correctement mappé
+                description: element.description
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Élément ajouté avec succès :', data.message);
+                } else {
+                    console.error('Erreur lors de l\'ajout de l\'élément :', data.error);
+                }
+            })
+            .catch(error => console.error('Erreur réseau :', error));
+    }
+
     // Créer une nouvelle partie
-    function createPart(title, elements) {
+    function createPart(title, elements, sectionId) {
         const courseContent = document.querySelector('.course-content');
         if (!courseContent) {
             console.error('Element .course-content introuvable.');
             return;
         }
-    
-        // Vérifier si une partie avec le même titre existe déjà
-        const existingPart = Array.from(courseContent.querySelectorAll('.part h2')).find(
-            h2 => h2.innerText === title
-        );
-        if (existingPart) {
-            console.warn(`Une partie avec le titre "${title}" existe déjà.`);
-            return;
-        }
+
         
         // Créer la nouvelle partie en html
         const newPart = document.createElement('div');
         newPart.classList.add('part');
+        newPart.setAttribute('data-section-id', sectionId);
         newPart.innerHTML = `
             <div class="part-header collapsed">
                 <ion-icon name="chevron-down-outline"></ion-icon>
@@ -64,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
             <div class="part-content" style="display: none;">
                 ${elements.map(element => `
-                    <div class="element">
+                    <div class="element" data-element-id="${element.id}">
                         <div class="element-header">
                             <ion-icon name="${element.icon}"></ion-icon>
                             <p contenteditable="false">${element.text}</p>
@@ -94,17 +191,72 @@ document.addEventListener('DOMContentLoaded', function() {
             editPart(newPart, this);
             togglePartContent(newPart.querySelector('.part-header'));
         });
-    
+
         const deleteButton = newPart.querySelector('.btn-delete-part');
         deleteButton.addEventListener('click', function () {
             const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
             if (!confirmDelete) return;
-            newPart.remove();
+
+            const sectionId = newPart.dataset.sectionId;
+            if (!sectionId) {
+                console.error("ID de la section introuvable.");
+                return;
+            }
+
+            fetch(`/api/course/${ueId}/delete_section/${sectionId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(error => {
+                            throw new Error(error.error || "Erreur lors de la suppression de la section.");
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Section supprimée avec succès :", data.message);
+                    newPart.remove(); // Supprime la section du DOM
+                })
+                .catch(error => console.error("Erreur réseau :", error));
         });
-    
+
         newPart.querySelectorAll('.btn-delete-element').forEach(btn => {
             btn.addEventListener('click', function () {
-                deleteElement(btn.parentElement.parentElement);
+                const element = btn.parentElement.parentElement;
+                const elementId = element.dataset.elementId;
+                const sectionId = newPart.dataset.sectionId;
+
+                if (!elementId || !sectionId) {
+                    console.error("ID de l'élément ou de la section introuvable.");
+                    return;
+                }
+
+                const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
+                if (!confirmDelete) return;
+
+                fetch(`/api/course/${ueId}/delete_element/${sectionId}/${elementId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(error => {
+                                throw new Error(error.error || "Erreur lors de la suppression de l'élément.");
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("Élément supprimé avec succès :", data.message);
+                        element.remove(); // Supprime l'élément du DOM
+                    })
+                    .catch(error => console.error("Erreur réseau :", error));
             });
         });
     
@@ -114,36 +266,66 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function saveChanges(part) {
+        const sectionId = part.dataset.sectionId;
+        const title = part.querySelector('.part-header h2').innerText;
+        const elements = Array.from(part.querySelectorAll('.element')).map(element => ({
+            id: element.dataset.elementId,
+            titre: element.querySelector('.element-header p').innerText,
+            description: element.querySelector('.element-description')?.innerText || '',
+            date: element.querySelector('.element-date')?.innerText || ''
+        }));
+
+        // Mettre à jour la section
+        fetch(`/api/course/${ueId}/update_section/${sectionId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ titre: title, elements }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.error || "Erreur lors de la mise à jour de la section.");
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Section mise à jour avec succès :", data.message);
+            })
+            .catch(error => console.error("Erreur réseau :", error));
+    }
+
     // Modifier une partie
     function editPart(part, editButton) {
         const header = part.querySelector('.part-header');
         const title = header.querySelector('h2');
-        const elements = part.querySelectorAll('.element p');
-    
-        // Toggle the edit mode
+        const elements = part.querySelectorAll('.element p:not(.element-date)');
+        const descriptions = part.querySelectorAll('.element-description');
+
+        // Toggle le mode édition
         if (title.isContentEditable) {
+            saveChanges(part);
             title.contentEditable = 'false';
             elements.forEach(element => element.contentEditable = 'false');
+            descriptions.forEach(description => description.contentEditable = 'false');
             editButton.name = "create-outline";
             editButton.title = "Modifier";
             title.classList.remove('editable');
             elements.forEach(element => element.classList.remove('editable'));
+            descriptions.forEach(description => description.classList.remove('editable'));
             isEditing = false;
-    
-            // Update the date for each element
-            part.querySelectorAll('.element').forEach(element => {
-                const dateElement = element.querySelector('.element-date');
-                if (dateElement) {
-                    dateElement.innerText = new Date().toLocaleString();
-                }
-            });
         } else {
             title.contentEditable = 'true';
             elements.forEach(element => element.contentEditable = 'true');
+            descriptions.forEach(description => description.contentEditable = 'true');
             editButton.name = "checkmark-outline";
             editButton.title = "Valider";
             title.classList.add('editable');
             elements.forEach(element => element.classList.add('editable'));
+            descriptions.forEach(description => description.classList.add('editable'));
             isEditing = true;
         }
     }
@@ -171,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
             // Create dynamic html based on the element type
             if (elementType === 'text') {
-                const elementDate = new Date().toLocaleString();
+                const elementDate = new Date().toLocaleDateString();
                 const elementDescription = document.getElementById('element-description').value;
                 elementHtml = `
                     <div class="element">
@@ -186,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="ligne-gris"></div>
                 `;
             } else if (elementType === 'file') {
-                const elementDate = new Date().toLocaleString();
+                const elementDate = new Date().toLocaleDateString();
                 const elementDescription = document.getElementById('element-description').value;
                 const elementFile = document.getElementById('part-element-file').files[0];
                 const fileType = elementFile.type.split('/')[1];
@@ -214,7 +396,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
                         </div>
                         <p class="element-description">${elementDescription}</p>
-                        <p class="element-date">${new Date().toLocaleString()}</p>
+                        <p class="element-date">${new Date().toLocaleDateString()}</p>
                     </div>
                     <div class="ligne-gris"></div>
                 `;
@@ -248,9 +430,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 description: element.querySelector('.element-description') ? element.querySelector('.element-description').innerText : '',
                 date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : ''
             }));
-    
-            // Create the new part
-            createPart(title, elements);
+
+            saveSectionToServer(ueId, title, elements)
+                .then(response => {
+                    if (response.id) {
+                        createPart(title, elements, response.id);
+                    } else {
+                        console.error('Erreur lors de la création de la section :', response.error);
+                    }
+                })
+                .catch(error => console.error('Erreur réseau :', error));
+
             const modal = document.getElementById('part-modal');
             modal.style.display = 'none'; // Close the modal
 
@@ -284,7 +474,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Display the form to add a new element
     function showElementForm(part) {
         activePart = part;
-        console.log('Active part:', activePart);
         const modal = document.getElementById('element-modal');
         modal.style.display = 'block';
 
@@ -305,6 +494,33 @@ document.addEventListener('DOMContentLoaded', function() {
         addElementButton.replaceWith(addElementButton.cloneNode(true));
         document.getElementById('add-element-modal').addEventListener('click', function(event) {
             event.preventDefault(); // Empêche le rechargement de la page
+
+            if (!activePart) {
+                console.error('Aucune partie active définie.');
+                return;
+            }
+
+            const sectionId = activePart.dataset.sectionId;
+            const elementType = document.getElementById('ele-element-type').value;
+            const elementText = document.getElementById('ele-element-text').value;
+            const elementDescription = document.getElementById('ele-element-description')
+                ? document.getElementById('ele-element-description').value
+                : '';
+            const elementDate = new Date().toLocaleDateString();
+
+            const icon = elementType === 'text' ? 'document-text-outline' :
+                elementType === 'file' ? 'document-outline' :
+                    'cloud-upload-outline';
+
+            const element = {
+                icon: icon,
+                text: elementText,
+                description: elementDescription,
+                date: elementDate,
+            };
+
+            saveElementToServer(ueId, sectionId, element);
+
             addElementToPart();
         });
     }
@@ -326,7 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const elementDescription = document.getElementById('ele-element-description') 
             ? document.getElementById('ele-element-description').value 
             : '';
-        const elementDate = new Date().toLocaleString();
+        const elementDate = new Date().toLocaleDateString();
 
         // Déterminer l'icône en fonction du type d'élément
         let iconName = '';
@@ -485,7 +701,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.onclick = function(event) {
         const partModal = document.getElementById('part-modal');
         const elementModal = document.getElementById('element-modal');
-        if (event.target == partModal || event.target == elementModal) {
+        if (event.target === partModal || event.target === elementModal) {
             partModal.style.display = 'none';
             elementModal.style.display = 'none';
         }
