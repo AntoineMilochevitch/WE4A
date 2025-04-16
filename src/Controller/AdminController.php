@@ -43,12 +43,12 @@ class AdminController extends AbstractController
         $usersData = [];
         foreach ($user as $entity) {
             $usersData[] = [
-                'id' => $entity->getId(),
-                'nom' => $entity->getNom(),
-                'prenom' => $entity->getPrenom(),
-                'email' => $entity->getEmail(),
-                'mdp' => $entity->getMdp()
+                'id' => $entity['id'],
+                'nom' => $entity['nom'] ?? null,
+                'prenom' => $entity['prenom'] ?? null,
+                'email' => $entity['email'] ?? null
             ];
+
         }
 
         // Récupérer les cours
@@ -61,11 +61,12 @@ class AdminController extends AbstractController
         $coursesData = [];
         foreach ($course as $entity) {
             $coursesData[] = [
-                'id' => $entity->getId(),
-                'code' => $entity->getCode(),
-                'nom' => $entity->getNom(),
-                'description' => $entity->getDescription()
+                'id' => $entity['id'],
+                'code' => $entity['code'] ?? null,
+                'nom' => $entity['nom'] ?? null,
+                'description' => $entity['description'] ?? null
             ];
+
         }
 
         $responseData = [
