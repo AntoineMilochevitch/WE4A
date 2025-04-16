@@ -1,3 +1,6 @@
+let utilisateurs = [];
+let ue = [];
+
 document.addEventListener('DOMContentLoaded', function() {
     const selectionDiv = document.querySelector('.selection');
 
@@ -19,7 +22,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Création du div
     const contentDiv = document.querySelector('.content-display');
 
-    utilisateurs = [
+    fetchInfo();
+
+    /*utilisateurs = [
         { id: 1, name: 'MOLIERES', first_name: 'Samuel', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4A']},
         { id: 2, name: 'EL ANDALOUSSI BENBRAHIM', first_name: 'Nizar', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4B']},
         { id: 3, name: 'MILOCHEVITCH', first_name: 'Antoine', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
@@ -32,9 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 10, name: 'PROF1', first_name: 'Prof1', role: 'Professeur' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40']},
         { id: 11, name: 'PROF2', first_name: 'Prof2', role: 'Professeur' ,departement: 'INFO', inscription: ['IA41', 'AP4A', 'AP4B']},
         { id: 12, name: 'PROF3', first_name: 'Prof3', role: 'Professeur' ,departement: 'MECA', inscription: ['MT3F', 'PS25', 'MAA1', 'CM1A', 'CM1B']},
-    ];
+    ];*/
 
-    ue = [
+    /*ue = [
         { id: 1, code: 'WE4A', libelle: 'Technologies et programmation WEB', description: 'Maîtriser les technologies Web permettant de créer des sites Web modernes'},
         { id: 2, code: 'WE4B', libelle: 'Technologies WEB avancées', description: 'Comprendre et appliquer une architecture web avancée à l\'aide d\'un Framework'},
         { id: 3, code: 'SI40', libelle: 'Systèmes d\'information', description: 'Mettre en œuvre des outils de conception de systèmes d\'information permettant la mise en application des méthodes associées'},
@@ -47,16 +52,38 @@ document.addEventListener('DOMContentLoaded', function() {
         { id: 10, code: 'CM1B', libelle: 'Organisation de la matière - partie II', description: 'Décrire les concepts de base de la chimie générale : Solubilité, oxydo-réduction, cinétique chimique'},
         { id: 11, code: 'PS22', libelle: 'Electronique analogique', description: 'Donner les bases tant théoriques que pratiques de l\'électronique analogique'},
         { id: 12, code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
-    ];
+    ];*/
 
-    function fetchInfo() {
+    async function fetchInfo() {
         fetch('/api/admin')
             .then(response => response.json())
             .then(data => {
                 const { users, courses } = data;
+                users.forEach(user => {
+                    utilisateurs.push(user);
+                    alert(user.nom);
+                })
+                courses.forEach(course => {
+                    ue.push(course);
+                    alert(course.code);
+                })
+                showUtilisateurs();
             })
             .catch(error => console.error('Error fetching courses/users:', error));
     }
+
+    function fetchInfoElement(type, callback) {
+        fetchInfo((users, courses) => {
+            if (type === "users") {
+                callback(users);
+            } else if (type === "courses") {
+                callback(courses);
+            } else {
+                console.error('Type inconnu pour fetchInfoElement :', type);
+            }
+        });
+    }
+
 
     function showUtilisateurs() {
         contentDiv.innerHTML = ''; // Clear previous content
@@ -74,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         header.textContent = 'Liste des Utilisateurs';
         contentDiv.appendChild(header);
 
-        i = 0;
+        let i = 0;
         const ul = document.createElement('ul');
         utilisateurs.forEach(utilisateur => {
             const li = document.createElement('li');
@@ -82,23 +109,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
-            nameSpan.textContent = utilisateur.name;
+            nameSpan.textContent = utilisateur.nom.textContent;
             li.appendChild(nameSpan);
 
             const firstNameSpan = document.createElement('span');
             firstNameSpan.className = 'item-first_name';
-            firstNameSpan.textContent = utilisateur.first_name;
+            firstNameSpan.textContent = utilisateur.prenom.textContent;
             li.appendChild(firstNameSpan);
 
+            /* Activer si les utilisateurs sont associés à un role
             const roleSpan = document.createElement('span');
             roleSpan.className = 'item-role';
             roleSpan.textContent = utilisateur.role;
             li.appendChild(roleSpan);
+             */
 
+            /* Activer si les utilisateurs sont associés à un departement
             const departementSpan = document.createElement('span');
             departementSpan.className = 'item-departement';
             departementSpan.textContent = utilisateur.departement;
             li.appendChild(departementSpan);
+             */
 
             const editButton = document.createElement('button');
             editButton.className = 'btn-edit btn-action';
@@ -153,12 +184,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-code';
-            nameSpan.textContent = course.code;
+            nameSpan.textContent = course.code.textContent;
             li.appendChild(nameSpan);
 
             const descriptionSpan = document.createElement('span');
             descriptionSpan.className = 'item-libelle';
-            descriptionSpan.textContent = course.libelle;
+            descriptionSpan.textContent = course.nom.textContent;
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
@@ -189,9 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
         utilisateursButton.disabled = false;
         utilisateursButton.classList.add('btn-enabled');
     }
-
-    fetchInfo();
-    showUtilisateurs(); // Pour initialiser la page avec la liste des users
 
     
     // Fonction qui permet d'afficher le formulaire de création d'un élément dans l'une des listes
