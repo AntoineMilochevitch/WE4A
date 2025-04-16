@@ -13,9 +13,11 @@
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <div class="content">
         <div class="container">
+
+
             <div class="cards-wrapper">
                 <div class="card-arrows">
                     <button class="arrow left" id="arrowLeft">
@@ -27,34 +29,23 @@
                 </div>
 
                 <div class="cards-container" id="scrollContainer">
-                    {% for i in 1..6 %}
-                        <a href="#">
-                            <div class="card">
-                                <img src="{{ asset('images/course_image.png') }}" alt="Card Logo" class="card__image">
-                                <div class="card__content">
-                                    <p class="card__title">UE</p>
-                                    <p class="card__description">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    {% endfor %}
+                    <!-- Les cours seront chargés dynamiquement ici via JS -->
                 </div>
             </div>
 
-            <!--  Barre de progression ajoutée ici -->
-<div class="progress-bar-container">
-    <div id="progressBar" class="progress-bar"></div>
-</div>
+
+            <div class="progress-bar-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
 
             <hr class="separator">
+
 
             <h2 class="section-title">Notifications Récentes</h2>
 
             <div class="info-container">
                 {% for notif in notifications %}
-                    <div class="info-item {{ notif.typeNotif.typeNotif|lower }}">
+                    <div class="info-item {{ notif.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
                         <div class="info-content">
                             <div class="info-title">
                                 {{ notif.typeNotif.typeNotif|upper }}
@@ -80,13 +71,7 @@
                     <p>Aucune notification pour le moment.</p>
                 {% endfor %}
             </div>
-
-
-            <div class="search">
-                <input type="text" placeholder="Rechercher un cours">
-                <button><ion-icon name="search-outline"></ion-icon></button>
-            </div>
         </div>
     </div>
-</body>
+    </body>
 {% endblock %}

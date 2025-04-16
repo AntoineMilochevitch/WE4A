@@ -12,13 +12,9 @@ use App\Repository\NotificationRepository;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(NotificationRepository $notificationRepository): Response
+    public function index(): Response
     {
-        $notifications = $notificationRepository->findBy([], ['date' => 'DESC']);
-
-        return $this->render('index.html.twig', [
-            'notifications' => $notifications,
-        ]);
+        return $this->render('index.html.twig');
     }
 
     #[Route('/my-courses', name: 'my_courses')]
