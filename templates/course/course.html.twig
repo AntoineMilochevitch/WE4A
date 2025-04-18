@@ -11,13 +11,14 @@
     {{ parent() }}
     <script src="{{ asset('js/courseModif.js') }}"></script>
     <script>
-        const ueId = {{ ueId }};
+        const ueId = {{ ueId }}; // Variable récupérée depuis le contrôleur pour l'id de l'ue
         document.addEventListener("DOMContentLoaded", () => {
             const courseContent = document.querySelector(".course-content");
             const participantsContent = document.querySelector(".participants-content");
             const courseMenuItems = document.querySelectorAll(".course-menu-li a");
             const addPartButton = document.querySelector(".btn-add-part");
 
+            // Changement de vue cours-participants
             courseMenuItems.forEach((item) => {
                 item.addEventListener("click", (e) => {
                     e.preventDefault();

@@ -38,7 +38,7 @@
                     <canvas id="snakeGame" width="400" height="400"></canvas>
                 </div>
             </div>
-
+            <!-- Emploi du temps (idée d'implémentation) -->
             <div class="emploi-du-temps">
                 <h1>Emploi du temps</h1>
                 <div class="edt">
@@ -104,10 +104,11 @@
     <script>
         document.getElementById('edit-profile-form').addEventListener('submit', sendUpdatedProfile);
         function sendUpdatedProfile(event) {
-            event.preventDefault();
+            event.preventDefault(); // Empêche le rechargement de la page
 
             const formData = new FormData(event.target);
             const errorContainer = document.getElementById('error-message');
+            //
             fetch('/api/profile/update_profile', {
                 method: 'POST',
                 body: formData,
