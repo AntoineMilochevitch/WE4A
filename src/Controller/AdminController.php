@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Repository\UserRepository;
+use App\Repository\UsersRepository;
 use App\Entity\UE;
 use App\Repository\UeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin')]
-    public function index(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): \Symfony\Component\HttpFoundation\Response
+    public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository, UeRepository $ueRepository): \Symfony\Component\HttpFoundation\Response
     {
         $users = $userRepository->allUsers();
         $ue = $ueRepository->allUE();
@@ -31,7 +31,7 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin', name: 'api_admin')]
-    public function getInfo(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    public function getInfo(EntityManagerInterface $entityManager, UsersRepository $userRepository, UeRepository $ueRepository): JsonResponse
     {
         // Récupérer les utilisateurs
         $user = $userRepository->allUsers();
