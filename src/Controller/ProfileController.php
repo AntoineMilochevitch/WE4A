@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Users;
-use App\Repository\UserRepository;
+use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ProfileController extends AbstractController
 {
     #[Route('/api/profile', name: 'api_profile')]
-    public function index(EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
+    public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository): JsonResponse
     {
         $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
         if (!$user) {
