@@ -10,6 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MyCoursesController extends AbstractController
 {
+
+    /**
+     * Pour récupérer les cours de l'utilisateur
+     * @Route("/api/my-courses", name="api_my_courses", methods={"GET"})
+     */
     #[Route('/api/my-courses', name: 'api_my_courses')]
     public function getCourses(): JsonResponse
     {
@@ -47,6 +52,11 @@ class MyCoursesController extends AbstractController
         return new JsonResponse($courseData);
     }
 
+    /**
+     * Pour basculer l'état des favoris d'un cours
+     * @Route("/api/toggle-favoris/{id}", name="toggle_favoris", methods={"POST"})
+     * @param int $id
+     */
     #[Route('/api/toggle-favoris/{id}', name: 'toggle_favoris', methods: ['POST'])]
     public function toggleFavoris(int $id, EntityManagerInterface $entityManager): JsonResponse
     {

@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends AbstractController
 {
+    /**
+     * Récupérer le profil de l'utilisateur
+     * @Route("/api/profile", name="api_profile")
+     * @return JsonResponse
+     */
     #[Route('/api/profile', name: 'api_profile')]
     public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository): JsonResponse
     {
@@ -45,6 +50,11 @@ class ProfileController extends AbstractController
         return new JsonResponse($profile);
     }
 
+    /**
+     * pour mettre à jour le score de l'utilisateur
+     * @Route("/api/profile/update_score", name="update_score")
+     * @return JsonResponse
+     */
     #[Route('/api/profile/update_score', name: 'update_score', methods: ['POST'])]
     public function updateScore(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -66,6 +76,11 @@ class ProfileController extends AbstractController
         return new JsonResponse(['error' => 'Score non fourni'], 400);
     }
 
+    /**
+     * Mettre à jour le profil de l'utilisateur
+     * @Route("/api/profile/update_profile", name="update_profile")
+     * @return JsonResponse
+     */
     #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
     public function updateProfile(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {

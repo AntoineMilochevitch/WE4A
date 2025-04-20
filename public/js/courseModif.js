@@ -6,7 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const courseContent = document.querySelector('.course-content');
     const participantsContent = document.querySelector('.participants-content');
 
-    // Charger les sections depuis l'API
+    /**
+     * Load sections from the API
+     * @param ueId
+     */
     function loadSections(ueId) {
         fetch(`/api/course/${ueId}/sections`)
             .then(response => response.json())
@@ -31,7 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadSections(ueId);
 
-    // Charger les participants depuis l'API
+    /**
+     * Load participants from the API
+     * @param ueId
+     */
     function loadParticipants(ueId) {
         fetch(`/api/course/${ueId}/users`)
             .then(response => response.json())
@@ -74,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    /**
+     * Toggle the display of part content
+     * @param header
+     */
     function togglePartContent(header) {
         if (isEditing) return;
         const partContent = header.nextElementSibling;
@@ -82,6 +92,12 @@ document.addEventListener('DOMContentLoaded', function() {
         header.classList.toggle('collapsed', !isCollapsed);
     }
 
+    /**
+     * Save section to server
+     * @param ueId
+     * @param title
+     * @param elements
+     */
     function saveSectionToServer(ueId, title, elements) {
         fetch(`/api/course/${ueId}/add_section`, {
             method: 'POST',
@@ -108,6 +124,12 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    /**
+     * Save element to server
+     * @param ueId
+     * @param sectionId
+     * @param element
+     */
     function saveElementToServer(ueId, sectionId, element) {
         console.log('Données envoyées :', {
             sectionId: sectionId,
@@ -138,7 +160,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Erreur réseau :', error));
     }
 
-    // Créer une nouvelle partie
+    /**
+     * Create a new part
+     * @param title
+     * @param elements
+     * @param sectionId
+     */
     function createPart(title, elements, sectionId) {
         const courseContent = document.querySelector('.course-content');
         if (!courseContent) {
@@ -203,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // Supprimer la section du serveur
             fetch(`/api/course/${ueId}/delete_section/${sectionId}`, {
                 method: 'DELETE',
                 headers: {
@@ -224,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => console.error("Erreur réseau :", error));
         });
 
+        // Ajouter les événements aux éléments de la nouvelle partie
         newPart.querySelectorAll('.btn-delete-element').forEach(btn => {
             btn.addEventListener('click', function () {
                 const element = btn.parentElement.parentElement;
@@ -266,6 +295,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Save changes to the section
+     * @param part
+     */
     function saveChanges(part) {
         const sectionId = part.dataset.sectionId;
         const title = part.querySelector('.part-header h2').innerText;
@@ -298,7 +331,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error("Erreur réseau :", error));
     }
 
-    // Modifier une partie
+    /**
+     * Edit the part
+     * @param part
+     * @param editButton
+     */
     function editPart(part, editButton) {
         const header = part.querySelector('.part-header');
         const title = header.querySelector('h2');
@@ -330,7 +367,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // View the form to add a new part
+    /**
+     * Display the form to add a new part
+     */
     function showPartForm() {
         const modal = document.getElementById('part-modal');
         modal.style.display = 'block';
@@ -431,6 +470,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : ''
             }));
 
+            // Send the data to the server
             saveSectionToServer(ueId, title, elements)
                 .then(response => {
                     if (response.id) {
@@ -452,8 +492,12 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.style.display = 'none';
         });
     }
-    
-    // Get the icon name based on the file type
+
+    /**
+     * Get the file icon based on the file type
+     * @param fileType
+     * @returns {string}
+     */
     function getFileIcon(fileType) {
         switch (fileType) {
             case 'pdf':
@@ -471,7 +515,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Display the form to add a new element
+    /**
+     * Display the form to add a new element
+     * @param part
+     */
     function showElementForm(part) {
         activePart = part;
         const modal = document.getElementById('element-modal');
@@ -500,6 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // Récupérer les valeurs des champs
             const sectionId = activePart.dataset.sectionId;
             const elementType = document.getElementById('ele-element-type').value;
             const elementText = document.getElementById('ele-element-text').value;
@@ -525,6 +573,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Add the new element to the active part
+     */
     function addElementToPart() {
         if (!activePart) {
             console.error('Aucune partie active définie.');
@@ -597,6 +648,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('ele-element-description').value = '';
     }
 
+    /**
+     * Delete an element
+     * @param element
+     */
     function deleteElement(element) {
         //add pop up to confirm removal
         const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
@@ -610,6 +665,9 @@ document.addEventListener('DOMContentLoaded', function() {
         element.remove();
     }
 
+    /**
+     * Listener for the element type dropdown
+     */
     document.getElementById('part-element-type').addEventListener('change', function() {
         const elementType = this.value;
         const elementFields = document.getElementById('part-element-fields');
@@ -645,7 +703,10 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
         }
     });
-    
+
+    /**
+     * Listener for the element type dropdown in the modal
+     */
     document.getElementById('ele-element-type').addEventListener('change', function() {
         const elementType = this.value;
         const elementFields = document.getElementById('ele-element-fields');
