@@ -15,7 +15,7 @@ class ProfileController extends AbstractController
     #[Route('/api/profile', name: 'api_profile')]
     public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository): JsonResponse
     {
-        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
+        $user = $this->getUser(); // ID de l'utilisateur actuel
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
         }
