@@ -127,4 +127,14 @@ class Ue
         return $this;
     }
 
+    public function findByCodeLike(string $search): array
+    {
+        return $this->createQueryBuilder('u')
+            ->where('LOWER(u.code) LIKE :search')
+            ->setParameter('search', '%' . strtolower($search) . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 }

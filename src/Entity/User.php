@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
 {
@@ -33,23 +34,7 @@ class User
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $score;
 
-    #[ORM\ManyToMany(targetEntity: Role::class, inversedBy: 'users')]
-    #[ORM\JoinTable(name: 'user_role')]
-    private Collection $roles;
 
-    #[ORM\ManyToMany(targetEntity: Notification::class, inversedBy: 'users')]
-    #[ORM\JoinTable(name: 'user_notif')]
-    private Collection $userNotifications;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
-    private Collection $userUes;
-
-    public function __construct()
-    {
-        $this->roles = new ArrayCollection();
-        $this->userNotifications = new ArrayCollection();
-        $this->userUes = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -135,17 +120,7 @@ class User
         return $this;
     }
 
-    public function getRoles(): Collection
-    {
-        return $this->roles;
-    }
 
-    public function setRoles(Collection $roles): static
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
 
     public function addRole(Role $role): static
     {
@@ -165,17 +140,8 @@ class User
         return $this;
     }
 
-    public function getUserNotifications(): Collection
-    {
-        return $this->userNotifications;
-    }
 
-    public function setUserNotifications(Collection $userNotifications): static
-    {
-        $this->userNotifications = $userNotifications;
 
-        return $this;
-    }
 
     public function addUserNotification(Notification $notification): static
     {
@@ -195,17 +161,6 @@ class User
         return $this;
     }
 
-    public function getUserUes(): Collection
-    {
-        return $this->userUes;
-    }
-
-    public function setUserUe(Collection $ue): static
-    {
-        $this->userUes = $ue;
-
-        return $this;
-    }
 
     public function addUserUe(UserUe $userUe): static
     {

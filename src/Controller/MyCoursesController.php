@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Entity\UserUe;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,7 @@ class MyCoursesController extends AbstractController
     public function getCourses(EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur avec l'ID 1
-        $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(Users::class)->find(1);
 
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
@@ -45,7 +45,7 @@ class MyCoursesController extends AbstractController
     public function toggleFavoris(int $id, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur avec l'ID 1
-        $user = $entityManager->getRepository(User::class)->find(1);
+        $user = $entityManager->getRepository(Users::class)->find(1);
 
         if (!$user) {
             return new JsonResponse(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);

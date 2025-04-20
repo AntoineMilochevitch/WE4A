@@ -32,4 +32,14 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function countUsersByRole(int $roleLabel): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->join('u.roles', 'r')
+            ->where('r.label = :role')
+            ->setParameter('role', $roleLabel)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

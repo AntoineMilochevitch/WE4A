@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,7 +15,7 @@ class ProfileController extends AbstractController
     #[Route('/api/profile', name: 'api_profile')]
     public function index(EntityManagerInterface $entityManager, UserRepository $userRepository): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find(1); // ID de l'utilisateur actuel
+        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
         if (!$user) {
             throw $this->createNotFoundException('Utilisateur non trouvé');
         }
@@ -48,7 +48,7 @@ class ProfileController extends AbstractController
     #[Route('/api/profile/update_score', name: 'update_score', methods: ['POST'])]
     public function updateScore(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find(1); // ID de l'utilisateur actuel
+        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
@@ -69,7 +69,7 @@ class ProfileController extends AbstractController
     #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
     public function updateProfile(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find(1); // ID de l'utilisateur actuel
+        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
 
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
