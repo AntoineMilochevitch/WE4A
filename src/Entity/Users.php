@@ -45,7 +45,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinTable(name: 'user_notif')]
     private Collection $userNotifications;
 
-    #[ORM\OneToMany(mappedBy: 'users', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
     private Collection $userUes;
 
     public function __construct()

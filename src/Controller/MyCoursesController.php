@@ -12,10 +12,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class MyCoursesController extends AbstractController
 {
     #[Route('/api/my-courses', name: 'api_my_courses')]
-    public function getCourses(EntityManagerInterface $entityManager): JsonResponse
+    public function getCourses(): JsonResponse
     {
-        // Récupérer l'utilisateur avec l'ID 1
-        $user = $entityManager->getRepository(Users::class)->find(1);
+        // Récupérer l'utilisateur
+        $user = $this->getUser();
 
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
@@ -24,9 +24,16 @@ class MyCoursesController extends AbstractController
         // Récupérer les cours auxquels l'utilisateur est inscrit
         $userUes= $user->getUserUes();
 
+        if (!$user->getUserUes() instanceof \Doctrine\Common\Collections\Collection || $user->getUserUes()->isEmpty()) {
+            return new JsonResponse(['error' => 'Aucun cours trouvé'], 404);
+        }
+
         $courseData = [];
         foreach ($userUes as $userUe) {
             $ue = $userUe->getUe();
+            if (!$ue) {
+                continue; // Ignorez les entrées invalides
+            }
             $courseData[] = [
                 'id' => $ue->getId(),
                 'nom' => $ue->getNom(),
