@@ -9,9 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 class UserUe
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'userUes')]
+    #[ORM\ManyToOne(targetEntity: Users::class, inversedBy: 'userUes')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    private ?Users $user = null;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Ue::class, inversedBy: 'userUes')]
@@ -24,12 +24,12 @@ class UserUe
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $lastVisited = null;
 
-    public function getUser(): ?User
+    public function getUser(): ?Users
     {
         return $this->user;
     }
 
-    public function setUser(?User $user): static
+    public function setUser(?Users $user): static
     {
         $this->user = $user;
 

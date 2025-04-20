@@ -275,7 +275,6 @@ class CourseController extends AbstractController
                 }
             }
         }
-
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Section mise à jour avec succès']);
