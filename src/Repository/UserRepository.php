@@ -32,16 +32,14 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-    public function findAllUsersEnhanced(): array{
+    public function countUsersByRole(int $roleLabel): int
+    {
         return $this->createQueryBuilder('u')
-            ->select('u.id, u.nom, u.prenom, u.email, r.nom AS role, ue.code AS course_code')
-            ->leftJoin('u.roles', 'r')
-            ->leftJoin('u.userUes', 'uu')
-            ->leftJoin('uu.ue', 'ue')
-            ->orderBy('u.id', 'ASC')
+            ->select('COUNT(u.id)')
+            ->join('u.roles', 'r')
+            ->where('r.label = :role')
+            ->setParameter('role', $roleLabel)
             ->getQuery()
-            ->getArrayResult();
+            ->getSingleScalarResult();
     }
-
-
 }

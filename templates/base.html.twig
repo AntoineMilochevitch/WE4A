@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
-            <button class="Btn" onclick="window.location.href='{{ path('login') }}'">
+            <button class="Btn" onclick="window.location.href='{{ path('app_logout') }}'">
                 <div class="sign">
                     <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
                 </div>
@@ -45,7 +45,6 @@
         </ul>
     </div>
 </header>
-
 
 <div id="notificationPanel" class="notification-panel">
     <div class="notification-header">
@@ -63,6 +62,12 @@
         {% endfor %}
     </div>
 </div>
+
+{% if app.user %}
+    <div class="mb-3">
+        You are logged in as {{ app.user.userIdentifier }}
+    </div>
+{% endif %}
 
 {% block body %}
 {% endblock %}

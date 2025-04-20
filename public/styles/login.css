@@ -1,0 +1,160 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+    margin: 0;
+    background-image: url('../images/background.jpeg');
+}
+
+.login-container {
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 0px 100px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 70%;
+    flex-direction: column;
+    align-items: center;
+    gap:20px;
+}
+
+input, #connexion {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0; /* Suppression du décalage horizontal */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: block; /* Garantit un bon alignement */
+}
+
+
+.login-container a {
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.password-container input {
+    flex: 1; /* Le champ prend tout l’espace disponible */
+}
+
+.password-container img {
+    position: absolute;
+    right: 10px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+}
+
+
+#connexion {
+    border: none;
+    color: #ffffff;
+    background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border-radius: 20px;
+    background-size: 100% auto;
+    font-family: inherit;
+    font-size: 17px;
+    padding: 0.6em 1.5em;
+    cursor: pointer;
+    transition: background-size 0.3s ease-in-out;
+}
+#connexion:hover {
+    background-position: right center;
+    background-size: 200% auto;
+    -webkit-animation: pulse512 1.5s infinite;
+    animation: pulse512 1.5s infinite;
+}
+@keyframes pulse512 {
+    0% {
+        box-shadow: 0 0 0 0 #05bada66;
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(218, 103, 68, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(218, 103, 68, 0);
+    }
+}
+
+.login-container-stat{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 50%;
+    gap: 15px;
+    padding: 20px;
+    color: #ffffff;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    flex: 100%; /* Chaque item prend une hauteur égale */
+    margin-bottom: 10px;
+}
+
+.stat-item img {
+    width: 40px !important; /* Ajuste la largeur */
+    height: auto; /* Garde les proportions */
+}
+
+.hbox {
+    display: flex;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out; /* Animation fluide */
+    width: 750px;
+    height: 380px;
+}
+
+.hbox:hover {
+    transform: scale(1.1); /* Agrandit le div de 10% */
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); /* Ombre légère */
+}
+
+.stat-item:hover{
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    transform: translateY(-5px); /* Faire monter l'image légèrement */
+}
+
+h2{
+    text-align: center;
+    font-size: 35px;
+    margin: 0px;
+    color: #ffffff;
+}
+
+.signup-link {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.signup-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+}
