@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Users;
 use App\Entity\UserUe;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -52,7 +51,7 @@ class MyCoursesController extends AbstractController
     public function toggleFavoris(int $id, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer l'utilisateur avec l'ID 1
-        $user = $entityManager->getRepository(Users::class)->find(1);
+        $user = $this->getUser(); // ID de l'utilisateur actuel
 
         if (!$user) {
             return new JsonResponse(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
