@@ -15,7 +15,7 @@ class MainController extends AbstractController
     #[Route('/', name: 'home')]
     public function index(UserNotifRepository $userNotifRepository): Response
     {
-        $user = $this->getUser(); // ✅
+        $user = $this->getUser();
         $notifications = [];
 
         if ($user) {
@@ -25,13 +25,13 @@ class MainController extends AbstractController
             ], [
                 'notification' => 'DESC'
             ]);
-
         }
 
         return $this->render('index.html.twig', [
             'notifications' => $notifications
         ]);
     }
+
 
     #[Route('/my-courses', name: 'my_courses')]
     public function myCourses(): Response
