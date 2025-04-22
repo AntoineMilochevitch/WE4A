@@ -58,7 +58,8 @@
                             <span class="menu-dots">⋮</span>
                             <div class="menu-popup">
                                 {% if not notif.estVu %}
-                                    <button class="menu-button mark-read-btn">✅ Marquer comme lu</button>
+                                    <button class="menu-button mark-read-btn" data-id="{{ notif.notification.id }}">✅ Marquer comme lu</button>
+
                                 {% endif %}
                                 <button class="menu-button delete-btn">🗑️ Supprimer</button>
                             </div>
