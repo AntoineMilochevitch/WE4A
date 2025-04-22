@@ -19,10 +19,13 @@ class MainController extends AbstractController
         $notifications = [];
 
         if ($user) {
-            $notifications = $userNotifRepository->findBy(
-                ['usersId' => $user->getId()],
-                ['notification' => 'DESC']
-            );
+            $notifications = $userNotifRepository->findBy([
+                'usersId' => $user->getId(),
+                'estVu' => false
+            ], [
+                'notification' => 'DESC'
+            ]);
+
         }
 
         return $this->render('index.html.twig', [
