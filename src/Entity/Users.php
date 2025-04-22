@@ -41,24 +41,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $score;
 
-    #[ORM\ManyToMany(targetEntity: Notification::class, inversedBy: 'users')]
-    #[ORM\JoinTable(name: 'user_notif')]
-    private Collection $userNotifications;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
     private Collection $userUes;
-
-    public function __construct()
-    {
-        $this->userNotifications = new ArrayCollection();
-        $this->userUes = new ArrayCollection();
-    }
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    public function __construct()
+    {
+        $this->userUes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -108,33 +103,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
     public function getUserIdentifier(): string
     {
         return (string) $this->email;
     }
 
-    /**
-     * @see UserInterface
-     *
-     * @return list<string>
-     */
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -142,9 +123,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see PasswordAuthenticatedUserInterface
-     */
     public function getPassword(): ?string
     {
         return $this->password;
@@ -181,44 +159,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @see UserInterface
-     */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    }
-
-
-    public function getUserNotifications(): Collection
-    {
-        return $this->userNotifications;
-    }
-
-    public function setUserNotifications(Collection $userNotifications): static
-    {
-        $this->userNotifications = $userNotifications;
-
-        return $this;
-    }
-
-    public function addUserNotification(Notification $notification): static
-    {
-        if (!$this->userNotifications->contains($notification)) {
-            $this->userNotifications[] = $notification;
-        }
-
-        return $this;
-    }
-
-    public function removeUserNotification(Notification $notification): static
-    {
-        if ($this->userNotifications->contains($notification)) {
-            $this->userNotifications->removeElement($notification);
-        }
-
-        return $this;
+        // Clear temporary sensitive data here if needed
     }
 
     public function getUserUes(): Collection
