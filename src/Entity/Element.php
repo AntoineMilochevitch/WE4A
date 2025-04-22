@@ -40,6 +40,12 @@ class Element
     #[ORM\ManyToMany(targetEntity: Section::class, mappedBy: 'elements')]
     private Collection $sections;
 
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    private ?string $importance = null;
+
+    #[ORM\Column(type: Types::BLOB, nullable: true)]
+    private $fichier = null;
+
     public function __construct()
     {
         $this->sections = new ArrayCollection();
@@ -149,6 +155,30 @@ class Element
         if ($this->sections->removeElement($section)) {
             $section->removeElement($this);
         }
+
+        return $this;
+    }
+
+    public function getImportance(): ?string
+    {
+        return $this->importance;
+    }
+
+    public function setImportance(?string $importance): static
+    {
+        $this->importance = $importance;
+
+        return $this;
+    }
+
+    public function getFichier()
+    {
+        return $this->fichier;
+    }
+
+    public function setFichier($fichier): static
+    {
+        $this->fichier = $fichier;
 
         return $this;
     }

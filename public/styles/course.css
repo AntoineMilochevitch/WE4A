@@ -308,6 +308,19 @@
     color: #005f8a;
 }
 
+.part-content .btn-download-element {
+    margin-left: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #007BC0;
+    align-self: flex-end;
+}
+
+/* Delete element button hover effect */
+.element .btn-download-element:hover {
+    color: #005f8a;
+}
+
 /* Hide element styling */
 .element.hide {
     display: none;
@@ -352,6 +365,19 @@
     padding-left: 34px; /* Align with icon */
 }
 
+/* Couleurs pour les niveaux d'importance */
+.icon-importance-low {
+    color: green;
+}
+
+.icon-importance-medium {
+    color: orange;
+}
+
+.icon-importance-high {
+    color: red;
+}
+
 /* Editable class styling */
 .editable {
     border: 1px dashed #007BC0;
@@ -380,6 +406,16 @@
 .participant-firstname {
     margin-right: 10px;
     font-size: 16px;
+}
+
+.participant-email {
+    color: #007BC0;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.participant-email:hover {
+    text-decoration: underline;
 }
 
 .course-menu ul li a.active {
