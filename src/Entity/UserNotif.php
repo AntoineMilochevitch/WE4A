@@ -15,8 +15,9 @@ class UserNotif
     private ?int $usersId = null;
 
     #[ORM\Id]
-    #[ORM\Column(name: 'notification_id', type: 'integer')]
-    private ?int $notificationId = null;
+    #[ORM\ManyToOne(targetEntity: Notification::class)]
+    #[ORM\JoinColumn(name: 'notification_id', referencedColumnName: 'id', nullable: false)]
+    private ?Notification $notification = null;
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => false])]
     private ?bool $estVu = false;
@@ -32,14 +33,14 @@ class UserNotif
         return $this;
     }
 
-    public function getNotificationId(): ?int
+    public function getNotification(): ?Notification
     {
-        return $this->notificationId;
+        return $this->notification;
     }
 
-    public function setNotificationId(int $notificationId): static
+    public function setNotification(Notification $notification): static
     {
-        $this->notificationId = $notificationId;
+        $this->notification = $notification;
         return $this;
     }
 
