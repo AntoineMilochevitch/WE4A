@@ -42,4 +42,16 @@ class UsersRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+    public function findAllUsersEnhanced(): array{
+        return $this->createQueryBuilder('u')
+            ->select('u.id, u.nom, u.prenom, u.email, r.nom AS role, ue.code AS course_code')
+            ->leftJoin('u.roles', 'r')
+            ->leftJoin('u.userUes', 'uu')
+            ->leftJoin('uu.ue', 'ue')
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+
 }
