@@ -11,14 +11,14 @@
     {{ parent() }}
     <script src="{{ asset('js/courseModif.js') }}"></script>
     <script>
-        const ueId = {{ ueId }};
-        console.log('ueId:', ueId);
+        const ueId = {{ ueId }}; // Variable récupérée depuis le contrôleur pour l'id de l'ue
         document.addEventListener("DOMContentLoaded", () => {
             const courseContent = document.querySelector(".course-content");
             const participantsContent = document.querySelector(".participants-content");
             const courseMenuItems = document.querySelectorAll(".course-menu-li a");
             const addPartButton = document.querySelector(".btn-add-part");
 
+            // Changement de vue cours-participants
             courseMenuItems.forEach((item) => {
                 item.addEventListener("click", (e) => {
                     e.preventDefault();
@@ -64,19 +64,7 @@
                         <ion-icon name="chevron-down-outline"></ion-icon>
                         <h2>Professeurs</h2>
                     </div>
-                    <div class="part-content" style="display: none;">
-                        <div class="participant">
-                            <img src="{{ asset('images/profil_pic1.jpg') }}" alt="Photo de profil" class="profile-pic">
-                            <span class="participant-name">Nom</span>
-                            <span class="participant-firstname">Prénom</span>
-                        </div>
-                        <div class="ligne-gris"></div>
-                        <div class="participant">
-                            <img src="{{ asset('images/profil_pic3.jpg') }}" alt="Photo de profil" class="profile-pic">
-                            <span class="participant-name">Nom</span>
-                            <span class="participant-firstname">Prénom</span>
-                        </div>
-                    </div>
+                    <div class="part-content"></div>
                 </div>
 
                 <div class="students">
@@ -84,14 +72,7 @@
                         <ion-icon name="chevron-down-outline"></ion-icon>
                         <h2>Élèves</h2>
                     </div>
-                    <div class="part-content" style="display: none;">
-                        <div class="participant">
-                            <img src="{{ asset('images/profil_pic2.jpg') }}" alt="Photo de profil" class="profile-pic">
-                            <span class="participant-name">Nom</span>
-                            <span class="participant-firstname">Prénom</span>
-                        </div>
-                        <div class="ligne-gris"></div>
-                    </div>
+                    <div class="part-content"></div>
                 </div>
             </div>
         </div>

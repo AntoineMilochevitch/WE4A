@@ -2,18 +2,18 @@
 
 namespace App\Repository;
 
-use App\Entity\User;
+use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<User>
+ * @extends ServiceEntityRepository<Users>
  */
-class UserRepository extends ServiceEntityRepository
+class UsersRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, User::class);
+        parent::__construct($registry, Users::class);
     }
 
     // find all socre's user
@@ -32,6 +32,16 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function countUsersByRole(int $roleLabel): int
+    {
+        return $this->createQueryBuilder('u')
+            ->select('COUNT(u.id)')
+            ->join('u.roles', 'r')
+            ->where('r.label = :role')
+            ->setParameter('role', $roleLabel)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
     public function findAllUsersEnhanced(): array{
         return $this->createQueryBuilder('u')
             ->select('u.id, u.nom, u.prenom, u.email, r.nom AS role, ue.code AS course_code')

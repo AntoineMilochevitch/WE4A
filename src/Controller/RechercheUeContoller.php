@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UeApiController extends AbstractController
+class RechercheUeContoller extends AbstractController
 {
     #[Route('/api/ue', name: 'api_ue', methods: ['GET'])]
     public function index(UeRepository $ueRepository): JsonResponse

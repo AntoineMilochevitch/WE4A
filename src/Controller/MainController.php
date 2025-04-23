@@ -8,14 +8,30 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Ue;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\NotificationRepository;
+use App\Repository\UserNotifRepository;
 
 class MainController extends AbstractController
 {
     #[Route('/', name: 'home')]
-    public function index(): Response
+    public function index(UserNotifRepository $userNotifRepository): Response
     {
-        return $this->render('index.html.twig');
+        $user = $this->getUser();
+        $notifications = [];
+
+        if ($user) {
+            $notifications = $userNotifRepository->findBy([
+                'usersId' => $user->getId(),
+                'estVu' => false
+            ], [
+                'notification' => 'DESC'
+            ]);
+        }
+
+        return $this->render('index.html.twig', [
+            'notifications' => $notifications
+        ]);
     }
+
 
     #[Route('/my-courses', name: 'my_courses')]
     public function myCourses(): Response

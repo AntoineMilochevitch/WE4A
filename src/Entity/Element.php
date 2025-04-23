@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ElementRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -34,6 +36,20 @@ class Element
     #[ORM\Column(type: Types::BOOLEAN)]
     #[ORM\Options(default: false)]
     private ?bool $estVisible;
+
+    #[ORM\ManyToMany(targetEntity: Section::class, mappedBy: 'elements')]
+    private Collection $sections;
+
+    #[ORM\Column(type: 'string', length: 50, nullable: true)]
+    private ?string $importance = null;
+
+    #[ORM\Column(type: Types::BLOB, nullable: true)]
+    private $fichier = null;
+
+    public function __construct()
+    {
+        $this->sections = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -118,4 +134,53 @@ class Element
 
         return $this;
     }
+
+    public function getSections(): Collection
+    {
+        return $this->sections;
+    }
+
+    public function addSection(Section $section): static
+    {
+        if (!$this->sections->contains($section)) {
+            $this->sections[] = $section;
+            $section->addElement($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSection(Section $section): static
+    {
+        if ($this->sections->removeElement($section)) {
+            $section->removeElement($this);
+        }
+
+        return $this;
+    }
+
+    public function getImportance(): ?string
+    {
+        return $this->importance;
+    }
+
+    public function setImportance(?string $importance): static
+    {
+        $this->importance = $importance;
+
+        return $this;
+    }
+
+    public function getFichier()
+    {
+        return $this->fichier;
+    }
+
+    public function setFichier($fichier): static
+    {
+        $this->fichier = $fichier;
+
+        return $this;
+    }
+
 }

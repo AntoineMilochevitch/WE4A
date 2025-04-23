@@ -38,7 +38,7 @@
                     <canvas id="snakeGame" width="400" height="400"></canvas>
                 </div>
             </div>
-
+            <!-- Emploi du temps (idée d'implémentation) -->
             <div class="emploi-du-temps">
                 <h1>Emploi du temps</h1>
                 <div class="edt">
@@ -103,11 +103,13 @@
   {% block javascript %}
     <script>
         document.getElementById('edit-profile-form').addEventListener('submit', sendUpdatedProfile);
+        // Fonction pour envoyer le formulaire de mise à jour du profil
         function sendUpdatedProfile(event) {
-            event.preventDefault();
+            event.preventDefault(); // Empêche le rechargement de la page
 
             const formData = new FormData(event.target);
             const errorContainer = document.getElementById('error-message');
+            //
             fetch('/api/profile/update_profile', {
                 method: 'POST',
                 body: formData,
@@ -133,6 +135,7 @@
             });
 
         }
+
         document.addEventListener('DOMContentLoaded', function () {
             const profileName = document.querySelector('.profil-name h2');
             const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
@@ -174,6 +177,7 @@
             }
         });
 
+        // SNAKE GAME
         const canvas = document.getElementById("snakeGame");
         const ctx = canvas.getContext("2d");
         const startButton = document.getElementById("startButton");
@@ -186,6 +190,7 @@
         let d;
         let game;
 
+        // Function to start the game
         function startGame() {
             snake = [];
             snake[0] = { x: 9 * box, y: 10 * box };
@@ -198,7 +203,7 @@
             score = 0;
             d = null;
 
-            document.addEventListener("keydown", direction);
+            document.addEventListener("keydown", direction); // add event listener for keydown
 
             if (game) clearInterval(game);
             game = setInterval(draw, 110);
@@ -206,6 +211,7 @@
             instructions.style.display = "none";
         }
 
+        // Function to handle keydown events
         function direction(event) {
             if (event.keyCode == 90 && d != "DOWN") {
                 d = "UP";
@@ -218,6 +224,7 @@
             }
         }
 
+        // Function to check collision with the snake itself
         function collision(newHead, array) {
             for (let i = 0; i < array.length; i++) {
                 if (newHead.x == array[i].x && newHead.y == array[i].y) {
@@ -227,6 +234,7 @@
             return false;
         }
 
+        // Function to fetch profile data from the server
         function fetchProfileData() {
             fetch('/api/profile')
                 .then(response => response.json())
@@ -247,6 +255,7 @@
                 .catch(error => console.error('Erreur lors de la récupération des données du profil :', error));
         }
 
+        // Function to send the score to the server
         function sendScoreToServer(score) {
             const formData = new FormData();
             formData.append('score', score);
@@ -266,6 +275,7 @@
             .catch(error => console.error('Erreur réseau:', error));
         }
 
+        // Function to draw the game
         function draw() {
             ctx.fillStyle = "#F7F7F7";
             ctx.fillRect(0, 0, canvas.width, canvas.height);

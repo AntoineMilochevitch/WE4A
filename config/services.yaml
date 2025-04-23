@@ -25,7 +25,9 @@ services:
 
     App\EventSubscriber\NotificationSubscriber:
         arguments:
-            $notificationRepository: '@App\Repository\NotificationRepository'
+
+            $userNotifRepository: '@App\Repository\UserNotifRepository'
             $twig: '@twig'
+            $tokenStorage: '@security.token_storage'
         tags:
             - { name: 'kernel.event_subscriber' }
