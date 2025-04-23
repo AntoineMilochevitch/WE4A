@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-  // === GESTION DES CARTES COURS (chargement dynamique + scroll + barre de progression) ===
+  // === GESTION DES CARTES COURS ===
 
   const scrollContainer = document.getElementById("scrollContainer");
   const progressBar = document.getElementById("progressBar");
@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentIndex = 0;
 
-  // Charger les cours depuis l'API
   fetch('/api/my-courses')
       .then(response => response.json())
       .then(data => {
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
           scrollContainer.appendChild(link);
         });
 
-        // Réinitialiser les références aux cartes après chargement
         const cards = scrollContainer.querySelectorAll(".card");
 
         function scrollToCard(index) {
@@ -51,22 +49,14 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (leftBtn && rightBtn && scrollContainer && cards.length > 0) {
-          leftBtn.addEventListener("click", () => {
-            scrollToCard(currentIndex - 1);
-          });
-
-          rightBtn.addEventListener("click", () => {
-            scrollToCard(currentIndex + 1);
-          });
-
-          scrollContainer.addEventListener("mouseleave", () => {
-            scrollToCard(0);
-          });
-
+          leftBtn.addEventListener("click", () => scrollToCard(currentIndex - 1));
+          rightBtn.addEventListener("click", () => scrollToCard(currentIndex + 1));
+          scrollContainer.addEventListener("mouseleave", () => scrollToCard(0));
           updateProgressBar();
         }
       })
       .catch(error => console.error('Erreur chargement des cours :', error));
+
 
   // === GESTION DES MENUS INFO (notifications) ===
 
@@ -79,47 +69,58 @@ document.addEventListener("DOMContentLoaded", function () {
       event.stopPropagation();
       event.preventDefault();
 
-      // Fermer tous les autres popups ouverts
       document.querySelectorAll('.menu-popup').forEach(otherPopup => {
         if (otherPopup !== popup) {
           otherPopup.style.display = 'none';
         }
       });
 
-      // Basculer l'affichage du popup actuel
       if (popup) {
         popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
       }
     });
 
-    // Boutons : marquer comme lu / supprimer
     const markAsReadBtn = popup?.querySelector('.mark-read-btn');
     const deleteBtn = popup?.querySelector('.delete-btn');
 
     markAsReadBtn?.addEventListener('click', function (e) {
       e.stopPropagation();
-      const infoItem = dot.closest('.info-item');
-      if (infoItem) {
-        infoItem.classList.add('read');
-      }
+      const notifId = this.dataset.id;
+
+      fetch(`/notification/mark-as-read/${notifId}`, {
+        method: 'POST',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const infoItem = dot.closest('.info-item');
+              if (infoItem) infoItem.classList.add('read');
+              this.remove();
+            } else {
+              alert('Erreur lors du marquage comme lu.');
+            }
+          })
+          .catch(error => {
+            console.error('Erreur requête marquage comme lu :', error);
+          });
+
       if (popup) popup.style.display = 'none';
     });
 
     deleteBtn?.addEventListener('click', function (e) {
       e.stopPropagation();
       const infoItem = dot.closest('.info-item');
-      if (infoItem) {
-        infoItem.remove();
-      }
+      if (infoItem) infoItem.remove();
       if (popup) popup.style.display = 'none';
     });
   });
 
-  // Fermer les popups si clic en dehors
   document.addEventListener('click', () => {
     document.querySelectorAll('.menu-popup').forEach(popup => {
       popup.style.display = 'none';
     });
   });
-
 });

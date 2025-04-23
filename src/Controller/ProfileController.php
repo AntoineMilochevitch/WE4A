@@ -12,6 +12,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProfileController extends AbstractController
 {
+    /**
+     * Récupérer le profil de l'utilisateur
+     * @Route("/api/profile", name="api_profile")
+     * @return JsonResponse
+     */
     #[Route('/api/profile', name: 'api_profile')]
     public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository): JsonResponse
     {
@@ -45,10 +50,15 @@ class ProfileController extends AbstractController
         return new JsonResponse($profile);
     }
 
+    /**
+     * pour mettre à jour le score de l'utilisateur
+     * @Route("/api/profile/update_score", name="update_score")
+     * @return JsonResponse
+     */
     #[Route('/api/profile/update_score', name: 'update_score', methods: ['POST'])]
     public function updateScore(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
+        $user = $this->getUser(); // ID de l'utilisateur actuel
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
@@ -66,10 +76,15 @@ class ProfileController extends AbstractController
         return new JsonResponse(['error' => 'Score non fourni'], 400);
     }
 
+    /**
+     * Mettre à jour le profil de l'utilisateur
+     * @Route("/api/profile/update_profile", name="update_profile")
+     * @return JsonResponse
+     */
     #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
     public function updateProfile(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $user = $entityManager->getRepository(Users::class)->find(1); // ID de l'utilisateur actuel
+        $user = $this->getUser();
 
         if (!$user) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
@@ -120,7 +135,7 @@ class ProfileController extends AbstractController
         }
         if ($mdp !== null && $mdp_confirm !== null && $mdp !== '' && $mdp_confirm !== '') {
             if ($mdp === $mdp_confirm) {
-                $user->setMdp(password_hash($mdp, PASSWORD_BCRYPT)); // Hachage du mot de passe
+                $user->setPassword(password_hash($mdp, PASSWORD_BCRYPT)); // Hachage du mot de passe
             } else {
                 return new JsonResponse(['error' => 'Les mots de passe ne correspondent pas'], 400);
             }

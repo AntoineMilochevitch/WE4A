@@ -60,28 +60,58 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const { users, courses } = data;
                 users.forEach(user => {
-                    utilisateurs.push(user);
                     alert(user.nom);
+                    alert(user.roles);
+                    alert(user.userUe);
+                    utilisateurs.push(user);
                 })
                 courses.forEach(course => {
                     ue.push(course);
-                    alert(course.code);
                 })
                 showUtilisateurs();
             })
             .catch(error => console.error('Error fetching courses/users:', error));
+
+        /*
+        try {
+            const usersResponse = await fetch('/api/admin/users');
+            const utilisateurs = await usersResponse.json();
+            console.log('Utilisateurs:', utilisateurs);
+
+            const coursesResponse = await fetch('/api/admin/courses');
+            const ue = await coursesResponse.json();
+            console.log('Cours:', ue);
+
+            showUtilisateurs(utilisateurs);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données :', error);
+        }*/
+
+
+
+
+        /*fetch('/api/admin/users')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(user => {
+                    utilisateurs.push(user);
+                })
+                showUtilisateurs();
+            })
+            .catch(error => console.error('Error fetching courses/users:', error));*/
     }
 
-    function fetchInfoElement(type, callback) {
-        fetchInfo((users, courses) => {
-            if (type === "users") {
-                callback(users);
-            } else if (type === "courses") {
-                callback(courses);
-            } else {
-                console.error('Type inconnu pour fetchInfoElement :', type);
-            }
-        });
+    async function fetchUsersByCourse(courseId) {
+        try {
+            const response = await fetch(`/api/admin/courses/${courseId}/users`);
+            if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs pour le cours");
+
+            const users = await response.json();
+            console.log(`Utilisateurs inscrits au cours ${courseId} :`, users);
+            return users;
+        } catch (error) {
+            console.error(error.message);
+        }
     }
 
 
@@ -109,12 +139,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
-            nameSpan.textContent = utilisateur.nom.textContent;
+            nameSpan.textContent = utilisateur.nom;
             li.appendChild(nameSpan);
 
             const firstNameSpan = document.createElement('span');
             firstNameSpan.className = 'item-first_name';
-            firstNameSpan.textContent = utilisateur.prenom.textContent;
+            firstNameSpan.textContent = utilisateur.prenom;
             li.appendChild(firstNameSpan);
 
             /* Activer si les utilisateurs sont associés à un role
@@ -184,12 +214,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-code';
-            nameSpan.textContent = course.code.textContent;
+            nameSpan.textContent = course.code;
             li.appendChild(nameSpan);
 
             const descriptionSpan = document.createElement('span');
             descriptionSpan.className = 'item-libelle';
-            descriptionSpan.textContent = course.nom.textContent;
+            descriptionSpan.textContent = course.nom;
             li.appendChild(descriptionSpan);
 
             const editButton = document.createElement('button');
@@ -356,9 +386,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isUser) {
             const editName = listItem.querySelector('.item-name').textContent;
             const editFirst_name = listItem.querySelector('.item-first_name').textContent;
-            const editRole = listItem.querySelector('.item-role').textContent;
-            const editDepartement = listItem.querySelector('.item-departement').textContent;
-            editInscription = utilisateurs.find(user => user.name === editName).inscription;
+            //const editRole = listItem.querySelector('.item-role').textContent;
+            //const editDepartement = listItem.querySelector('.item-departement').textContent;
+            //editInscription = utilisateurs.find(user => user.name === editName).inscription;
 
             // Ajouter le champ pour le nom
             const nameInput = document.createElement('input');
@@ -375,29 +405,29 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(first_nameInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const roleInput = document.createElement('input');
+            /*const roleInput = document.createElement('input');
             roleInput.type = 'text';
             roleInput.id = 'edit-role';
             roleInput.value = editRole;
             modalContent.appendChild(roleInput);
-            modalContent.appendChild(document.createElement('br'));
+            modalContent.appendChild(document.createElement('br'));*/
 
-            // Ajouter le champ pour le departement
+            /*// Ajouter le champ pour le departement
             const departementInput = document.createElement('input');
             departementInput.type = 'text';
             departementInput.id = 'edit-departement';
             departementInput.value = editDepartement;
             modalContent.appendChild(departementInput);
-            modalContent.appendChild(document.createElement('br'));
+            modalContent.appendChild(document.createElement('br'));*/
         } else {
             const editCode = listItem.querySelector('.item-code').textContent;
             const editLibelle = listItem.querySelector('.item-libelle').textContent;
-            editInscription = [];
+            /*editInscription = [];
             utilisateurs.forEach(user => {
                 if (user.inscription.includes(editCode)) {
                     editInscription.push(user.name);
                 }
-            })
+            })*/
             let editDescription;
             ue.forEach(course => {
                 if (course.code === editCode) {
@@ -433,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('br'));
         }
 
-        const messageUE = document.createElement('p');
+        /*const messageUE = document.createElement('p');
         messageUE.textContent = 'Modifier les inscriptions :';
         modalContent.appendChild(messageUE);
 
@@ -469,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addButton.onclick = function () {
 
         }
-        modalContent.appendChild(addButton);
+        modalContent.appendChild(addButton);*/
 
         modalContent.appendChild(document.createElement('p'));
 

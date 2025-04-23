@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -55,8 +56,8 @@
     </div>
     <div class="notification-content">
         {% for notif in notifications %}
-            <div class="notification-item {{ notif.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
-                <p>{{ notif.message }}</p>
+            <div class="notification-item {{ notif.notification.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
+                <p>{{ notif.notification.message }}</p>
                 <span class="delete-btn">&times;</span>
             </div>
         {% else %}
@@ -74,6 +75,7 @@
     </div>
 {% endif %}
 
+
 {% if 'ROLE_ADMIN' in app.user.roles %}
     <div class="alert alert-info">
         Vous êtes un admin 🎓
@@ -83,5 +85,8 @@
 
 {% block body %}
 {% endblock %}
+
+{% block body %}{% endblock %}
+
 </body>
 </html>

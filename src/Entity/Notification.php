@@ -21,10 +21,6 @@ class Notification
     #[ORM\Column(type: Types::TEXT)]
     private ?string $message;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    #[ORM\Options(default: false)]
-    private ?bool $estVu;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
@@ -60,18 +56,6 @@ class Notification
     public function setMessage(string $message): static
     {
         $this->message = $message;
-
-        return $this;
-    }
-
-    public function isEstVu(): ?bool
-    {
-        return $this->estVu;
-    }
-
-    public function setEstVu(bool $estVu): static
-    {
-        $this->estVu = $estVu;
 
         return $this;
     }
