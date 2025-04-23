@@ -60,14 +60,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 const { users, courses } = data;
                 users.forEach(user => {
-                    alert(user.nom);
-                    alert(user.roles);
-                    alert(user.userUe);
                     utilisateurs.push(user);
                 })
-                courses.forEach(course => {
+                /*courses.forEach(course => {
                     ue.push(course);
-                })
+                })*/
                 showUtilisateurs();
             })
             .catch(error => console.error('Error fetching courses/users:', error));
@@ -147,12 +144,39 @@ document.addEventListener('DOMContentLoaded', function() {
             firstNameSpan.textContent = utilisateur.prenom;
             li.appendChild(firstNameSpan);
 
-            /* Activer si les utilisateurs sont associés à un role
             const roleSpan = document.createElement('span');
             roleSpan.className = 'item-role';
-            roleSpan.textContent = utilisateur.role;
+            let isAdmin = false;
+            let isProf = false;
+            let isEtudiant = false;
+            let roleText = "AAA";
+            alert("AAAAAAAA");
+            console.log(utilisateur.role);
+            console.log(typeof utilisateur.role);
+
+
+            alert(utilisateur.role);
+            /*
+            let role = JSON.parse(utilisateur.role);
+
+            if (role.includes("ROLE_ADMIN")) {
+                isAdmin = true;
+                roleText = "Admin";
+            }
+            else if (role.includes("ROLE_PROF")) {
+                isProf = true;
+                roleText = "Professeur";
+            }
+            else if (role.includes("ROLE_USER")) {
+                isEtudiant = true;
+                roleText = "Etudiant";
+            }
+            else{
+                roleText = "Inconnu";
+            }
+            */
+            roleSpan.textContent = roleText;
             li.appendChild(roleSpan);
-             */
 
             /* Activer si les utilisateurs sont associés à un departement
             const departementSpan = document.createElement('span');
