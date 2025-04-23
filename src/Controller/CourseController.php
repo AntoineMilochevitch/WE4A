@@ -180,35 +180,29 @@ class CourseController extends AbstractController
             $entityManager->flush();
 
             foreach ($data['elements'] as $elem) {
-                $maxElementOrder = $entityManager->getRepository(Element::class)
-                    ->createQueryBuilder('e')
-                    ->select('MAX(e.ordre)')
-                    ->join('e.sections', 's')
-                    ->where('s.id = :sectionId')
-                    ->setParameter('sectionId', $section->getId())
-                    ->getQuery()
-                    ->getSingleScalarResult();
-
                 $type = $entityManager->getRepository(Type::class)->findOneBy(['nomType' => $elem['type']]);
 
                 if (!$type) {
                     return new JsonResponse(['error' => 'Type non trouvé pour l\'élément : ' . $elem['type']], 400);
                 }
 
-
                 $element = new Element();
                 $element->setTitre($elem['titre']);
                 $element->setDescription($elem['description'] ?? null);
                 $element->setDate(new \DateTime());
                 $element->setIdType($type);
-                $element->setOrdre($maxElementOrder + 1);
-                if (!empty($data['fichier'])) {
+                $element->setOrdre(0);
+                $element->setEstVisible(true);
+
+                if (!empty($elem['fichier'])) {
                     try {
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png']; // Types MIME autorisés
-                        $fileContent = $this->handleFileUpload($data['fichier'], $allowedMimeTypes);
+                        $fileContent = $this->handleFileUpload($elem['fichier'], $allowedMimeTypes);
+
+                        // Récupérer le nom du fichier original
+                        $originalFileName = $elem['fileName'] ?? 'fichier_inconnu';
 
                         // Sérialiser les données du fichier
-                        $originalFileName = $data['titre']; // Utilisez le titre comme nom de fichier
                         $fileData = [
                             'name' => $originalFileName,
                             'data' => base64_encode($fileContent),
@@ -220,12 +214,13 @@ class CourseController extends AbstractController
                         return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
                     }
                 }
+
                 $section->addElement($element);
-                $element->setEstVisible(true);
                 $entityManager->persist($element);
             }
 
             $entityManager->flush();
+
             return new JsonResponse([
                 'message' => 'Section ajoutée avec succès',
                 'id' => $section->getId()

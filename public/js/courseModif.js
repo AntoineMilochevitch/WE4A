@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param ueId
      */
     function loadSections(ueId) {
+        console.log("Chargement des sections...");
         fetch(`/api/course/${ueId}/sections`)
             .then(response => response.json())
             .then(data => {
@@ -106,17 +107,18 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param elements
      */
     function saveSectionToServer(ueId, title, elements) {
+        console.log("Elements file :", elements);
         const body = {
             titre: title,
             elements: elements.map(async (element) => {
-                const fileInput = element.fileInput;
                 let fichierBase64 = null;
                 let fileName = null;
 
-                if (fileInput && fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    fichierBase64 = await convertFileToBase64(file);
-                    fileName = file.name;
+                // Vérifiez si un fichier est présent
+                if (element.file) {
+                    console.log("Fichier sélectionné :", element.file);
+                    fichierBase64 = await convertFileToBase64(element.file);
+                    fileName = element.file.name;
                 }
 
                 return {
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Résolvez toutes les promesses avant d'envoyer la requête
         return Promise.all(body.elements).then((resolvedElements) => {
             body.elements = resolvedElements;
-
+            console.log("Corps de la requête :", body);
             return fetch(`/api/course/${ueId}/add_section`, {
                 method: 'POST',
                 headers: {
@@ -317,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Envoyer une requête GET pour télécharger le fichier
+                console.log("elemntId :", elementId);
                 fetch(`/api/course/${ueId}/download_file/${elementId}`, {
                     method: 'GET',
                 })
@@ -505,87 +508,50 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove previous event listeners
         const addElementButton = document.getElementById('part-add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
-    
+
+        let elements = []; // Tableau pour stocker les éléments
         // Handle adding a new element to the form
         document.getElementById('part-add-element').addEventListener('click', function () {
             const elementType = document.getElementById('part-element-type').value;
             const elementText = document.getElementById('element-text').value;
-            let elementHtml = '';
+            const elementDescription = document.getElementById('element-description').value;
+            const elementDate = new Date().toLocaleDateString();
+            // Vérifiez si le champ importance existe
+            const elementImportanceField = document.getElementById('element-importance');
+            const elementImportance = elementImportanceField ? elementImportanceField.value : null;
 
-            // Créez le HTML dynamique en fonction du type d'élément
-            if (elementType === 'text') {
-                const elementDate = new Date().toLocaleDateString();
-                const elementDescription = document.getElementById('element-description').value;
-                elementHtml = `
-            <div class="element">
-                <div class="element-header">
-                    <ion-icon name="document-text-outline"></ion-icon>
-                    <p>${elementText}</p>
-                    <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
-                </div>
-                <p class="element-description">${elementDescription}</p>
-                <p class="element-date">${elementDate}</p>
-            </div>
-            <div class="ligne-gris"></div>
-        `;
-            } else if (elementType === 'file') {
-                const elementDate = new Date().toLocaleDateString();
-                const elementDescription = document.getElementById('element-description').value;
-                const elementFile = document.getElementById('element-file'); // Vérifiez si l'élément existe
-                if (elementFile) {
-                    const fileType = elementFile.type.split('/')[1];
-                    const fileIcon = getFileIcon(fileType);
-                    elementHtml = `
+            // Vérifiez si le champ fichier existe
+            const elementFileField = document.getElementById('element-file');
+            const elementFile = elementFileField ? elementFileField.files[0] : null;
+            const newElement = {
+                text: elementText,
+                type: elementType,
+                description: elementDescription,
+                importance: elementImportance,
+                file: elementFile,
+                date: elementDate,
+            };
+
+            const elementHtml = `
                 <div class="element">
                     <div class="element-header">
-                        <ion-icon name="${fileIcon}"></ion-icon>
+                        <ion-icon name="${elementType === 'text' ? 'document-text-outline' : elementType === 'depot' ? 'cloud-upload-outline' : 'document-outline'}"></ion-icon>
                         <p>${elementText}</p>
-                        <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
+                        ${elementDescription ? `<p class="element-description">${elementDescription}</p>` : ''}
                     </div>
-                    <p class="element-description">${elementDescription}</p>
-                    <p class="element-date">${elementDate}</p>
                 </div>
-                <div class="ligne-gris"></div>
-            `;
-                } else {
-                    console.error("Le champ de fichier n'est pas présent dans le DOM.");
-                }
-            } else if (elementType === 'depot') {
-                const elementDescription = document.getElementById('element-description').value;
-                elementHtml = `
-            <div class="element">
-                <div class="element-header">
-                    <ion-icon name="cloud-upload-outline"></ion-icon>
-                    <p>${elementText}</p>
-                    <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
-                </div>
-                <p class="element-description">${elementDescription}</p>
-                <p class="element-date">${new Date().toLocaleDateString()}</p>
-            </div>
-            <div class="ligne-gris"></div>
-        `;
-            } else {
-                elementHtml = `
-            <div class="element">
-                <div class="element-header">
-                    <ion-icon name="${elementType}"></ion-icon>
-                    <p>${elementText}</p>
-                    <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
-                </div>
-            </div>
-            <div class="ligne-gris"></div>
-        `;
-            }
+                `;
 
-            // Ajoutez le nouvel élément au formulaire
             document.getElementById('part-elements-container').insertAdjacentHTML('beforeend', elementHtml);
 
-            // Vérifiez si le champ de fichier est bien ajouté
-            const addedFileInput = document.getElementById('element-file');
-            console.log("element file :", addedFileInput);
+            // Ajoutez l'élément au tableau `elements`
+            elements.push(newElement);
 
-            // Réinitialisez le champ texte
+            // Réinitialisez les champs du formulaire
             document.getElementById('element-text').value = '';
+            if (elementDescription) document.getElementById('element-description').value = '';
+            if (elementImportanceField) elementImportanceField.value = '';
+            if (elementFileField) elementFileField.value = '';
         });
     
 
@@ -595,28 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
             event.preventDefault(); // Prevent page reload
     
             const title = document.getElementById('part-title').value;
-            const elements = Array.from(document.querySelectorAll('#part-elements-container .element')).map(element => ({
-                icon: element.querySelector('ion-icon').getAttribute('name'),
-                type: (() => {
-                    const iconName = element.querySelector('ion-icon').getAttribute('name');
-                    if (iconName === 'document-text-outline') {
-                        return 'text';
-                    } else if (iconName === 'cloud-upload-outline') {
-                        return 'depot';
-                    } else {
-                        return 'file';
-                    }
-                })(),
-                text: element.querySelector('p').innerText,
-                description: element.querySelector('.element-description') ? element.querySelector('.element-description').innerText : '',
-                date: element.querySelector('.element-date') ? element.querySelector('.element-date').innerText : '',
-                importance: (() => {
-                    console.log("importance :", element.querySelector('.element-importance'));
-                    const type = element.querySelector('ion-icon').getAttribute('name') === 'document-text-outline' ? 'text' : null;
-                    return type === 'text' ? element.querySelector('.element-importance')?.value || null : null;
-                })(),
-                fileInput: element.querySelector('input[type="file"]') || null,
-            }));
+
 
             console.log("elements :", elements);
             // Send the data to the server
@@ -624,8 +569,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then((response) => {
                     console.log("Réponse du serveur :", response);
                     if (response.id) {
+
                         console.log("Section créée avec succès :", response);
                         createPart(title, elements, response.id);
+                        loadSections(ueId)
+
                     } else {
                         console.error('Erreur lors de la création de la section :', response.error);
                     }
