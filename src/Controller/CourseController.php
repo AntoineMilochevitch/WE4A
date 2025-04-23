@@ -301,6 +301,7 @@ class CourseController extends AbstractController
                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
             }
         }
+        $element->setImportance($data['importance'] ?? null);
         $section->addElement($element);
 
         $entityManager->persist($element);
@@ -394,6 +395,28 @@ class CourseController extends AbstractController
                     $element->setTitre($elementData['titre']);
                     $element->setDescription($elementData['description'] ?? null);
                     $element->setDate(new \DateTime($elementData['date']));
+                    // Mettre à jour l'importance
+                    if (isset($elementData['importance'])) {
+                        $element->setImportance($elementData['importance']);
+                    }
+
+                    // Mettre à jour le fichier si modifié
+                    if (!empty($elementData['fichier'])) {
+                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+                        $fileContent = base64_decode($elementData['fichier']);
+                        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                        $mimeType = $finfo->buffer($fileContent);
+
+                        if (!in_array($mimeType, $allowedMimeTypes)) {
+                            return new JsonResponse(['error' => 'Type de fichier non autorisé'], 400);
+                        }
+
+                        $fileData = [
+                            'name' => $elementData['fileName'] ?? 'fichier_inconnu',
+                            'data' => base64_encode($fileContent),
+                        ];
+                        $element->setFichier(json_encode($fileData));
+                    }
                 }
             }
         }
@@ -452,4 +475,5 @@ class CourseController extends AbstractController
 
         return $response;
     }
+
 }
