@@ -20,7 +20,9 @@
     </div>
     <div class="menu">
         <ul>
-            <li><a href="{{ path('admin') }}">Admin</a></li>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <li><a href="{{ path('admin') }}">Admin</a></li>
+            {% endif %}
             <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
             <li><a href="{{ path('find') }}">Recherche de cours</a></li>
         </ul>
@@ -67,7 +69,17 @@
     <div class="mb-3">
         You are logged in as {{ app.user.userIdentifier }}
     </div>
+    <div class="mb-3">
+        Your roles: {{ app.user.roles|join(', ') }}
+    </div>
 {% endif %}
+
+{% if 'ROLE_ADMIN' in app.user.roles %}
+    <div class="alert alert-info">
+        Vous êtes un admin 🎓
+    </div>
+{% endif %}
+
 
 {% block body %}
 {% endblock %}
