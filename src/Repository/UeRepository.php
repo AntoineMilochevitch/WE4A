@@ -22,6 +22,20 @@ class UeRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function findUsersByCourse(int $courseId): array
+    {
+        return $this->createQueryBuilder('ue')
+            ->select('u.id, u.nom, u.prenom, u.email, r.nom as role')
+            ->innerJoin('ue.users', 'uu') // jointure sur user_ue
+            ->innerJoin('uu.user', 'u') // jointure des utilisateurs
+            ->leftJoin('u.roles', 'r') // récupération des rôles des utilisateurs
+            ->where('ue.id = :courseId')
+            ->setParameter('courseId', $courseId)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+
     //    /**
     //     * @return Ue[] Returns an array of Ue objects
     //     */
