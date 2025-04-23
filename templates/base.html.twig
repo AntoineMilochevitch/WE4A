@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -21,7 +20,9 @@
     </div>
     <div class="menu">
         <ul>
-            <li><a href="{{ path('admin') }}">Admin</a></li>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <li><a href="{{ path('admin') }}">Admin</a></li>
+            {% endif %}
             <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
             <li><a href="{{ path('find') }}">Recherche de cours</a></li>
         </ul>
@@ -54,8 +55,8 @@
     </div>
     <div class="notification-content">
         {% for notif in notifications %}
-            <div class="notification-item {{ notif.notification.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
-                <p>{{ notif.notification.message }}</p>
+            <div class="notification-item {{ notif.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
+                <p>{{ notif.message }}</p>
                 <span class="delete-btn">&times;</span>
             </div>
         {% else %}
@@ -68,8 +69,19 @@
     <div class="mb-3">
         You are logged in as {{ app.user.userIdentifier }}
     </div>
+    <div class="mb-3">
+        Your roles: {{ app.user.roles|join(', ') }}
+    </div>
 {% endif %}
 
-{% block body %}{% endblock %}
+{% if 'ROLE_ADMIN' in app.user.roles %}
+    <div class="alert alert-info">
+        Vous êtes un admin 🎓
+    </div>
+{% endif %}
+
+
+{% block body %}
+{% endblock %}
 </body>
 </html>
