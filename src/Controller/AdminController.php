@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\Users;
 use App\Repository\UsersRepository;
 use App\Entity\UE;
 use App\Repository\UeRepository;
@@ -17,9 +17,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin')]
-    public function index(EntityManagerInterface $entityManager, UsersRepository $userRepository, UeRepository $ueRepository): \Symfony\Component\HttpFoundation\Response
+    public function index(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): \Symfony\Component\HttpFoundation\Response
     {
-        $users = $userRepository->allUsers();
+        $users = $usersRepository->allUsers();
         $ue = $ueRepository->allUE();
 
         return $this->render('admin/admin.html.twig', [
@@ -31,16 +31,49 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin', name: 'api_admin')]
-    public function getInfo(EntityManagerInterface $entityManager, UsersRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    public function getInfo(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
     {
         // Récupérer les utilisateurs
-        $user = $userRepository->allUsers();
+        $users = $usersRepository->allUsers();
 
-        if (!$user) {
+        if (!$users) {
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
         $usersData = [];
+
+        foreach ($users as $user) {
+            $userId = $user['id'];
+            if (!isset($usersData[$userId])) {
+                // Initialiser l'entrée utilisateur
+                $usersData[$userId] = [
+                    'id' => $user['id'],
+                    'nom' => $user['nom'] ?? null,
+                    'prenom' => $user['prenom'] ?? null,
+                    'email' => $user['email'] ?? null,
+                    //'roles' => $user->getRoles(), // Récupération des rôles
+                    'ues' => [], // Une liste pour les UE
+                ];
+            }
+
+            // Ajouter l'UE (si elle existe)
+            if (!empty($user['ue_id'])) {
+                $usersData[$userId]['ues'][] = [
+                    'id' => $user['ue_id'],
+                    'code' => $user['ue_code'],
+                    'nom' => $user['ue_name'],
+                ];
+            }
+        }
+
+        // Retourner les données en JSON
+        return new JsonResponse([
+            'users' => array_values($usersData), // Réindexer pour obtenir un tableau JSON cohérent
+        ]);
+
+
+
+
         foreach ($user as $entity) {
             $roles = [];
             //return $entity;
@@ -112,9 +145,9 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin/users', name: 'api_admin_users')]
-    public function getAllUsers(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    public function getAllUsers(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
     {
-        $users = $userRepository->allUsers();
+        $users = $usersRepository->allUsers();
 
         $responseData = [];
 
@@ -143,7 +176,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/api/admin/courses', name: 'api_admin_courses')]
-    public function getAllCoursesWithUsers(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    public function getAllCoursesWithUsers(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
     {
         // Récupérer tous les cours (UE) avec leurs utilisateurs inscrits
         $ue = $ueRepository->allUE();
@@ -180,7 +213,7 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin/courses/{id}/users', name: 'api_admin_course_users')]
-    public function getUsersByCourse(int $id, EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    public function getUsersByCourse(int $id, EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
     {
         $ue = $ueRepository->findUsersByCourse($id);
 
