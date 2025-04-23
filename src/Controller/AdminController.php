@@ -42,11 +42,24 @@ class AdminController extends AbstractController
 
         $usersData = [];
         foreach ($user as $entity) {
+            $roles = [];
+            //return $entity;
+            /*foreach ($entity->getRoles() as $role) {
+                $roles[] = $role->getNomRole();
+            }*/
+            /*
+            $inscriptions = [];
+            foreach ($entity->getUserUes() as $userUe) {
+                $inscriptions[] = $userUe->getUe()->getCode();
+            }*/
+
             $usersData[] = [
                 'id' => $entity['id'],
                 'nom' => $entity['nom'] ?? null,
                 'prenom' => $entity['prenom'] ?? null,
-                'email' => $entity['email'] ?? null
+                'email' => $entity['email'] ?? null/*,
+                'role' => $entity->map(fn($role) => $role->getRole())->toArray()/*,
+                'inscriptions' => $inscriptions*/
             ];
 
         }
@@ -59,15 +72,34 @@ class AdminController extends AbstractController
         }
 
         $coursesData = [];
+        /*
         foreach ($course as $entity) {
+            $users = [];
+            foreach ($entity->getUserUes() as $userUe) {
+                $user = $userUe->getUser();
+                $roles = [];
+                foreach ($user->getRoles() as $role) {
+                    $roles[] = $role->getNomRole();
+                }
+
+                $users[] = [
+                    'id' => $user->getId(),
+                    'nom' => $user->getNom(),
+                    'prenom' => $user->getPrenom(),
+                    'email' => $user->getEmail(),
+                    'roles' => $roles
+                ];
+            }
+
             $coursesData[] = [
                 'id' => $entity['id'],
                 'code' => $entity['code'] ?? null,
                 'nom' => $entity['nom'] ?? null,
-                'description' => $entity['description'] ?? null
+                'description' => $entity['description'] ?? null,
+                'utilisateurs' => $users
             ];
 
-        }
+        }*/
 
         $responseData = [
             'users' => $usersData,
@@ -77,6 +109,106 @@ class AdminController extends AbstractController
         return new JsonResponse($responseData);
 
     }
+
+
+    #[Route('/api/admin/users', name: 'api_admin_users')]
+    public function getAllUsers(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    {
+        $users = $userRepository->allUsers();
+
+        $responseData = [];
+
+        foreach ($users as $user) {
+            $roles = [];
+            foreach ($user->getRoles() as $role) {
+                $roles[] = $role->getNomRole();
+            }
+
+            $inscriptions = [];
+            foreach ($user->getUserUes() as $userUe) {
+                $inscriptions[] = $userUe->getUe()->getCode();
+            }
+
+            $responseData[] = [
+                'id' => $user->getId(),
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'email' => $user->getEmail(),
+                'roles' => $roles,
+                'inscriptions' => $inscriptions,
+            ];
+        }
+
+        return new JsonResponse($responseData);
+    }
+
+    #[Route('/api/admin/courses', name: 'api_admin_courses')]
+    public function getAllCoursesWithUsers(EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    {
+        // Récupérer tous les cours (UE) avec leurs utilisateurs inscrits
+        $ue = $ueRepository->allUE();
+
+        $responseData = [];
+
+        foreach ($ue as $course) {
+            $users = [];
+            foreach ($course->getUserUes() as $userUe) {
+                $user = $userUe->getUser();
+                $roles = [];
+                foreach ($user->getRoles() as $role) {
+                    $roles[] = $role->getNomRole();
+                }
+
+                $users[] = [
+                    'id' => $user->getId(),
+                    'nom' => $user->getNom(),
+                    'prenom' => $user->getPrenom(),
+                    'email' => $user->getEmail(),
+                    'roles' => $roles,
+                ];
+            }
+
+            $responseData[] = [
+                'id' => $course->getId(),
+                'code' => $course->getCode(),
+                'utilisateurs' => $users
+            ];
+        }
+
+        return new JsonResponse($responseData);
+    }
+
+
+    #[Route('/api/admin/courses/{id}/users', name: 'api_admin_course_users')]
+    public function getUsersByCourse(int $id, EntityManagerInterface $entityManager, UserRepository $userRepository, UeRepository $ueRepository): JsonResponse
+    {
+        $ue = $ueRepository->findUsersByCourse($id);
+
+        if (!$ue) {
+            return new JsonResponse(['error' => 'UE introuvable'], 404);
+        }
+
+        $responseData = [];
+        foreach ($ue as $userUe) {
+            $user = $userUe->getUser();
+            $roles = [];
+            foreach ($user->getRoles() as $role) {
+                $roles[] = $role->getNomRole();
+            }
+
+            $responseData[] = [
+                'id' => $user->getId(),
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'email' => $user->getEmail(),
+                'roles' => $roles,
+            ];
+        }
+
+        return new JsonResponse($responseData);
+    }
+
+
 }
 
 
