@@ -159,11 +159,18 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param element
      */
     function saveElementToServer(ueId, sectionId, element) {
-        const files = element.fileInput.files;
+        console.log("element :", element);
+        let files;
+        if (element.type === 'file') {
+            files = element.fileInput.files;
+        } else {
+            files = null;
+        }
+
         let fichierBase64 = null;
         let fileName = null;
 
-        if (files.length > 0) {
+        if (files && files.length > 0) {
             const file = files[0];
             console.log("Fichier sélectionné :", file);
             fichierBase64 = convertFileToBase64(file);
@@ -204,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fichier: null,
                 importance: element.importance || null,
             };
+            console.log("Corps de la requête :", body);
 
             fetch(`/api/course/${ueId}/add_element`, {
                 method: 'POST',
@@ -219,6 +227,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch((error) => {
                     console.error('Erreur lors de l\'enregistrement de l\'élément :', error);
                 });
+        }
+        loadSections(ueId)
+        const modal = document.getElementById('element-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        } else {
+            console.error('Modal introuvable');
         }
     }
 
@@ -278,7 +293,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="element" data-element-id="${element.id}">
                         <div class="element-header" data-importance="${element.importance}">
                             <ion-icon name="${element.icon}" class="${importanceClass}"></ion-icon>
-                            <p contenteditable="false">${element.text}</p>  
+                            <p contenteditable="false">${element.text}</p>
+                            ${element.type === 'text' ? `
+                                <select class="importance-select" disabled>
+                                    <option value="low" ${element.importance === 'low' ? 'selected' : ''}>Faible</option>
+                                    <option value="medium" ${element.importance === 'medium' ? 'selected' : ''}>Moyenne</option>
+                                    <option value="high" ${element.importance === 'high' ? 'selected' : ''}>Élevée</option>
+                                </select>
+                            ` : ''}
+                            ${element.type === 'file' ? `
+                                <input type="file" class="file-input">
+                            ` : ''} 
                             ${downloadButton}                      
                             <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
                         </div>
@@ -427,33 +452,47 @@ document.addEventListener('DOMContentLoaded', function() {
     function saveChanges(part) {
         const sectionId = part.dataset.sectionId;
         const title = part.querySelector('.part-header h2').innerText;
-        const elements = Array.from(part.querySelectorAll('.element')).map(element => ({
-            id: element.dataset.elementId,
-            titre: element.querySelector('.element-header p').innerText,
-            description: element.querySelector('.element-description')?.innerText || '',
-            date: element.querySelector('.element-date')?.innerText || ''
-        }));
+        const elements = Array.from(part.querySelectorAll('.element')).map(element => {
+            const textElement = element.querySelector('.element-header p');
+            const importanceSelect = element.querySelector('.importance-select');
+            const fileInput = element.querySelector('.file-input');
 
-        // Mettre à jour la section
-        fetch(`/api/course/${ueId}/update_section/${sectionId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ titre: title, elements }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(error => {
-                        throw new Error(error.error || "Erreur lors de la mise à jour de la section.");
-                    });
-                }
-                return response.json();
+            let fichierBase64 = null;
+            let fileName = null;
+
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fichierBase64 = convertFileToBase64(file);
+                fileName = file.name;
+            }
+
+            return {
+                id: element.dataset.elementId,
+                titre: textElement.innerText,
+                description: element.querySelector('.element-description')?.innerText || '',
+                date: element.querySelector('.element-date')?.innerText || '',
+                importance: importanceSelect ? importanceSelect.value : null,
+                fichier: fichierBase64,
+                fileName: fileName,
+            };
+        });
+
+        Promise.all(elements.map(e => e.fichier)).then(resolvedFiles => {
+            resolvedFiles.forEach((file, index) => {
+                elements[index].fichier = file;
+            });
+
+            fetch(`/api/course/${ueId}/update_section/${sectionId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ titre: title, elements }),
             })
-            .then(data => {
-                console.log("Section mise à jour avec succès :", data.message);
-            })
-            .catch(error => console.error("Erreur réseau :", error));
+                .then(response => response.json())
+                .then(data => console.log("Section mise à jour :", data))
+                .catch(error => console.error("Erreur réseau :", error));
+        });
     }
 
     /**
@@ -464,33 +503,93 @@ document.addEventListener('DOMContentLoaded', function() {
     function editPart(part, editButton) {
         const header = part.querySelector('.part-header');
         const title = header.querySelector('h2');
-        const elements = part.querySelectorAll('.element p:not(.element-date)');
-        const descriptions = part.querySelectorAll('.element-description');
+        const elements = part.querySelectorAll('.element');
 
-        // Toggle le mode édition
         if (title.isContentEditable) {
+            // Désactiver le mode édition
             saveChanges(part);
             title.contentEditable = 'false';
-            elements.forEach(element => element.contentEditable = 'false');
-            descriptions.forEach(description => description.contentEditable = 'false');
+            elements.forEach(element => {
+                const textElement = element.querySelector('.element-header p');
+                const descriptionElement = element.querySelector('.element-description');
+                const importanceSelect = element.querySelector('.importance-select');
+                if (importanceSelect) {
+                    importanceSelect.style.display = 'none';
+                    importanceSelect.disabled = true;
+                }
+                const fileInput = element.querySelector('.file-input');
+                const fileInputLabel = element.querySelector('.file-input-label');
+
+                if (textElement) {
+                    textElement.contentEditable = 'false';
+                    textElement.classList.remove('editable');
+                }
+                if (descriptionElement) {
+                    descriptionElement.contentEditable = 'false';
+                    descriptionElement.classList.remove('editable');
+                }
+                if (importanceSelect) importanceSelect.style.display = 'none';
+                if (fileInput) fileInput.style.display = 'none';
+                if (fileInputLabel) fileInputLabel.style.display = 'none';
+            });
             editButton.name = "create-outline";
             editButton.title = "Modifier";
             title.classList.remove('editable');
-            elements.forEach(element => element.classList.remove('editable'));
-            descriptions.forEach(description => description.classList.remove('editable'));
             isEditing = false;
         } else {
+            // Activer le mode édition
             title.contentEditable = 'true';
-            elements.forEach(element => element.contentEditable = 'true');
-            descriptions.forEach(description => description.contentEditable = 'true');
+            elements.forEach(element => {
+                const textElement = element.querySelector('.element-header p');
+                const descriptionElement = element.querySelector('.element-description');
+                const importanceSelect = element.querySelector('.importance-select');
+                if (importanceSelect) {
+                    importanceSelect.style.display = 'block'; // Passer en display block
+                    importanceSelect.disabled = false; // Activer le menu
+                }
+                document.querySelectorAll('.importance-select').forEach(select => {
+                    select.addEventListener('change', function () {
+                        const elementHeader = this.closest('.element-header');
+                        const icon = elementHeader.querySelector('ion-icon');
+
+                        icon.classList.remove('icon-importance-low', 'icon-importance-medium', 'icon-importance-high');
+
+                        if (this.value === 'low') {
+                            icon.classList.add('icon-importance-low');
+                        } else if (this.value === 'medium') {
+                            icon.classList.add('icon-importance-medium');
+                        } else if (this.value === 'high') {
+                            icon.classList.add('icon-importance-high');
+                        }
+                    });
+                });
+                const fileInput = element.querySelector('.file-input');
+                const fileInputLabel = element.querySelector('.file-input-label');
+
+                if (textElement) {
+                    textElement.contentEditable = 'true';
+                    textElement.classList.add('editable');
+                }
+                if (descriptionElement) {
+                    descriptionElement.contentEditable = 'true';
+                    descriptionElement.classList.add('editable');
+                }
+
+                if (fileInput) fileInput.style.display = 'inline-block';
+                if (fileInputLabel) fileInputLabel.style.display = 'inline-block';
+            });
             editButton.name = "checkmark-outline";
             editButton.title = "Valider";
             title.classList.add('editable');
-            elements.forEach(element => element.classList.add('editable'));
-            descriptions.forEach(description => description.classList.add('editable'));
             isEditing = true;
         }
     }
+
+    document.querySelectorAll('.importance-select').forEach(select => {
+        select.addEventListener('click', function(event) {
+            event.stopPropagation(); // Empêche la propagation du clic vers les éléments parents
+        });
+    });
 
     /**
      * Display the form to add a new part
@@ -655,7 +754,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 ? document.getElementById('ele-element-description').value
                 : '';
             const elementDate = new Date().toLocaleDateString();
-            const fileInput = document.getElementById('ele-element-file');
+            const fileInput = elementType === 'file' ? document.getElementById('ele-element-file') : null;
+            const elementImportanceField = document.getElementById('ele-element-importance');
+            const elementImportance = elementImportanceField ? elementImportanceField.value : null;
 
 
             const icon = elementType === 'text' ? 'document-text-outline' :
@@ -670,90 +771,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 description: elementDescription,
                 date: elementDate,
                 fileInput: fileInput,
+                importance:elementImportance,
             };
 
             saveElementToServer(ueId, sectionId, element);
-
-            addElementToPart();
         });
     }
 
-    /**
-     * Add the new element to the active part
-     */
-    function addElementToPart() {
-        if (!activePart) {
-            console.error('Aucune partie active définie.');
-            return;
-        }
-    
-        const partContent = activePart.querySelector('.part-content');
-        if (!partContent) {
-            console.error('Impossible de trouver .part-content dans la partie active.');
-            return;
-        }
-    
-        const elementType = document.getElementById('ele-element-type').value || 'text'; // Default icon
-        const elementText = document.getElementById('ele-element-text').value;
-        const elementDescription = document.getElementById('ele-element-description')
-            ? document.getElementById('ele-element-description').value 
-            : '';
-        const elementDate = new Date().toLocaleDateString();
 
-        // Déterminer l'icône en fonction du type d'élément
-        let iconName = '';
-        switch (elementType) {
-            case 'text':
-                iconName = 'document-text-outline';
-                break;
-            case 'file':
-                iconName = 'document-outline';
-                break;
-            case 'depot':
-                iconName = 'cloud-upload-outline';
-                break;
-            default:
-                iconName = 'help-outline'; // Icône par défaut
-        }
-
-
-        const elementImportanceField = document.getElementById('element-importance');
-        const elementImportance = elementImportanceField ? elementImportanceField.value : '';
-
-        const elementHtml = `
-            <div class="element">
-                <div class="element-header">
-                    <ion-icon name="${iconName}"></ion-icon>
-                    <p>${elementText}</p>
-                </div>
-                ${elementDescription ? `<p class="element-description">${elementDescription}</p>` : ''}
-                ${elementImportance ? `<p class="element-importance">Importance: ${elementImportance}</p>` : ''}
-                <p class="element-date">${elementDate}</p>
-            </div>
-            <div class="ligne-gris"></div>
-        `;
-    
-        // Ajouter l'élément à la partie active
-        partContent.insertAdjacentHTML('beforeend', elementHtml);
-    
-        // Fermer la modal
-        const modal = document.getElementById('element-modal');
-        if (modal) {
-            modal.style.display = 'none';
-        } else {
-            console.error('Modal introuvable');
-        }
-    
-        activePart.querySelectorAll('.btn-delete-element').forEach(btn => {
-            btn.addEventListener('click', function () {
-                deleteElement(btn.parentElement.parentElement);
-            });
-        });
-
-        // Réinitialiser les champs du formulaire
-        document.getElementById('ele-element-text').value = '';
-        document.getElementById('ele-element-description').value = '';
-    }
 
     /**
      * Delete an element
