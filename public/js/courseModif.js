@@ -128,9 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="ligne-gris"></div>
                     `;
 
-                    if (user.role.includes('enseignant')) {
+                    if (user.role.includes('ROLE_ADMIN')) {
                         professorsContainer.insertAdjacentHTML('beforeend', participantHtml);
-                    } else if (user.role.includes('etudiant')) {
+                    } else if (user.role.includes('ROLE_USER')) {
                         studentsContainer.insertAdjacentHTML('beforeend', participantHtml);
                     }
                 });

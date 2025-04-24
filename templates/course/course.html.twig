@@ -15,6 +15,7 @@
         const ueId = {{ ueId }}; // Variable récupérée depuis le contrôleur pour l'id de l'ue
         document.addEventListener("DOMContentLoaded", () => {
             const courseContent = document.querySelector(".course-content");
+            const courseEpingle = document.querySelector(".course-epingle");
             const participantsContent = document.querySelector(".participants-content");
             const courseMenuItems = document.querySelectorAll(".course-menu-li a");
             const addPartButton = document.querySelector(".btn-add-part");
@@ -27,10 +28,12 @@
 
                     if (text === "Cours") {
                         courseContent.style.display = "block";
+                        courseEpingle.style.display = "block";
                         participantsContent.style.display = "none";
                         addPartButton.style.display = "inline-block";
                     } else if (text === "Participants") {
                         courseContent.style.display = "none";
+                        courseEpingle.style.display = "none";
                         participantsContent.style.display = "block";
                         addPartButton.style.display = "none";
                     }
