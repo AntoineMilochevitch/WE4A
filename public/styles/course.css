@@ -50,6 +50,7 @@
 .course-content {
     margin-top: 20px;
     width: 100%;
+    overflow: scroll;
 }
 
 /* Part container styling */
@@ -445,4 +446,33 @@
 }
 
 
+.course-epingle {
+    width: 100%;
+    border: 2px solid #007BC0;
+    background-color: #e6f7ff;
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: scroll;
+}
+
+.course-epingle .part {
+    background-color: white;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.course-content,
+.course-epingle {
+    max-height: 100vh; /* ou autre limite */
+    overflow-y: auto;
+}
+
+.course-content::-webkit-scrollbar {
+    display: none; /* Masque les barres de défilement */
+}
+
+.course-epingle::-webkit-scrollbar {
+    display: none; /* Masque les barres de défilement */
+}
 
