@@ -129,9 +129,10 @@ class CourseController extends AbstractController
             $roles = $user->getRoles();
             $data[] = [
                 'id' => $user->getId(),
+                'email' => $user->getEmail(),
                 'nom' => $user->getNom(),
                 'prenom' => $user->getPrenom(),
-                'role' => $roles->map(fn($role) => $role->getNomRole())->toArray(),
+                'role' => $user->getRoles(),
                 'avatar' => $user->getAvatar(),
             ];
         }
