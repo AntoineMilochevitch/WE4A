@@ -98,6 +98,7 @@ class CourseController extends AbstractController
                 'titre' => $section->getTitre(),
                 'date' => $section->getDate()->format('Y-m-d'),
                 'ordre' => $section->getOrdre(),
+                'estEpingle' => $section->isEstEpingle(),
                 'elements' => $elements,
             ];
         }
@@ -475,5 +476,41 @@ class CourseController extends AbstractController
 
         return $response;
     }
+
+    #[Route('/api/course/{ueId}/pin_section/{sectionId}', name: 'pin_section', methods: ['PUT'])]
+    public function pinSection(int $sectionId, EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        $section = $entityManager->getRepository(Section::class)->find($sectionId);
+
+        if (!$section) {
+            return new JsonResponse(['success' => false, 'error' => 'Section non trouvée'], 404);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $section->setEstEpingle($data['estEpingle'] ?? false);
+
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    #[Route('/api/course/{ueId}/update_section_order', name: 'update_section_order', methods: ['PUT'])]
+    public function updateSectionOrder(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $sections = $data['sections'] ?? [];
+
+        foreach ($sections as $sectionData) {
+            $section = $em->getRepository(Section::class)->find($sectionData['id']);
+            if ($section) {
+                $section->setOrdre($sectionData['ordre']);
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Ordre des sections mis à jour']);
+    }
+
 
 }

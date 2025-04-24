@@ -48,7 +48,7 @@ class MainController extends AbstractController
     #[Route('/login', name: 'login')]
     public function login(): Response
     {
-        return $this->render('login/login.html.twig');
+        return $this->render('security/login.html.twig');
     }
 
     #[Route('/admin', name: 'admin')]

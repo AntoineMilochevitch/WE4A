@@ -15,9 +15,14 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/api/course/${ueId}/sections`)
             .then(response => response.json())
             .then(data => {
+                const courseContent = document.querySelector('.course-content');
+                const courseEpingle = document.querySelector('.course-epingle');
+
+                // Vider les conteneurs
                 courseContent.innerHTML = '';
+                courseEpingle.innerHTML = '';
                 data.forEach(section => {
-                    createPart(
+                    const part = createPart(
                         section.titre,
                         section.elements.map(element => ({
                             id : element.id,
@@ -33,13 +38,68 @@ document.addEventListener('DOMContentLoaded', function() {
                             importance: element.importance,
                         })),
                         section.id
+
                     );
+                    if (section.estEpingle) {
+                        courseEpingle.appendChild(part);
+                    } else {
+                        courseContent.appendChild(part);
+                    }
                 });
+
+                updateCourseEpingleVisibility();
+                enableDragAndDrop('.course-content', ueId);
+                enableDragAndDrop('.course-epingle', ueId);
             })
             .catch(error => console.error('Erreur lors du chargement des sections :', error));
     }
 
     loadSections(ueId);
+
+    function updateCourseEpingleVisibility() {
+        const courseEpingle = document.querySelector('.course-epingle');
+        if (courseEpingle.children.length === 0) {
+            courseEpingle.style.display = 'none';
+        } else {
+            courseEpingle.style.display = 'block';
+        }
+    }
+
+    function enableDragAndDrop(containerSelector, ueId) {
+        const container = document.querySelector(containerSelector);
+
+        Sortable.create(container, {
+            animation: 150,
+            handle: '.part-header', // Drag via header
+            scroll: true,
+            scrollSensitivity: 100,
+            scrollSpeed: 15,
+            onEnd: function () {
+                const parts = container.querySelectorAll('.part');
+                const updates = [];
+
+                parts.forEach((part, index) => {
+                    const sectionId = part.getAttribute('data-section-id');
+                    updates.push({ id: sectionId, ordre: index + 1 });
+                });
+
+                // Envoyer les nouveaux ordres a la bdd
+                fetch(`/api/course/${ueId}/update_section_order`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sections: updates })
+                })
+                    .then(res => res.json())
+                    .then(data => console.log("Ordre mis à jour :", data))
+                    .catch(err => console.error("Erreur de mise à jour de l'ordre :", err));
+            }
+        });
+
+
+    }
+
 
     /**
      * Load participants from the API
@@ -270,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <ion-icon name="create-outline" class="btn-edit-part" title="Modifier"></ion-icon>
             <ion-icon name="trash-outline" class="btn-delete-part" title="Supprimer"></ion-icon>
             <ion-icon name="add-circle-outline" class="btn-add-element" title="Ajouter un élément"></ion-icon>
+            <ion-icon name="bookmark-outline" class="btn-pin-part" title="Épingler"></ion-icon>
         </div>
         <div class="part-content" style="display: none;">
             ${elements.map(element => {
@@ -369,6 +430,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+
+
         const deleteButton = newPart.querySelector('.btn-delete-part');
         deleteButton.addEventListener('click', function () {
             const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
@@ -439,11 +502,54 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
+        const courseEpingle = document.querySelector('.course-epingle');
+        const pinButton = newPart.querySelector('.btn-pin-part');
+
+        pinButton.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const part = this.closest('.part');
+            const sectionId = part.dataset.sectionId;
+            const isPinned = part.classList.contains('epingle');
+
+            // Appel AJAX pour épingler/désépingler
+            fetch(`/api/course/${ueId}/pin_section/${sectionId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ estEpingle: !isPinned }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (isPinned) {
+                            // Si désépinglé, déplacer dans course-content
+                            part.classList.remove('epingle');
+                            document.querySelector('.course-content').appendChild(part);
+                        } else {
+                            // Si épinglé, déplacer dans course-epingle
+                            part.classList.add('epingle');
+                            document.querySelector('.course-epingle').appendChild(part);
+                        }
+
+                        //trier les div
+
+                        updateCourseEpingleVisibility();
+                    } else {
+                        console.error('Erreur lors de la mise à jour de l\'épinglage.');
+                    }
+                })
+                .catch(error => console.error('Erreur réseau :', error));
+        });
+
         const addElementButton = newPart.querySelector('.btn-add-element');
         addElementButton.addEventListener('click', function () {
             showElementForm(newPart);
         });
+
+        return newPart;
     }
+
 
     /**
      * Save changes to the section
