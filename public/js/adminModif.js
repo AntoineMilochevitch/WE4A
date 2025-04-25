@@ -150,12 +150,11 @@ document.addEventListener('DOMContentLoaded', function() {
             let isProf = false;
             let isEtudiant = false;
             let roleText = "AAA";
-            alert("AAAAAAAA");
             console.log(utilisateur.role);
             console.log(typeof utilisateur.role);
 
 
-            alert(utilisateur.role);
+
             /*
             let role = JSON.parse(utilisateur.role);
 

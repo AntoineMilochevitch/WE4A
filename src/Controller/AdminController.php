@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin')]
-    public function index(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): \Symfony\Component\HttpFoundation\Response
+    public function index(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): Response
     {
         $users = $usersRepository->allUsers();
         $ue = $ueRepository->allUE();
@@ -31,116 +31,36 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin', name: 'api_admin')]
-    public function getInfo(EntityManagerInterface $entityManager, UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
+    public function getInfo(UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
     {
-        // Récupérer les utilisateurs
         $users = $usersRepository->allUsers();
-
-        if (!$users) {
-            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
-        }
+        $ue = $ueRepository->allUE();
 
         $usersData = [];
-
         foreach ($users as $user) {
-            $userId = $user['id'];
-            if (!isset($usersData[$userId])) {
-                // Initialiser l'entrée utilisateur
-                $usersData[$userId] = [
-                    'id' => $user['id'],
-                    'nom' => $user['nom'] ?? null,
-                    'prenom' => $user['prenom'] ?? null,
-                    'email' => $user['email'] ?? null,
-                    //'roles' => $user->getRoles(), // Récupération des rôles
-                    'ues' => [], // Une liste pour les UE
-                ];
-            }
-
-            // Ajouter l'UE (si elle existe)
-            if (!empty($user['ue_id'])) {
-                $usersData[$userId]['ues'][] = [
-                    'id' => $user['ue_id'],
-                    'code' => $user['ue_code'],
-                    'nom' => $user['ue_name'],
-                ];
-            }
-        }
-
-        // Retourner les données en JSON
-        return new JsonResponse([
-            'users' => array_values($usersData), // Réindexer pour obtenir un tableau JSON cohérent
-        ]);
-
-
-
-
-        foreach ($user as $entity) {
-            $roles = [];
-            //return $entity;
-            /*foreach ($entity->getRoles() as $role) {
-                $roles[] = $role->getNomRole();
-            }*/
-            /*
-            $inscriptions = [];
-            foreach ($entity->getUserUes() as $userUe) {
-                $inscriptions[] = $userUe->getUe()->getCode();
-            }*/
-
             $usersData[] = [
-                'id' => $entity['id'],
-                'nom' => $entity['nom'] ?? null,
-                'prenom' => $entity['prenom'] ?? null,
-                'email' => $entity['email'] ?? null/*,
-                'role' => $entity->map(fn($role) => $role->getRole())->toArray()/*,
-                'inscriptions' => $inscriptions*/
+                'id' => $user['id'],
+                'nom' => $user['nom'],
+                'prenom' => $user['prenom'],
+                'email' => $user['email'],
+                'roles' => $user['roles'],
             ];
-
-        }
-
-        // Récupérer les cours
-        $course = $ueRepository->allUE();
-
-        if (!$course) {
-            return new JsonResponse(['error' => 'Cours non trouvé'], 404);
         }
 
         $coursesData = [];
-        /*
-        foreach ($course as $entity) {
-            $users = [];
-            foreach ($entity->getUserUes() as $userUe) {
-                $user = $userUe->getUser();
-                $roles = [];
-                foreach ($user->getRoles() as $role) {
-                    $roles[] = $role->getNomRole();
-                }
-
-                $users[] = [
-                    'id' => $user->getId(),
-                    'nom' => $user->getNom(),
-                    'prenom' => $user->getPrenom(),
-                    'email' => $user->getEmail(),
-                    'roles' => $roles
-                ];
-            }
-
+        foreach ($ue as $course) {
             $coursesData[] = [
-                'id' => $entity['id'],
-                'code' => $entity['code'] ?? null,
-                'nom' => $entity['nom'] ?? null,
-                'description' => $entity['description'] ?? null,
-                'utilisateurs' => $users
+                'id' => $course['id'],
+                'code' => $course['code'],
+                'nom' => $course['nom'],
+                'description' => $course['description'],
             ];
+        }
 
-        }*/
-
-        $responseData = [
+        return new JsonResponse([
             'users' => $usersData,
             'courses' => $coursesData,
-        ];
-
-        return new JsonResponse($responseData);
-
+        ]);
     }
 
 
