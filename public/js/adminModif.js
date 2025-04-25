@@ -222,6 +222,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             li.id = `liUE-${i}`;
 
+            const idSpan = document.createElement('span');
+            idSpan.className = 'item-id';
+            idSpan.textContent = course.id;
+            li.appendChild(idSpan);
+
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-code';
             nameSpan.textContent = course.code;
@@ -394,11 +399,13 @@ document.addEventListener('DOMContentLoaded', function() {
         let editName;
         let editFirst_name;
         let editRole;
-
         let editInscription;
+
+        let editCode;
         let editDescription;
+
+        const editId = listItem.querySelector('.item-id').textContent;
         if (isUser) {
-            const editId = listItem.querySelector('.item-id').textContent;
             utilisateurs.forEach(user => {
                 if (user.id == editId) {
                     editName = user.nom;
@@ -477,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inscriptionsSelect.id = 'edit-inscription';
             ue.forEach(course => {
                 const option = document.createElement('option'); // Crée une option
-                option.value = course.code; // Attribue la valeur de l'option
+                option.value = course.id; // Attribue la valeur de l'option
                 option.textContent = course.code;
                 inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
             })
@@ -495,23 +502,40 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ajoute la liste <ul> au modal
             modalContent.appendChild(ueList);
 
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = inscriptionsSelect.value; // Récupère la valeur sélectionnée
+                // A rajouter :
+                // Vérifier si l'association user-ue existe déjà dans la bdd ou dans la liste en dessous
+                // Si ce n'est pas le cas, envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+
+                if (!alreadyInList) {
+                    // Ajoute l'élément sélectionné dans la liste si ce n'est pas déjà présent
+                    const listItem = document.createElement('li');
+                    listItem.textContent = selectedCourse.code; // Ajoute code et libellé
+                    ueList.appendChild(listItem);
+                }
+            });
 
 
         } else {
-            const editCode = listItem.querySelector('.item-code').textContent;
-            const editLibelle = listItem.querySelector('.item-libelle').textContent;
+            ue.forEach(course => {
+                if (course.id == editId) {
+                    editCode = course.code;
+                    editName = course.nom;
+                    editDescription = course.description;
+                }
+            })
+
             /*editInscription = [];
             utilisateurs.forEach(user => {
                 if (user.inscription.includes(editCode)) {
                     editInscription.push(user.name);
                 }
             })*/
-            let editDescription;
-            ue.forEach(course => {
-                if (course.code === editCode) {
-                    editDescription = course.description;
-                }
-            })
+
+            const codeMessage = document.createElement('p');
+            codeMessage.textContent = 'Code :';
+            modalContent.appendChild(codeMessage);
 
             // Ajouter le champ pour le code
             const codeInput = document.createElement('input');
@@ -521,11 +545,15 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(codeInput);
             modalContent.appendChild(document.createElement('br'));
 
+            const nameMessage = document.createElement('p');
+            nameMessage.textContent = 'Nom :';
+            modalContent.appendChild(nameMessage);
+
             // Ajouter le champ pour le libelle
             const libelleInput = document.createElement('input');
             libelleInput.type = 'text';
             libelleInput.id = 'edit-libelle';
-            libelleInput.value = editLibelle;
+            libelleInput.value = editName;
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
@@ -539,6 +567,33 @@ document.addEventListener('DOMContentLoaded', function() {
             descriptionInput.value = editDescription;
             modalContent.appendChild(descriptionInput);
             modalContent.appendChild(document.createElement('br'));
+
+            const inscriptionsMessage = document.createElement('p');
+            inscriptionsMessage.textContent = 'Inscriptions :';
+            modalContent.appendChild(inscriptionsMessage);
+
+            const inscriptionsSelect = document.createElement('select');
+            inscriptionsSelect.id = 'edit-inscription';
+            utilisateurs.forEach(user => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
+                option.textContent = user.id + ' ' + user.nom + ' ' + user.prenom;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const usersList = document.createElement('ul');
+            usersList.id = 'edit-ueList';
+            // Parcourt le tableau dynamiquement
+            utilisateurs.forEach(user => { //A remplacer par le tableau d'utilisateurs pour l'ue en question
+                const listItem = document.createElement('li'); // Crée un élément <li>
+                listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
+                usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+            });
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(usersList);
+
         }
 
         /*const messageUE = document.createElement('p');
