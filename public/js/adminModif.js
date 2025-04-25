@@ -134,6 +134,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             li.id = `liUser-${i}`;
 
+            const idSpan = document.createElement('span');
+            idSpan.className = 'item-id';
+            idSpan.textContent = utilisateur.id;
+            li.appendChild(idSpan);
+
             const nameSpan = document.createElement('span');
             nameSpan.className = 'item-name';
             nameSpan.textContent = utilisateur.nom;
@@ -151,20 +156,16 @@ document.addEventListener('DOMContentLoaded', function() {
             let isEtudiant = false;
 
             let roleText = "Inconnu";
-            if (utilisateur.role === "ROLE_ADMIN") {
-                let role = JSON.parse(utilisateur.role);
-
-                if (role.includes("ROLE_ADMIN")) {
+                if (utilisateur.roles.includes("ROLE_ADMIN")) {
                     isAdmin = true;
                     roleText = "Admin";
-                } else if (role.includes("ROLE_PROF")) {
+                } else if (utilisateur.roles.includes("ROLE_PROF")) {
                     isProf = true;
                     roleText = "Professeur";
-                } else if (role.includes("ROLE_USER")) {
+                } else if (utilisateur.roles.includes("ROLE_USER")) {
                     isEtudiant = true;
                     roleText = "Etudiant";
                 }
-            }
 
             roleSpan.textContent = roleText;
             li.appendChild(roleSpan);
@@ -387,17 +388,37 @@ document.addEventListener('DOMContentLoaded', function() {
         modalContent.innerHTML = '';
 
         const confirmationMessage = document.createElement('p');
-        confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessus.';
+        confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessous.';
         modalContent.appendChild(confirmationMessage);
+
+        let editName;
+        let editFirst_name;
+        let editRole;
 
         let editInscription;
         let editDescription;
         if (isUser) {
-            const editName = listItem.querySelector('.item-name').textContent;
-            const editFirst_name = listItem.querySelector('.item-first_name').textContent;
-            //const editRole = listItem.querySelector('.item-role').textContent;
-            //const editDepartement = listItem.querySelector('.item-departement').textContent;
+            const editId = listItem.querySelector('.item-id').textContent;
+            utilisateurs.forEach(user => {
+                if (user.id == editId) {
+                    editName = user.nom;
+                    editFirst_name = user.prenom;
+                    if (user.roles.includes("ROLE_ADMIN")) {
+                        editRole = "Admin";
+                    } else if (user.roles.includes("ROLE_PROF")) {
+                        editRole = "Professeur";
+                    } else {
+                        editRole = "Etudiant";
+                    }
+
+                }
+            })
+
             //editInscription = utilisateurs.find(user => user.name === editName).inscription;
+
+            const nameMessage = document.createElement('p');
+            nameMessage.textContent = 'Nom :';
+            modalContent.appendChild(nameMessage);
 
             // Ajouter le champ pour le nom
             const nameInput = document.createElement('input');
@@ -407,6 +428,10 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(nameInput);
             modalContent.appendChild(document.createElement('br'));
 
+            const first_nameMessage = document.createElement('p');
+            first_nameMessage.textContent = 'Prenom :';
+            modalContent.appendChild(first_nameMessage);
+
             const first_nameInput = document.createElement('input');
             first_nameInput.type = 'text';
             first_nameInput.id = 'edit-first_name';
@@ -414,12 +439,36 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(first_nameInput);
             modalContent.appendChild(document.createElement('br'));
 
-            /*const roleInput = document.createElement('input');
-            roleInput.type = 'text';
-            roleInput.id = 'edit-role';
-            roleInput.value = editRole;
-            modalContent.appendChild(roleInput);
-            modalContent.appendChild(document.createElement('br'));*/
+            const roleMessage = document.createElement('p');
+            roleMessage.textContent = 'Role :';
+            modalContent.appendChild(roleMessage);
+
+            const roleSelect = document.createElement('select');
+            roleSelect.id = 'edit-role';
+            const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF'];
+            options.forEach(role => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = role; // Attribue la valeur de l'option
+                if (role === 'ROLE_USER') {
+                    option.textContent = "Etudiant";
+                }
+                else if (role === 'ROLE_ADMIN') {
+                    option.textContent = "Admin";
+                }
+                else if (role === 'ROLE_PROF') {
+                    option.textContent = "Professeur";
+                }
+                else{
+                    option.textContent = "Inconnu";
+                }
+                if (option.textContent === editRole) {
+                    option.selected = true; // Définit l'option sélectionnée par défaut (si correspond à "editRole")
+                }
+                roleSelect.appendChild(option); // Ajoute l'option au <select>
+            });
+
+            modalContent.appendChild(roleSelect);
+            modalContent.appendChild(document.createElement('br'));
 
             /*// Ajouter le champ pour le departement
             const departementInput = document.createElement('input');
