@@ -466,17 +466,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 roleSelect.appendChild(option); // Ajoute l'option au <select>
             });
-
             modalContent.appendChild(roleSelect);
             modalContent.appendChild(document.createElement('br'));
 
-            /*// Ajouter le champ pour le departement
-            const departementInput = document.createElement('input');
-            departementInput.type = 'text';
-            departementInput.id = 'edit-departement';
-            departementInput.value = editDepartement;
-            modalContent.appendChild(departementInput);
-            modalContent.appendChild(document.createElement('br'));*/
+            const inscriptionsMessage = document.createElement('p');
+            inscriptionsMessage.textContent = 'Inscription aux UE :';
+            modalContent.appendChild(inscriptionsMessage);
+
+            const inscriptionsSelect = document.createElement('select');
+            inscriptionsSelect.id = 'edit-inscription';
+            ue.forEach(course => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = course.code; // Attribue la valeur de l'option
+                option.textContent = course.code;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const ueList = document.createElement('ul');
+            ueList.id = 'edit-ueList';
+            // Parcourt le tableau dynamiquement
+            ue.forEach(course => { //A remplacer par le tableau d'UE pour l'utilisateur en question
+                const listItem = document.createElement('li'); // Crée un élément <li>
+                listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
+                ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+            });
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(ueList);
+
+
+
         } else {
             const editCode = listItem.querySelector('.item-code').textContent;
             const editLibelle = listItem.querySelector('.item-libelle').textContent;
