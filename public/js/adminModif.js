@@ -62,9 +62,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 users.forEach(user => {
                     utilisateurs.push(user);
                 })
-                /*courses.forEach(course => {
+                courses.forEach(course => {
                     ue.push(course);
-                })*/
+                })
                 showUtilisateurs();
             })
             .catch(error => console.error('Error fetching courses/users:', error));
@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     function showUtilisateurs() {
-        contentDiv.innerHTML = ''; // Clear previous content
+        contentDiv.innerHTML = ''; // Efface le contenu précédent
 
         const createButton = document.createElement('button');
         createButton.className = 'btn-create btn-action';
@@ -149,40 +149,25 @@ document.addEventListener('DOMContentLoaded', function() {
             let isAdmin = false;
             let isProf = false;
             let isEtudiant = false;
-            let roleText = "AAA";
-            console.log(utilisateur.role);
-            console.log(typeof utilisateur.role);
 
+            let roleText = "Inconnu";
+            if (utilisateur.role === "ROLE_ADMIN") {
+                let role = JSON.parse(utilisateur.role);
 
+                if (role.includes("ROLE_ADMIN")) {
+                    isAdmin = true;
+                    roleText = "Admin";
+                } else if (role.includes("ROLE_PROF")) {
+                    isProf = true;
+                    roleText = "Professeur";
+                } else if (role.includes("ROLE_USER")) {
+                    isEtudiant = true;
+                    roleText = "Etudiant";
+                }
+            }
 
-            /*
-            let role = JSON.parse(utilisateur.role);
-
-            if (role.includes("ROLE_ADMIN")) {
-                isAdmin = true;
-                roleText = "Admin";
-            }
-            else if (role.includes("ROLE_PROF")) {
-                isProf = true;
-                roleText = "Professeur";
-            }
-            else if (role.includes("ROLE_USER")) {
-                isEtudiant = true;
-                roleText = "Etudiant";
-            }
-            else{
-                roleText = "Inconnu";
-            }
-            */
             roleSpan.textContent = roleText;
             li.appendChild(roleSpan);
-
-            /* Activer si les utilisateurs sont associés à un departement
-            const departementSpan = document.createElement('span');
-            departementSpan.className = 'item-departement';
-            departementSpan.textContent = utilisateur.departement;
-            li.appendChild(departementSpan);
-             */
 
             const editButton = document.createElement('button');
             editButton.className = 'btn-edit btn-action';
@@ -205,6 +190,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ul.appendChild(li);
             i++;
         });
+
         contentDiv.appendChild(ul);
 
         utilisateursButton.disabled = true;
