@@ -21,7 +21,7 @@ class Ue
     #[ORM\Column(type: 'string', length: 255)]
     private ?string $nom;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
@@ -127,14 +127,6 @@ class Ue
         return $this;
     }
 
-    public function findByCodeLike(string $search): array
-    {
-        return $this->createQueryBuilder('u')
-            ->where('LOWER(u.code) LIKE :search')
-            ->setParameter('search', '%' . strtolower($search) . '%')
-            ->getQuery()
-            ->getResult();
-    }
 
 
 }
