@@ -35,6 +35,16 @@ class UeRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function findByCode(string $term)
+    {
+        return $this->createQueryBuilder('u')
+            ->where('u.nom LIKE :term OR u.code LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
+
 
     //    /**
     //     * @return Ue[] Returns an array of Ue objects
