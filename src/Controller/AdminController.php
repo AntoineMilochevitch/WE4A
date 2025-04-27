@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Users;
+use App\Entity\UserUe;
 use App\Repository\UsersRepository;
 use App\Repository\UserUeRepository;
 use App\Entity\UE;
@@ -187,7 +188,7 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin/update-user', name: 'api_admin_update_user', methods: ['POST'])]
-    public function updateUser(Request $request, UsersRepository $usersRepository, EntityManagerInterface $entityManager): JsonResponse {
+    public function updateUser(Request $request, UsersRepository $usersRepository, UeRepository $ueRepository, EntityManagerInterface $entityManager): JsonResponse {
         // Décoder les données envoyées en JSON par la requêter
         $data = json_decode($request->getContent(), true);
 
@@ -208,16 +209,26 @@ class AdminController extends AbstractController
         $user->setEmail($data['email']);
         $user->setRoles($data['roles']);
 
-        $ues = $request->get('inscriptions');
-        if ($ues === null) {
-            $ues = [];
+        foreach ($user->getUserUes() as $existingUserUe) {
+            $entityManager->remove($existingUserUe); // Supprime l'association existante
         }
-        $uesCollection = new ArrayCollection($ues);
-        $user->setUserUe($uesCollection);
+        $entityManager->flush();
 
+        $ueIds = $data['inscriptions']; // Liste des IDs des UE envoyés
+        foreach ($ueIds as $ueId) {
+            $ue = $ueRepository->find($ueId);
+            if (!$ue) {
+                return new JsonResponse(['error' => "UE avec l'ID $ueId introuvable."], Response::HTTP_NOT_FOUND);
+            }
 
-        // Persister et enregistrer les changements dans la base de données
-        $entityManager->persist($user);
+            // Créer une nouvelle relation UserUe
+            $userUe = new UserUe();
+            $userUe->setUser($user);
+            $userUe->setUe($ue);
+
+            $entityManager->persist($userUe); // Persister la relation
+        }
+
         $entityManager->flush();
 
         // Retourner une réponse de succès.
