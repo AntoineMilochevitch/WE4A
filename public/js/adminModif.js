@@ -942,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ue.forEach(course => {
                 if (course.id === numericId){
                     course.code = newCode;
-                    course.libelle = newLibelle
+                    course.nom = newLibelle
                     course.users = [];
                     newInscriptions.forEach(user => {
                         utilisateurs.forEach(utilisateur => {
@@ -963,6 +963,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
                     });
+                    fetch('/api/admin/update-course', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: course.id,
+                            nom: newLibelle,
+                            code: newCode,
+                            description: newDescription,
+                            inscriptions: course.users,
+                        }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json(); // Parse la réponse en JSON
+                            } else {
+                                throw new Error('Erreur lors de l\'enregistrement des modifications');
+                            }
+                        })
+                        .then((data) => {
+                            alert(data.message); // Affiche un message de succès
+                        })
+                        .catch((error) => {
+                            console.error('Erreur :', error);
+                        });
 
                 }
             })
