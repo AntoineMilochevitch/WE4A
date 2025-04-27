@@ -62,10 +62,13 @@ class AdminController extends AbstractController
 
         $coursesData = [];
         foreach ($ue as $course) {
-            $enrolledUsers = array_map(
-                fn($relation) => $relation['user_id'],
-                array_filter($userUe, fn($relation) => $relation['ue_id'] === $course['id'])
-            );
+            $enrolledUsers =
+                array_values( // Réindexe les résultats pour forcer un tableau "propre"
+                    array_map(
+                        fn($relation) => $relation['user_id'],
+                        array_filter($userUe, fn($relation) => $relation['ue_id'] === $course['id'])
+                    )
+                );
 
             $coursesData[] = [
                 'id' => $course['id'],
