@@ -71,6 +71,7 @@ class RegistrationFormType extends AbstractType
                     'Utilisateur' => 'ROLE_USER',
                     'Professeur' => 'ROLE_PROF',
                     'Administrateur' => 'ROLE_ADMIN',
+                    'PA' => 'ROLE_PA'
                 ],
                 'multiple' => false,
                 'expanded' => true,

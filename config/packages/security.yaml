@@ -19,7 +19,7 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: home  # redirection après login réussi
+                success_handler: App\security\LoginSuccessHandler
                 enable_csrf: true
             logout:
                 path: app_logout
@@ -29,6 +29,7 @@ security:
     access_control:
         - { path: ^/Connexion, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS } # si tu as une page d'inscription
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
 
