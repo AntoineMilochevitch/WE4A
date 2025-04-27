@@ -10,10 +10,12 @@ use App\Repository\UserUeRepository;
 use App\Entity\UE;
 use App\Repository\UeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AdminController extends AbstractController
 {
@@ -182,6 +184,46 @@ class AdminController extends AbstractController
 
         return new JsonResponse($responseData);
     }
+
+
+    #[Route('/api/admin/update-user', name: 'api_admin_update_user', methods: ['POST'])]
+    public function updateUser(Request $request, UsersRepository $usersRepository, EntityManagerInterface $entityManager): JsonResponse {
+        // Décoder les données envoyées en JSON par la requêter
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier si toutes les informations nécessaires sont reçues
+        if (!isset($data['id'], $data['nom'], $data['prenom'], $data['email'], $data['roles'])) {
+            return new JsonResponse(['error' => 'Données manquantes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Récupérer l'utilisateur à modifier (par son ID)
+        $user = $usersRepository->find($data['id']);
+        if (!$user) {
+            return new JsonResponse(['error' => 'Utilisateur non trouvé'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Mettre à jour les champs de l’utilisateur avec les données reçues
+        $user->setNom($data['nom']);
+        $user->setPrenom($data['prenom']);
+        $user->setEmail($data['email']);
+        $user->setRoles($data['roles']);
+
+        $ues = $request->get('inscriptions');
+        if ($ues === null) {
+            $ues = [];
+        }
+        $uesCollection = new ArrayCollection($ues);
+        $user->setUserUe($uesCollection);
+
+
+        // Persister et enregistrer les changements dans la base de données
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        // Retourner une réponse de succès.
+        return new JsonResponse(['message' => 'Utilisateur mis à jour avec succès']);
+    }
+
 
 
 }
