@@ -40,4 +40,10 @@ class UserUeRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findAll(): array{
+        return $this->createQueryBuilder('u')
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

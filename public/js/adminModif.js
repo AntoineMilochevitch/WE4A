@@ -399,7 +399,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let editName;
         let editFirst_name;
         let editRole;
-        let editInscription;
+        let editInscription = [];
 
         let editCode;
         let editDescription;
@@ -416,6 +416,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         editRole = "Professeur";
                     } else {
                         editRole = "Etudiant";
+                    }
+
+                    if (Array.isArray(user.inscriptions)) {
+                        user.inscriptions.forEach(course => {
+                            editInscription.push(course); // Ajoute au tableau
+                        });
+                    } else {
+                        console.error('Les inscriptions de cet utilisateur ne sont pas un tableau :', user.inscriptions);
                     }
 
                 }
@@ -493,12 +501,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const ueList = document.createElement('ul');
             ueList.id = 'edit-ueList';
-            // Parcourt le tableau dynamiquement
-            ue.forEach(course => { //A remplacer par le tableau d'UE pour l'utilisateur en question
-                const listItem = document.createElement('li'); // Crée un élément <li>
-                listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
-                ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
-            });
+            if (editInscription.length == 0) {
+                const listItem = document.createElement('li');
+                listItem.textContent = '- Aucune UE';
+                ueList.appendChild(listItem);
+            }
+            else {
+                // Parcourt le tableau dynamiquement
+                editInscription.forEach(inscription => { //A remplacer par le tableau d'UE pour l'utilisateur en question
+                    const listItem = document.createElement('li'); // Crée un élément <li>
+                    listItem.textContent = `- Erreur`;
+                    ue.forEach(course => {
+                        if (course.id == inscription) {
+                            listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
+                        }
+                    })
+                    ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+                });
+            }
+
             // Ajoute la liste <ul> au modal
             modalContent.appendChild(ueList);
 
