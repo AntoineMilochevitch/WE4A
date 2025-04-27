@@ -863,34 +863,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             utilisateurs.forEach(user => {
                 if (user.id === numericId) {
-                    fetch('/api/admin/update-user', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            id: user.id,
-                            nom: newName,
-                            prenom: newFirst_name,
-                            email: user.email,
-                            roles: [newRole],
-                            inscriptions: newInscriptions,
-                        }),
-                    })
-                        .then((response) => {
-                            if (response.ok) {
-                                return response.json(); // Parse la réponse en JSON
-                            } else {
-                                throw new Error('Erreur lors de l\'enregistrement des modifications');
-                            }
-                        })
-                        .then((data) => {
-                            alert(data.message); // Affiche un message de succès
-                        })
-                        .catch((error) => {
-                            console.error('Erreur :', error);
-                        });
-
                     user.nom = newName;
                     user.prenom = newFirst_name;
                     user.roles = newRole;
@@ -915,6 +887,33 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     });
 
+                    fetch('/api/admin/update-user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: user.id,
+                            nom: newName,
+                            prenom: newFirst_name,
+                            email: user.email,
+                            roles: [newRole],
+                            inscriptions: user.inscriptions,
+                        }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json(); // Parse la réponse en JSON
+                            } else {
+                                throw new Error('Erreur lors de l\'enregistrement des modifications');
+                            }
+                        })
+                        .then((data) => {
+                            alert(data.message); // Affiche un message de succès
+                        })
+                        .catch((error) => {
+                            console.error('Erreur :', error);
+                        });
 
                 }
             })
