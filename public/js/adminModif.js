@@ -422,8 +422,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         user.inscriptions.forEach(course => {
                             editInscription.push(course); // Ajoute au tableau
                         });
-                    } else {
-                        console.error('Les inscriptions de cet utilisateur ne sont pas un tableau :', user.inscriptions);
                     }
 
                 }
@@ -544,15 +542,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     editCode = course.code;
                     editName = course.nom;
                     editDescription = course.description;
+
+                    if (Array.isArray(course.users)) {
+                        course.users.forEach(user => {
+                            editInscription.push(user); // Ajoute au tableau
+                        });
+                    }
                 }
             })
-
-            /*editInscription = [];
-            utilisateurs.forEach(user => {
-                if (user.inscription.includes(editCode)) {
-                    editInscription.push(user.name);
-                }
-            })*/
 
             const codeMessage = document.createElement('p');
             codeMessage.textContent = 'Code :';
@@ -605,13 +602,26 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('br'));
 
             const usersList = document.createElement('ul');
-            usersList.id = 'edit-ueList';
-            // Parcourt le tableau dynamiquement
-            utilisateurs.forEach(user => { //A remplacer par le tableau d'utilisateurs pour l'ue en question
-                const listItem = document.createElement('li'); // Crée un élément <li>
-                listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
-                usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
-            });
+            usersList.id = 'edit-usersList';
+            if (editInscription.length == 0) {
+                const listItem = document.createElement('li');
+                listItem.textContent = '- Aucun utilisateur inscrit';
+                ueList.appendChild(listItem);
+            }
+            else {
+                // Parcourt le tableau dynamiquement
+                editInscription.forEach(inscription => {
+                    const listItem = document.createElement('li'); // Crée un élément <li>
+                    listItem.textContent = `- Erreur`; // Définit le contenu de chaque élément
+                    utilisateurs.forEach(user => {
+                        if (user.id == inscription) {
+                            listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
+                        }
+                    })
+                    usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+                });
+            }
+
             // Ajoute la liste <ul> au modal
             modalContent.appendChild(usersList);
 
