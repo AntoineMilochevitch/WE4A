@@ -58,6 +58,7 @@ class CourseController extends AbstractController
 
         return $this->render('course/course.html.twig', [
             'ueId' => $ue->getId(),
+            'userRoles' => $this->getUser()->getRoles(),
         ]);
     }
 
@@ -195,6 +196,7 @@ class CourseController extends AbstractController
                 $element->setIdType($type);
                 $element->setOrdre(0);
                 $element->setEstVisible(true);
+                $element->setImportance($elem['importance'] ?? null);
 
                 if (!empty($elem['fichier'])) {
                     try {

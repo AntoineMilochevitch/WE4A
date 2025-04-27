@@ -12,6 +12,7 @@
     <script src="{{ asset('js/courseModif.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script>
+        const userRoles = {{ userRoles|json_encode|raw }};
         const ueId = {{ ueId }}; // Variable récupérée depuis le contrôleur pour l'id de l'ue
         document.addEventListener("DOMContentLoaded", () => {
             const courseContent = document.querySelector(".course-content");
@@ -56,7 +57,7 @@
                     <div class="course-menu-li"><li><a href="#" class="active">Cours</a></li></div>
                     <div class="course-menu-li"><li><a href="#">Participants</a></li></div>
                 </ul>
-                <button class="btn-add-part">Ajouter une partie</button>
+                <button class="btn-add-part" disabled>Ajouter une partie</button>
             </div>
             <div class="ligne-gris"></div>
             <div class="course-epingle"></div>

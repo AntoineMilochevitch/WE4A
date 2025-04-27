@@ -6,6 +6,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const courseContent = document.querySelector('.course-content');
     const participantsContent = document.querySelector('.participants-content');
 
+    function hasRole() {
+        return userRoles.includes('ROLE_ADMIN') || userRoles.includes('ROLE_PROF');
+    }
+
+    function enableButtonsBasedOnRole() {
+        document.querySelectorAll('.btn-edit-part, .btn-delete-part, .btn-add-element, .btn-pin-part, .btn-add-part').forEach(button => {
+            if (hasRole()) {
+                button.style.display = 'block'; // Affiche le bouton
+                button.removeAttribute('disabled');   // Active le bouton
+            } else {
+                button.style.display = 'none';
+            }
+        });
+    }
+
+    enableButtonsBasedOnRole();
     /**
      * Load sections from the API
      * @param ueId
@@ -366,7 +382,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="file" class="file-input">
                             ` : ''} 
                             ${downloadButton}                      
-                            <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
+                            ${hasRole() ? `
+                                <ion-icon name="trash-outline" class="btn-delete-element" title="Supprimer"></ion-icon>
+                            ` : ''}
                         </div>
                         ${element.description ? `<p class="element-description">${element.description}</p>` : ''}
                         ${element.date ? `<p class="element-date">${element.date}</p>` : ''}
@@ -374,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="ligne-gris"></div>
                 `;
         }).join('')}
-            <button type="button" class="btn-add-element" style="display: none;">Ajouter un élément</button>
+
         </div>
     `;
 
@@ -546,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
         addElementButton.addEventListener('click', function () {
             showElementForm(newPart);
         });
-
+        enableButtonsBasedOnRole();
         return newPart;
     }
 
