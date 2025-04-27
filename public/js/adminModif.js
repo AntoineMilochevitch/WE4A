@@ -606,6 +606,10 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(inscriptionsMessage);
 
             const inscriptionsSelect = document.createElement('select');
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un utilisateur --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             inscriptionsSelect.id = 'edit-inscription';
             utilisateurs.forEach(user => {
                 const option = document.createElement('option'); // Crée une option
@@ -642,19 +646,28 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(usersList);
 
             inscriptionsSelect.addEventListener('change', function () {
-                const selectedOption = inscriptionsSelect.value; // Récupère la valeur sélectionnée
-                // A rajouter :
-                // Vérifier si l'association user-ue existe déjà dans la bdd ou dans la liste en dessous
-                // Si ce n'est pas le cas, envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedUser = utilisateurs.find(user => user.id === selectedOption); // Trouve le user correspondant
+                const userListItem = Array.from(usersList.querySelectorAll('li'));
 
-                if (!alreadyInList) {
-                    // Ajoute l'élément sélectionné dans la liste si ce n'est pas déjà présent
-                    const listItem = document.createElement('li');
-                    listItem.textContent = selectedCourse.code; // Ajoute code et libellé
-                    ueList.appendChild(listItem);
+                const stringToCompare = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom;
+                const alreadyInList = userListItem.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Cet utilisateur est déjà assigné à cet ue.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
                 }
-            });
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom; // Ajout des infos du user
+                usersList.appendChild(listItem);
 
+                inscriptionsSelect.value = "";
+
+
+                // A rajouter :
+                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+
+            });
         }
 
         /*const messageUE = document.createElement('p');
