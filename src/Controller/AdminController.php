@@ -6,6 +6,7 @@ namespace App\Controller;
 
 use App\Entity\Users;
 use App\Repository\UsersRepository;
+use App\Repository\UserUeRepository;
 use App\Entity\UE;
 use App\Repository\UeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,29 +32,47 @@ class AdminController extends AbstractController
 
 
     #[Route('/api/admin', name: 'api_admin')]
-    public function getInfo(UsersRepository $usersRepository, UeRepository $ueRepository): JsonResponse
+    public function getInfo(UsersRepository $usersRepository, UeRepository $ueRepository, UserUeRepository $userUeRepository): JsonResponse
     {
         $users = $usersRepository->allUsers();
         $ue = $ueRepository->allUE();
+        $userUe = $userUeRepository->findAll();
 
         $usersData = [];
         foreach ($users as $user) {
+            $inscriptions =
+                array_values( // Réindexe les résultats pour forcer un tableau "propre"
+                    array_map(
+                        fn($relation) => $relation['ue_id'],
+                        array_filter($userUe, fn($relation) => $relation['user_id'] === $user['id'])
+                    )
+                );
+
+
+
             $usersData[] = [
                 'id' => $user['id'],
                 'nom' => $user['nom'],
                 'prenom' => $user['prenom'],
                 'email' => $user['email'],
                 'roles' => $user['roles'],
+                'inscriptions' => $inscriptions,
             ];
         }
 
         $coursesData = [];
         foreach ($ue as $course) {
+            $enrolledUsers = array_map(
+                fn($relation) => $relation['user_id'],
+                array_filter($userUe, fn($relation) => $relation['ue_id'] === $course['id'])
+            );
+
             $coursesData[] = [
                 'id' => $course['id'],
                 'code' => $course['code'],
                 'nom' => $course['nom'],
                 'description' => $course['description'],
+                'users' => $enrolledUsers,
             ];
         }
 
