@@ -111,7 +111,10 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        $roles[] = 'ROLE_USER';
+        // Ajouter ROLE_USER uniquement si l'utilisateur est professeur
+        if (in_array('ROLE_PROF', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
 
         return array_unique($roles);
     }
