@@ -816,6 +816,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function confirmEdit(button) {
         const listItemId = button.getAttribute('data-list-item-id');
         const listItem = document.getElementById(listItemId);
+        const numericId = parseInt(listItem.textContent, 10);
 
         if (utilisateursButton.disabled) {
 
@@ -849,7 +850,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             utilisateurs.forEach(user => {
-                if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
+                if (user.id === numericId) {
                     user.name = newName;
                     user.first_name = newFirst_name;
                     user.role = newRole;
@@ -859,6 +860,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (course == '- ' + cours.code) {
                                 user.inscriptions.push(cours.id); // Ajoute au tableau
                                 user.inscriptions.sort()
+
+                                let flagUserPresent = false;
+                                cours.users.forEach(utilisateur => {
+                                    if (user.id == utilisateur) {
+                                        flagUserPresent = true;
+                                    }
+                                })
+                                if (!flagUserPresent) {
+                                    cours.users.push(user.id);
+                                }
                             }
                         });
 
@@ -888,7 +899,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (descriptionSpan) descriptionSpan.textContent = newDescription;
 
             ue.forEach(course => {
-                if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
+                if (course.id === numericId){
                     course.code = newCode;
                     course.libelle = newLibelle
                     course.users = [];
@@ -897,6 +908,16 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom) {
                                 course.users.push(utilisateur.id); // Ajoute au tableau
                                 course.users.sort()
+
+                                let flagUePresent = false;
+                                utilisateur.inscriptions.forEach(cours => {
+                                    if (course.id == cours) {
+                                        flagUePresent = true;
+                                    }
+                                })
+                                if (!flagUePresent) {
+                                    utilisateur.inscriptions.push(course.id);
+                                }
                             }
                         });
 
