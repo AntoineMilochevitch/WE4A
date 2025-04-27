@@ -863,30 +863,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             utilisateurs.forEach(user => {
                 if (user.id === numericId) {
-                    user.name = newName;
-                    alert(newName);
-                    user.first_name = newFirst_name;
-                    user.role = newRole;
-                    user.inscriptions = [];
-                    newInscriptions.forEach(course => {
-                        ue.forEach(cours => {
-                            if (course == '- ' + cours.code) {
-                                user.inscriptions.push(cours.id); // Ajoute au tableau
-                                user.inscriptions.sort()
-
-                                let flagUserPresent = false;
-                                cours.users.forEach(utilisateur => {
-                                    if (user.id == utilisateur) {
-                                        flagUserPresent = true;
-                                    }
-                                })
-                                if (!flagUserPresent) {
-                                    cours.users.push(user.id);
-                                }
-                            }
-                        });
-
-                    });
                     fetch('/api/admin/update-user', {
                         method: 'POST',
                         headers: {
@@ -914,6 +890,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         .catch((error) => {
                             console.error('Erreur :', error);
                         });
+
+                    user.nom = newName;
+                    user.prenom = newFirst_name;
+                    user.roles = newRole;
+                    user.inscriptions = [];
+                    newInscriptions.forEach(course => {
+                        ue.forEach(cours => {
+                            if (course == '- ' + cours.code) {
+                                user.inscriptions.push(cours.id); // Ajoute au tableau
+                                user.inscriptions.sort()
+
+                                let flagUserPresent = false;
+                                cours.users.forEach(utilisateur => {
+                                    if (user.id == utilisateur) {
+                                        flagUserPresent = true;
+                                    }
+                                })
+                                if (!flagUserPresent) {
+                                    cours.users.push(user.id);
+                                }
+                            }
+                        });
+
+                    });
+
 
                 }
             })
