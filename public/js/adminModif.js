@@ -510,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             else {
                 // Parcourt le tableau dynamiquement
-                editInscription.forEach(inscription => { //A remplacer par le tableau d'UE pour l'utilisateur en question
+                editInscription.forEach(inscription => {
                     const listItem = document.createElement('li'); // Crée un élément <li>
                     listItem.textContent = `- Erreur`;
                     ue.forEach(course => {
@@ -818,12 +818,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const listItem = document.getElementById(listItemId);
 
         if (utilisateursButton.disabled) {
+
             const newName = document.getElementById('edit-name').value;
             const newFirst_name = document.getElementById('edit-first_name').value;
             const newRole = document.getElementById('edit-role').value;
-            const newDepartement = document.getElementById('edit-departement').value;
+            const ueList = document.getElementById('edit-ueList');
+            const newInscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.textContent.trim());
 
-            if (!newName || !newFirst_name || !newRole || !newDepartement) {
+            if (!newName || !newFirst_name) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
@@ -831,19 +833,36 @@ document.addEventListener('DOMContentLoaded', function() {
             const nameSpan = listItem.querySelector('.item-name');
             const first_nameSpan = listItem.querySelector('.item-first_name');
             const roleSpan = listItem.querySelector('.item-role');
-            const departementSpan = listItem.querySelector('.item-departement');
 
             if (nameSpan) nameSpan.textContent = newName;
             if (first_nameSpan) first_nameSpan.textContent = newFirst_name;
-            if (roleSpan) roleSpan.textContent = newRole;
-            if (departementSpan) departementSpan.textContent = newDepartement;
+            if (roleSpan) {
+                if (newRole === 'ROLE_USER') {
+                    roleSpan.textContent = "Etudiant";
+                }
+                else if (newRole === 'ROLE_ADMIN') {
+                    roleSpan.textContent = "Admin";
+                }
+                else if (newRole === 'ROLE_PROF') {
+                    roleSpan.textContent = "Professeur";
+                }
+            }
 
             utilisateurs.forEach(user => {
                 if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
                     user.name = newName;
                     user.first_name = newFirst_name;
                     user.role = newRole;
-                    user.departement = newDepartement;
+                    user.inscriptions = [];
+                    newInscriptions.forEach(course => {
+                        ue.forEach(cours => {
+                            if (course == '- ' + cours.code) {
+                                user.inscriptions.push(cours.id); // Ajoute au tableau
+                                user.inscriptions.sort()
+                            }
+                        });
+
+                    });
                 }
             })
         }
@@ -851,6 +870,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const newCode = document.getElementById('edit-code').value;
             const newLibelle = document.getElementById('edit-libelle').value;
             const newDescription = document.getElementById('edit-description').value;
+            const usersList = document.getElementById('edit-usersList');
+            const newInscriptions = Array.from(usersList.querySelectorAll('li')).map(item => item.textContent.trim());
+
 
             if (!newCode || !newLibelle || !newDescription) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
@@ -869,6 +891,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
                     course.code = newCode;
                     course.libelle = newLibelle
+                    course.users = [];
+                    newInscriptions.forEach(user => {
+                        utilisateurs.forEach(utilisateur => {
+                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom) {
+                                course.users.push(utilisateur.id); // Ajoute au tableau
+                                course.users.sort()
+                            }
+                        });
+
+                    });
+
                 }
             })
         }
