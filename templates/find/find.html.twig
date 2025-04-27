@@ -4,10 +4,26 @@
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('styles/find.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/recherche.css') }}">
 {% endblock %}
 
 {% block body %}
+    <!-- Modal caché par défaut -->
+    <div id="ueModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="image">
+                <span id="modalClose">&times;</span>
+                <div class="titre">
+                    <h1 id="modalCode"></h1>
+                </div>
+            </div>
+            <h2 id="modalTitle"></h2>
+            <div id="modalDescription">
+                <p id="modalDescription"></p>
+            </div>
+        </div>
+    </div>
+
     <div class="content-display">
         <div class="search">
             <input type="text" id="searchInput" placeholder="Rechercher un cours">
@@ -27,6 +43,9 @@
             <tbody>
                 <script src="{{ asset('js/find.js') }}"></script> <!-- Ajout du fichier JS -->
             </tbody>
+
         </table>
     </div>
+
+
 {% endblock %}
