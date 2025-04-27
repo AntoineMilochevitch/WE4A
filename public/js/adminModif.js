@@ -488,6 +488,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const inscriptionsSelect = document.createElement('select');
             inscriptionsSelect.id = 'edit-inscription';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un cours --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             ue.forEach(course => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = course.id; // Attribue la valeur de l'option
@@ -511,6 +515,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     listItem.textContent = `- Erreur`;
                     ue.forEach(course => {
                         if (course.id == inscription) {
+                            listItem.value = course.id;
                             listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
                         }
                     })
@@ -522,17 +527,27 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(ueList);
 
             inscriptionsSelect.addEventListener('change', function () {
-                const selectedOption = inscriptionsSelect.value; // Récupère la valeur sélectionnée
-                // A rajouter :
-                // Vérifier si l'association user-ue existe déjà dans la bdd ou dans la liste en dessous
-                // Si ce n'est pas le cas, envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedCourse = ue.find(course => course.id === selectedOption); // Trouve le cours correspondant
+                const ueListItems = Array.from(ueList.querySelectorAll('li'));
 
-                if (!alreadyInList) {
-                    // Ajoute l'élément sélectionné dans la liste si ce n'est pas déjà présent
-                    const listItem = document.createElement('li');
-                    listItem.textContent = selectedCourse.code; // Ajoute code et libellé
-                    ueList.appendChild(listItem);
+                const stringToCompare = '- ' + selectedCourse.code;
+                const alreadyInList = ueListItems.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Ce cours est déjà assigné à cet utilisateur.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
                 }
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedCourse.code; // Ajout du code du cours ici
+                ueList.appendChild(listItem);
+
+                inscriptionsSelect.value = "";
+
+
+                // A rajouter :
+                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+
             });
 
 
@@ -615,6 +630,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     listItem.textContent = `- Erreur`; // Définit le contenu de chaque élément
                     utilisateurs.forEach(user => {
                         if (user.id == inscription) {
+                            listItem.value = user.id;
                             listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
                         }
                     })
@@ -624,6 +640,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Ajoute la liste <ul> au modal
             modalContent.appendChild(usersList);
+
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = inscriptionsSelect.value; // Récupère la valeur sélectionnée
+                // A rajouter :
+                // Vérifier si l'association user-ue existe déjà dans la bdd ou dans la liste en dessous
+                // Si ce n'est pas le cas, envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
+
+                if (!alreadyInList) {
+                    // Ajoute l'élément sélectionné dans la liste si ce n'est pas déjà présent
+                    const listItem = document.createElement('li');
+                    listItem.textContent = selectedCourse.code; // Ajoute code et libellé
+                    ueList.appendChild(listItem);
+                }
+            });
 
         }
 
