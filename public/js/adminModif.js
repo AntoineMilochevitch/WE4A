@@ -154,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let isAdmin = false;
             let isProf = false;
             let isEtudiant = false;
+            let isProfAdmin = false;
 
             let roleText = "Inconnu";
                 if (utilisateur.roles.includes("ROLE_ADMIN")) {
@@ -165,6 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (utilisateur.roles.includes("ROLE_USER")) {
                     isEtudiant = true;
                     roleText = "Etudiant";
+                } else if (utilisateur.roles.includes("ROLE_PA")) {
+                    isProfAdmin = true;
+                    roleText = "Professeur / Admin";
                 }
 
             roleSpan.textContent = roleText;
@@ -414,8 +418,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         editRole = "Admin";
                     } else if (user.roles.includes("ROLE_PROF")) {
                         editRole = "Professeur";
-                    } else {
+                    } else if (user.roles.includes("ROLE_USER")){
                         editRole = "Etudiant";
+                    } else if (user.roles.includes("ROLE_PA")){
+                        editRole = "Professeur / Admin";
                     }
 
                     if (Array.isArray(user.inscriptions)) {
@@ -458,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const roleSelect = document.createElement('select');
             roleSelect.id = 'edit-role';
-            const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF'];
+            const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
             options.forEach(role => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = role; // Attribue la valeur de l'option
@@ -470,6 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 else if (role === 'ROLE_PROF') {
                     option.textContent = "Professeur";
+                }
+                else if (role === 'ROLE_PA') {
+                    option.textContent = "Professeur / Admin";
                 }
                 else{
                     option.textContent = "Inconnu";
@@ -846,6 +855,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 else if (newRole === 'ROLE_PROF') {
                     roleSpan.textContent = "Professeur";
+                }
+                else if (newRole === 'ROLE_PA') {
+                    roleSpan.textContent = "Professeur / Admin";
                 }
             }
 
