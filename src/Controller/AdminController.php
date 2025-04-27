@@ -303,6 +303,7 @@ class AdminController extends AbstractController
         $user->setPassword($data['password']);
 
         $entityManager->persist($user);
+        $entityManager->flush();
 
         if (isset($data['inscriptions'])) {
             $ueIds = $data['inscriptions']; // Liste des IDs des UE
@@ -318,6 +319,7 @@ class AdminController extends AbstractController
                 $userUe->setUe($ue);
 
                 $entityManager->persist($userUe);
+                $entityManager->flush();
             }
         }
 
@@ -361,6 +363,7 @@ class AdminController extends AbstractController
 
         // Sauvegarde dans la base de données
         $entityManager->persist($course);
+        $entityManager->flush();
 
         if (isset($data['users'])) {
             $userIds = $data['users']; // Liste des IDs des utilisateurs
@@ -376,7 +379,9 @@ class AdminController extends AbstractController
                 $userUe->setUe($course);
 
                 $entityManager->persist($userUe);
+                $entityManager->flush();
             }
+            $entityManager->flush();
         }
 
 
@@ -394,6 +399,49 @@ class AdminController extends AbstractController
                 'users' => $data['users'] ?? []
             ],
         ]);
+    }
+
+
+    #[Route('/api/admin/delete', name: 'api_admin_delete', methods: ['DELETE'])]
+    public function deleteElement(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $id = $data['id'] ?? null;
+        $type = $data['type'] ?? null;
+
+        if (!$id || !$type) {
+            return new JsonResponse(['error' => 'Invalid data'], 400);
+        }
+
+        if ($type === 'user') {
+            $user = $em->getRepository(Users::class)->find($id);
+            if (!$user) {
+                return new JsonResponse(['error' => 'User not found'], 404);
+            }
+            foreach ($user->getUserUes() as $userUe) {
+                $em->remove($userUe);
+            }
+
+            $em->remove($user); // Supprimer l'utilisateur après avoir supprimé les relations
+            $em->flush();
+
+            return new JsonResponse(['success' => true, 'message' => 'User deleted with associated relations.']);
+        }
+        if ($type === 'course') {
+            $course = $em->getRepository(Ue::class)->find($id);
+            if (!$course) {
+                return new JsonResponse(['error' => 'Course not found'], 404);
+            }
+
+            $em->remove($course);
+            $em->flush();
+
+            return new JsonResponse(['success' => true, 'message' => 'Course deleted successfully.']);
+        }
+
+        return new JsonResponse(['error' => 'Invalid type'], 400);
+
     }
 
 

@@ -41,7 +41,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $score;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: UserUe::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $userUes;
 
     /**

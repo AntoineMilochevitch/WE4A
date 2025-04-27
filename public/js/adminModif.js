@@ -1224,23 +1224,49 @@ document.addEventListener('DOMContentLoaded', function() {
     function confirmDelete(button) {
         const listItemId = button.getAttribute('data-list-item-id');
         const listItem = document.getElementById(listItemId);
+        const numericId = parseInt(listItem.textContent, 10);
 
         listItem.remove();
 
         if (utilisateursButton.disabled) {
             utilisateurs.forEach(user => {
-                if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
+                if (user.id === numericId) {
                     utilisateurs.splice(utilisateurs.indexOf(user), 1);
                 }
             })
         }
         else {
             ue.forEach(course => {
-                if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
+                if (course.id === numericId){
                     ue.splice(ue.indexOf(course), 1);
                 }
             })
         }
+
+        fetch(`/api/admin/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: numericId, // ID de l'élément à supprimer
+                type: utilisateursButton.disabled ? 'user' : 'course' // (utilisateur ou cours)
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la suppression dans la base de données.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(`Suppression réussie :`, data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la suppression :', error);
+                alert('Une erreur est survenue lors de la suppression côté serveur.');
+            });
+
     }
 
     // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes
