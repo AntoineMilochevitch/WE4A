@@ -236,6 +236,52 @@ class AdminController extends AbstractController
     }
 
 
+    #[Route('/api/admin/update-course', name: 'api_admin_update_course', methods: ['POST'])]
+    public function updateCourse(Request $request, UsersRepository $usersRepository, UeRepository $ueRepository, EntityManagerInterface $entityManager): JsonResponse {
+        // Décoder les données envoyées en JSON par la requêter
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier si toutes les informations nécessaires sont reçues
+        if (!isset($data['id'], $data['code'], $data['nom'], $data['description'])) {
+            return new JsonResponse(['error' => 'Données manquantes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Récupérer le cours à modifier (par son ID)
+        $ue = $ueRepository ->find($data['id']);
+        if (!$ue) {
+            return new JsonResponse(['error' => 'UE non trouvée'], Response::HTTP_NOT_FOUND);
+        }
+
+        // Mettre à jour les champs de l’UE avec les données reçues
+        $ue->setCode($data['code']);
+        $ue->setNom($data['nom']);
+        $ue->setDescription($data['description']);
+
+        foreach ($ue->getUserUes() as $existingUserUe) {
+            $entityManager->remove($existingUserUe); // Supprime l'association existante
+        }
+        $entityManager->flush();
+
+        $userIds = $data['inscriptions']; // Liste des IDs des UE envoyés
+        foreach ($userIds as $userId) {
+            $user = $usersRepository->find($userId);
+            if (!$user) {
+                return new JsonResponse(['error' => "User avec l'ID $userId introuvable."], Response::HTTP_NOT_FOUND);
+            }
+
+            // Créer une nouvelle relation UserUe
+            $userUe = new UserUe();
+            $userUe->setUser($user);
+            $userUe->setUe($ue);
+
+            $entityManager->persist($userUe); // Persister la relation
+        }
+
+        $entityManager->flush();
+
+        // Retourner une réponse de succès.
+        return new JsonResponse(['message' => 'UE mis à jour avec succès']);
+    }
 
 }
 
