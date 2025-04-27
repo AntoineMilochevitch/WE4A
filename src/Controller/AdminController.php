@@ -283,6 +283,121 @@ class AdminController extends AbstractController
         return new JsonResponse(['message' => 'UE mis à jour avec succès']);
     }
 
+    #[Route('/api/admin/create-user', name: 'api_admin_create_user', methods: ['POST'])]
+    public function createUser(Request $request, EntityManagerInterface $entityManager, UeRepository $ueRepository): JsonResponse
+    {
+        // Décoder les données JSON envoyées avec la requête
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier si toutes les informations nécessaires sont présentes
+        if (!isset($data['nom'], $data['prenom'], $data['email'], $data['roles'], $data['password'])) {
+            return new JsonResponse(['error' => 'Données manquantes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Créer une nouvelle entité Users
+        $user = new Users();
+        $user->setNom($data['nom']);
+        $user->setPrenom($data['prenom']);
+        $user->setEmail($data['email']);
+        $user->setRoles($data['roles']);
+        $user->setPassword($data['password']);
+
+        $entityManager->persist($user);
+
+        if (isset($data['inscriptions'])) {
+            $ueIds = $data['inscriptions']; // Liste des IDs des UE
+            foreach ($ueIds as $ueId) {
+                $ue = $ueRepository->find($ueId);
+                if (!$ue) {
+                    return new JsonResponse(['error' => "UE avec l'ID $ueId introuvable."], Response::HTTP_NOT_FOUND);
+                }
+
+                // Créer une nouvelle association entre l'utilisateur et l'UE
+                $userUe = new UserUe();
+                $userUe->setUser($user);
+                $userUe->setUe($ue);
+
+                $entityManager->persist($userUe);
+            }
+        }
+
+        // Enregistrer toutes les modifications dans la base de données
+        $entityManager->flush();
+
+        // Retourner une réponse de succès
+        return new JsonResponse([
+            'message' => 'Utilisateur créé avec succès',
+            'user' => [
+                'id' => $user->getId(), // L'ID est maintenant généré par Doctrine
+                'nom' => $user->getNom(),
+                'prenom' => $user->getPrenom(),
+                'password' => $user->getPassword(),
+                'email' => $user->getEmail(),
+                'roles' => $user->getRoles(),
+                'inscriptions' => $data['inscriptions'] ?? [], // Retourne les inscriptions si fournies
+            ],
+        ]);
+
+    }
+
+
+    #[Route('/api/admin/create-course', name: 'api_admin_create_course', methods: ['POST'])]
+    public function createCourse(Request $request, EntityManagerInterface $entityManager, UsersRepository $usersRepository): JsonResponse
+    {
+        // Décoder les données JSON envoyées avec la requête
+        $data = json_decode($request->getContent(), true);
+
+        // Vérifier les données reçues
+        if (!isset($data['code'], $data['nom'], $data['description'])) {
+            return new JsonResponse(['error' => 'Données manquantes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Créer une nouvelle entité UE
+        $course = new UE();
+        $course->setCode($data['code']); // Ex : "WE4A"
+        $course->setNom($data['nom']); // Ex : "Technologies WEB avancées"
+        $course->setDescription($data['description']); // Ex : "Appliquer une architecture Web avancée"
+
+
+        // Sauvegarde dans la base de données
+        $entityManager->persist($course);
+
+        if (isset($data['users'])) {
+            $userIds = $data['users']; // Liste des IDs des utilisateurs
+            foreach ($userIds as $userId) {
+                $user = $usersRepository->find($userId);
+                if (!$user) {
+                    return new JsonResponse(['error' => "Utilisateur avec l'ID $userId introuvable."], Response::HTTP_NOT_FOUND);
+                }
+
+                // Créer une nouvelle association entre l'utilisateur et l'UE
+                $userUe = new UserUe();
+                $userUe->setUser($user);
+                $userUe->setUe($course);
+
+                $entityManager->persist($userUe);
+            }
+        }
+
+
+
+        $entityManager->flush();
+
+        // Retourner une réponse JSON
+        return new JsonResponse([
+            'message' => 'Cours créé avec succès',
+            'course' => [
+                'id' => $course->getId(),
+                'code' => $course->getCode(),
+                'nom' => $course->getNom(),
+                'description' => $course->getDescription(),
+                'users' => $data['users'] ?? []
+            ],
+        ]);
+    }
+
+
+
 }
 
 

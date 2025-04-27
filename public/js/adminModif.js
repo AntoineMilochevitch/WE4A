@@ -301,19 +301,99 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(firstNameInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const roleInput = document.createElement('input');
-            roleInput.type = 'text';
-            roleInput.id = 'new-role';
-            roleInput.placeholder =  'Rôle';
-            modalContent.appendChild(roleInput);
+            const emailInput = document.createElement('input');
+            emailInput.type = 'text';
+            emailInput.id = 'new-email';
+            emailInput.placeholder =  'Email';
+            modalContent.appendChild(emailInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const departementInput = document.createElement('input');
-            departementInput.type = 'text';
-            departementInput.id = 'new-departement';
-            departementInput.placeholder = 'Departement';
-            modalContent.appendChild(departementInput);
+            const passwordInput = document.createElement('input');
+            passwordInput.type = 'text';
+            passwordInput.id = 'new-password';
+            passwordInput.placeholder =  'Password';
+            modalContent.appendChild(passwordInput);
             modalContent.appendChild(document.createElement('br'));
+
+            const roleMessage = document.createElement('p');
+            roleMessage.textContent = 'Role :';
+            modalContent.appendChild(roleMessage);
+
+            const roleSelect = document.createElement('select');
+            roleSelect.id = 'new-role';
+            const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
+            options.forEach(role => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = role; // Attribue la valeur de l'option
+                if (role === 'ROLE_USER') {
+                    option.textContent = "Etudiant";
+                    option.selected = true; // Définit l'option sélectionnée par défaut
+                }
+                else if (role === 'ROLE_ADMIN') {
+                    option.textContent = "Admin";
+                }
+                else if (role === 'ROLE_PROF') {
+                    option.textContent = "Professeur";
+                }
+                else if (role === 'ROLE_PA') {
+                    option.textContent = "Professeur / Admin";
+                }
+
+                roleSelect.appendChild(option); // Ajoute l'option au <select>
+            });
+            modalContent.appendChild(roleSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const messageUE = document.createElement('p');
+            messageUE.textContent = 'Ajouter des inscriptions :';
+            modalContent.appendChild(messageUE);
+
+            const inscriptionsSelect = document.createElement('select');
+            inscriptionsSelect.id = 'new-inscription';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un cours --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
+            ue.forEach(course => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = course.id; // Attribue la valeur de l'option
+                option.textContent = course.code;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const ueList = document.createElement('ul');
+            ueList.id = 'new-ueList';
+            const listItem = document.createElement('li');
+            listItem.textContent = '- Aucune UE';
+            ueList.appendChild(listItem);
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(ueList);
+
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedCourse = ue.find(course => course.id === selectedOption); // Trouve le cours correspondant
+                const ueListItems = Array.from(ueList.querySelectorAll('li'));
+
+                if (ueListItems.length === 1 && ueListItems[0].textContent === '- Aucune UE') {
+                    ueListItems[0].remove(); // Supprime cet élément
+                }
+
+                const stringToCompare = '- ' + selectedCourse.code;
+                const alreadyInList = ueListItems.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Ce cours est déjà assigné à cet utilisateur.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
+                }
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedCourse.code; // Ajout du code du cours ici
+                listItem.value = selectedCourse.id;
+                ueList.appendChild(listItem);
+
+                inscriptionsSelect.value = "";
+            });
 
             modalContent.appendChild(document.createElement('p'));
 
@@ -329,7 +409,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const libelleInput = document.createElement('input');
             libelleInput.type = 'text';
             libelleInput.id = 'new-libelle';
-            libelleInput.placeholder = 'Libellé';
+            libelleInput.placeholder = 'Nom';
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
@@ -345,20 +425,58 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('br'));
 
             modalContent.appendChild(document.createElement('p'));
+
+            const messageUE = document.createElement('p');
+            messageUE.textContent = 'Ajouter des inscriptions :';
+            modalContent.appendChild(messageUE);
+
+            const inscriptionsSelect = document.createElement('select');
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un utilisateur --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
+            inscriptionsSelect.id = 'new-inscription';
+            utilisateurs.forEach(user => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
+                option.textContent = user.id + ' ' + user.nom + ' ' + user.prenom;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const usersList = document.createElement('ul');
+            usersList.id = 'new-usersList';
+            const listItem = document.createElement('li');
+            listItem.textContent = '- Aucun utilisateur inscrit';
+            usersList.appendChild(listItem);
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(usersList);
+
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedUser = utilisateurs.find(user => user.id === selectedOption); // Trouve le user correspondant
+                const userListItem = Array.from(usersList.querySelectorAll('li'));
+
+                if (userListItem.length === 1 && userListItem[0].textContent === '- Aucun utilisateur inscrit') {
+                    userListItem[0].remove(); // Supprime cet élément
+                }
+
+                const stringToCompare = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom;
+                const alreadyInList = userListItem.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Cet utilisateur est déjà assigné à cet ue.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
+                }
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom; // Ajout des infos du user
+                listItem.value = selectedUser.id;
+                usersList.appendChild(listItem);
+
+                inscriptionsSelect.value = "";
+            });
         }
-
-        const messageUE = document.createElement('p');
-        messageUE.textContent = 'Ajouter des inscriptions :';
-        modalContent.appendChild(messageUE);
-
-        const addButton = document.createElement('button');
-        addButton.className = 'btn-add btn-action';
-        addButton.textContent = 'Ajouter';
-        addButton.id = 'addButton';
-        addButton.onclick = function () {
-
-        }
-        modalContent.appendChild(addButton);
 
         modalContent.appendChild(document.createElement('p'));
 
@@ -553,10 +671,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 inscriptionsSelect.value = "";
 
-
-                // A rajouter :
-                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
-
             });
 
 
@@ -634,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editInscription.length == 0) {
                 const listItem = document.createElement('li');
                 listItem.textContent = '- Aucun utilisateur inscrit';
-                ueList.appendChild(listItem);
+                usersList.appendChild(listItem);
             }
             else {
                 // Parcourt le tableau dynamiquement
@@ -788,32 +902,143 @@ document.addEventListener('DOMContentLoaded', function() {
         if (utilisateursButton.disabled) {
             const name = document.getElementById('new-name').value;
             const first_name = document.getElementById('new-first_name').value;
+            const password = document.getElementById('new-password').value;
+            const email = document.getElementById('new-email').value;
             const role = document.getElementById('new-role').value;
-            const departement = document.getElementById('new-departement').value;
+            const ueList = document.getElementById('new-ueList');
+            const inscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.value);
 
-            if (!name  || !first_name || !role || !departement) {
+            if (!name || !first_name) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
-            utilisateurs.push({ name, first_name, role, departement });
+            const maxId = utilisateurs.reduce((max, utilisateur) => {
+                return utilisateur.id > max ? utilisateur.id : max;
+            }, 0);
+
+            const newId = maxId + 1;
+
+            let newUser = {
+                id: newId,
+                nom: name,
+                prenom: first_name,
+                password: password,
+                email: email,
+                roles: [role],
+                inscriptions: [] // Initialise un tableau vide pour les inscriptions
+            };
+
+            inscriptions.forEach(course => {
+                ue.forEach(cours => {
+                    if (course == cours.id) {
+                        newUser.inscriptions.push(cours.id); // Ajoute au tableau
+                        newUser.inscriptions.sort()
+                        cours.users.push(newUser.id);
+                    }
+                });
+
+            });
+
+            fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newUser),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user && data.user.id) {
+                        // Ajouter l'utilisateur dans la liste locale
+                        const newUser = {
+                            id: data.user.id,
+                            nom: data.user.nom,
+                            prenom: data.user.prenom,
+                            password: data.user.password,
+                            email: data.user.email,
+                            roles: data.user.roles,
+                            inscriptions: data.user.inscriptions,
+                        };
+                        alert(`Utilisateur ${data.user.nom} ${data.user.prenom} créé avec succès et ajouté à la liste.`);
+                    } else if (data.error) {
+                        alert('Erreur : ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la création de l\'utilisateur:', error);
+                });
+            utilisateurs.push(newUser);
         }
         else {
             const code = document.getElementById('new-code').value;
-            const libelle = document.getElementById('new-libelle').value;
+            const nom = document.getElementById('new-libelle').value;
             const description = document.getElementById('new-description').value;
+            const userList = document.getElementById('new-usersList');
+            const inscriptions = Array.from(userList.querySelectorAll('li')).map(item => item.value);
 
-            if (!code || !libelle || !description) {
+            if (!code || !nom || !description) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
-            ue.push({ code, libelle, description });
+            const maxId = ue.reduce((max, course) => {
+                return course.id > max ? course.id : max;
+            }, 0);
+
+            const newId = maxId + 1;
+
+            let newCourse = {
+                id: newId,
+                nom: nom,
+                code: code,
+                description: description,
+                users: [] // Initialise un tableau vide pour les inscriptions
+            };
+
+            inscriptions.forEach(user => {
+                utilisateurs.forEach(utilisateur => {
+                    if (user == utilisateur.id) {
+                        newCourse.users.push(utilisateur.id); // Ajoute au tableau
+                        newCourse.users.sort()
+                        utilisateur.inscriptions.push(newCourse.id);
+                    }
+                });
+
+            });
+
+            fetch('/api/admin/create-course', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newCourse),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.course && data.course.id) {
+                        // Ajouter le cours dans la liste locale
+                        const newCourse = {
+                            id: data.course.id,
+                            code: data.course.code,
+                            nom: data.course.nom,
+                            description: data.course.description,
+                            users: data.course.users,
+                        };
+
+                        alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
+                    } else if (data.error) {
+                        alert('Erreur : ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la création du cours :', error);
+                });
+            ue.push(newCourse);
         }
 
         closeModal();
 
-        // Rafraichissement de la liste, à remplacer par du Ajax plus tard
         if (utilisateursButton.disabled) {
             showUtilisateurs();
         } else {
@@ -973,7 +1198,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             nom: newLibelle,
                             code: newCode,
                             description: newDescription,
-                            inscriptions: course.users,
+                            users: course.users,
                         }),
                     })
                         .then((response) => {
