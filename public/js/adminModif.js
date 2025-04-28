@@ -690,6 +690,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (course.id == inscription) {
                             listItem.value = course.id;
                             listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
+
+                            // Ajout d'un bouton pour supprimer l'UE
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'X';
+                            deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                            deleteButton.style.backgroundColor = 'red';
+                            deleteButton.style.color = 'white'; // Couleur du texte
+                            deleteButton.style.border = 'none';
+                            deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                            // Ajout d'un événement pour supprimer l'UE
+                            deleteButton.addEventListener('click', function () {
+                                listItem.remove(); // Supprime cet élément de la liste
+                                if (ueList.querySelectorAll('li').length === 0) {
+                                    // Si la liste est vide, afficher "Aucune UE"
+                                    const emptyItem = document.createElement('li');
+                                    emptyItem.textContent = '- Aucune UE';
+                                    ueList.appendChild(emptyItem);
+                                }
+                            });
+
+                            listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'UE
+
                         }
                     })
                     ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
@@ -704,6 +727,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selectedCourse = ue.find(course => course.id === selectedOption); // Trouve le cours correspondant
                 const ueListItems = Array.from(ueList.querySelectorAll('li'));
 
+                if (ueListItems.length === 1 && ueListItems[0].textContent === '- Aucune UE') {
+                    ueListItems[0].remove(); // Supprime cet élément
+                }
+
                 const stringToCompare = '- ' + selectedCourse.code;
                 const alreadyInList = ueListItems.some(item => item.textContent === stringToCompare);
                 if (alreadyInList) {
@@ -713,6 +740,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const listItem = document.createElement('li');
                 listItem.textContent = '- ' + selectedCourse.code; // Ajout du code du cours ici
+                listItem.value = selectedCourse.id;
+
+                // Ajout d'un bouton pour supprimer l'UE
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'UE
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (ueList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucune UE"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'UE
+
                 ueList.appendChild(listItem);
 
                 inscriptionsSelect.value = "";
@@ -805,6 +856,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (user.id == inscription) {
                             listItem.value = user.id;
                             listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
+
+                            // Ajout d'un bouton pour supprimer l'utilisateur
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'X';
+                            deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                            deleteButton.style.backgroundColor = 'red';
+                            deleteButton.style.color = 'white'; // Couleur du texte
+                            deleteButton.style.border = 'none';
+                            deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                            // Ajout d'un événement pour supprimer l'Utilisateur
+                            deleteButton.addEventListener('click', function () {
+                                listItem.remove(); // Supprime cet élément de la liste
+                                if (usersList.querySelectorAll('li').length === 0) {
+                                    // Si la liste est vide, afficher "Aucun utilisateur inscrit"
+                                    const emptyItem = document.createElement('li');
+                                    emptyItem.textContent = '- Aucun utilisateur inscrit';
+                                    usersList.appendChild(emptyItem);
+                                }
+                            });
+
+                            listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
                         }
                     })
                     usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
@@ -819,6 +892,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selectedUser = utilisateurs.find(user => user.id === selectedOption); // Trouve le user correspondant
                 const userListItem = Array.from(usersList.querySelectorAll('li'));
 
+                if (userListItem.length === 1 && userListItem[0].textContent === '- Aucun utilisateur inscrit') {
+                    userListItem[0].remove(); // Supprime cet élément
+                }
+
                 const stringToCompare = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom;
                 const alreadyInList = userListItem.some(item => item.textContent === stringToCompare);
                 if (alreadyInList) {
@@ -828,13 +905,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const listItem = document.createElement('li');
                 listItem.textContent = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom; // Ajout des infos du user
+
+                // Ajout d'un bouton pour supprimer l'utilisateur
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'Utilisateur
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (usersList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucun utilisateur inscrit"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucun utilisateur inscrit';
+                        usersList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
+
                 usersList.appendChild(listItem);
 
                 inscriptionsSelect.value = "";
-
-
-                // A rajouter :
-                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
 
             });
         }
@@ -1104,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newFirst_name = document.getElementById('edit-first_name').value;
             const newRole = document.getElementById('edit-role').value;
             const ueList = document.getElementById('edit-ueList');
-            const newInscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.textContent.trim());
+            const newInscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.value);
 
             if (!newName || !newFirst_name) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
@@ -1140,7 +1236,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     user.inscriptions = [];
                     newInscriptions.forEach(course => {
                         ue.forEach(cours => {
-                            if (course == '- ' + cours.code) {
+                            if (course == cours.id) {
                                 user.inscriptions.push(cours.id); // Ajoute au tableau
                                 user.inscriptions.sort()
 
