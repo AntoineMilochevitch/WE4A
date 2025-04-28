@@ -1484,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     course.users = [];
                     newInscriptions.forEach(user => {
                         utilisateurs.forEach(utilisateur => {
-                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom) {
+                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom + 'X') {
                                 course.users.push(utilisateur.id); // Ajoute au tableau
                                 course.users.sort()
 
