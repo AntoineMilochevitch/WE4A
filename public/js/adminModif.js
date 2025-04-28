@@ -1403,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id === numericId) {
                     user.nom = newName;
                     user.prenom = newFirst_name;
-                    user.roles = newRole;
+                    user.roles = role;
                     user.inscriptions = [];
                     newInscriptions.forEach(course => {
                         ue.forEach(cours => {
