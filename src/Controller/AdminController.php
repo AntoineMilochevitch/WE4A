@@ -264,7 +264,7 @@ class AdminController extends AbstractController
         }
         $entityManager->flush();
 
-        $userIds = $data['inscriptions']; // Liste des IDs des UE envoyés
+        $userIds = $data['users']; // Liste des IDs des UE envoyés
         foreach ($userIds as $userId) {
             $user = $usersRepository->find($userId);
             if (!$user) {
