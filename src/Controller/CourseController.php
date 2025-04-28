@@ -6,6 +6,7 @@ use App\Entity\Element;
 use App\Entity\Section;
 use App\Entity\Type;
 use App\Entity\Ue;
+use App\Entity\UserUe;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +18,13 @@ use Psr\Log\LoggerInterface;
 
 class CourseController extends AbstractController
 {
-
+    /**
+     * Traiter les fichiers téléchargés
+     * @param string|null $base64File
+     * @param array $allowedMimeTypes
+     * @return string|null
+     * @throws \Exception
+     */
     private function handleFileUpload(?string $base64File, array $allowedMimeTypes): ?string
     {
         if (!$base64File) {
@@ -42,6 +49,29 @@ class CourseController extends AbstractController
     }
 
     /**
+     * Vérifier si l'utilisateur a accès au cours
+     * @param int $ueId
+     * @param EntityManagerInterface $entityManager
+     * @return bool
+     */
+    private function isUserAllowedToAccessCourse(int $ueId, EntityManagerInterface $entityManager): bool
+    {
+        $user = $this->getUser();
+
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return true; // L'admin a accès à tout
+        }
+
+        // Vérifier si l'utilisateur est inscrit au cours
+        $userUe = $entityManager->getRepository(UserUe::class)->findOneBy([
+            'user' => $user,
+            'ue' => $ueId,
+        ]);
+
+        return $userUe !== null;
+    }
+
+    /**
      * Route pour afficher la page de cours
      * @Route("/course/{ueCode}", name="course_page", methods={"GET"})
      * @param string $ueCode
@@ -54,6 +84,10 @@ class CourseController extends AbstractController
 
         if (!$ue) {
             throw $this->createNotFoundException('UE non trouvée');
+        }
+
+        if (!$this->isUserAllowedToAccessCourse($ue->getId(), $entityManager)) {
+            throw $this->createAccessDeniedException('Accès refusé : vous n\'êtes pas inscrit à ce cours.');
         }
 
         return $this->render('course/course.html.twig', [
@@ -71,6 +105,10 @@ class CourseController extends AbstractController
     #[Route('/api/course/{ueId}/sections', name: 'get_course_sections', methods: ['GET'])]
     public function getSections(int $ueId, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->isUserAllowedToAccessCourse($ueId, $entityManager)) {
+            return new JsonResponse(['error' => 'Accès refusé : vous n\'êtes pas inscrit à ce cours.'], 403);
+        }
+
         $sectionRepository = $entityManager->getRepository(Section::class);
         // Récupérer l'UE par son ID
         $sections = $sectionRepository->findBy(
@@ -115,6 +153,10 @@ class CourseController extends AbstractController
     #[Route('/api/course/{ueId}/users', name: 'get_course_users', methods: ['GET'])]
     public function getUsers(int $ueId, EntityManagerInterface $entityManager): JsonResponse
     {
+        if (!$this->isUserAllowedToAccessCourse($ueId, $entityManager)) {
+            return new JsonResponse(['error' => 'Accès refusé : vous n\'êtes pas inscrit à ce cours.'], 403);
+        }
+
         $ue = $entityManager->getRepository(Ue::class)->find($ueId); // Récupérer l'UE par son ID
 
         if (!$ue) {
@@ -149,6 +191,10 @@ class CourseController extends AbstractController
     #[Route('/api/course/{ueId}/add_section', name: 'add_section', methods: ['POST'])]
     public function addSection(int $ueId, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+        if (!$this->isUserAllowedToAccessCourse($ueId, $entityManager)) {
+            return new JsonResponse(['error' => 'Accès refusé : vous n\'êtes pas inscrit à ce cours.'], 403);
+        }
+
         try {
             $ue = $entityManager->getRepository(Ue::class)->find($ueId);
 
@@ -198,6 +244,7 @@ class CourseController extends AbstractController
                 $element->setEstVisible(true);
                 $element->setImportance($elem['importance'] ?? null);
 
+
                 if (!empty($elem['fichier'])) {
                     try {
                         $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png']; // Types MIME autorisés
@@ -244,6 +291,10 @@ class CourseController extends AbstractController
     #[Route('/api/course/{ueId}/add_element', name: 'add_element', methods: ['POST'])]
     function addElement(int $ueId, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
+        if (!$this->isUserAllowedToAccessCourse($ueId, $entityManager)) {
+            return new JsonResponse(['error' => 'Accès refusé : vous n\'êtes pas inscrit à ce cours.'], 403);
+        }
+
         $ue = $entityManager->getRepository(Ue::class)->find($ueId); // Récupérer l'UE par son ID
 
         if (!$ue) {
@@ -326,6 +377,7 @@ class CourseController extends AbstractController
     #[Route('/api/course/{ueId}/delete_section/{sectionId}', name: 'delete_section', methods: ['DELETE'])]
     function deleteSection(int $sectionId, EntityManagerInterface $entityManager): JsonResponse
     {
+
         $section = $entityManager->getRepository(Section::class)->find($sectionId); // Récupérer la section par son ID
 
         if (!$section) {
