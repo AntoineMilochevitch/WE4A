@@ -15,11 +15,7 @@
 <body>
 <header>
     <div class="logo">
-        {% set redirectPath = path('admin') %}
-        {% if is_granted('ROLE_USER') %}
-            {% set redirectPath = path('home') %}
-        {% endif %}
-        <a href="{{ redirectPath }}">
+        <a href= {{ path('home') }}>
             <img src="{{ asset('images/logo_UTBM_blanc.png') }}" alt="MyMoodle">
         </a>
     </div>
@@ -28,26 +24,25 @@
             {% if 'ROLE_ADMIN' in app.user.roles %}
                 <li><a href="{{ path('admin') }}">Admin</a></li>
             {% endif %}
+            <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
+            <li><a href="{{ path('find') }}">Recherche de cours</a></li>
 
-            {% if 'ROLE_USER' in app.user.roles %}
-                <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
-                <li><a href="{{ path('find') }}">Recherche de cours</a></li>
-            {% endif %}
         </ul>
     </div>
     <div class="user">
         <ul>
-            {% if is_granted('ROLE_USER') %}
-                <li>
-                    <a href="#">
-                        <ion-icon name="notifications-outline"></ion-icon>
-                        <span class="notification-count">
+
+            <li>
+                <a href="#">
+                    <ion-icon name="notifications-outline"></ion-icon>
+                    <span class="notification-count">
                         {{ notifications|filter(n => not n.estVu)|length }}
                     </span>
-                    </a>
-                </li>
-                <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
-            {% endif %}
+                </a>
+            </li>
+
+            <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+
             <button class="Btn" onclick="window.location.href='{{ path('app_logout') }}'">
                 <div class="sign">
                     <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
@@ -74,22 +69,6 @@
         {% endfor %}
     </div>
 </div>
-
-{% if app.user %}
-     <div class="mb-3">
-        You are logged in as {{ app.user.userIdentifier }}
-    </div>
-    <div class="mb-3">
-        Your roles: {{ app.user.roles|join(', ') }}
-    </div>
-{% endif %}
-
-
-{% if 'ROLE_ADMIN' in app.user.roles %}
-    <div class="alert alert-info">
-        Vous êtes un admin 🎓
-    </div>
-{% endif %}
 
 
 {% block body %}
