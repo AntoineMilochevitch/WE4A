@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             modalContent.appendChild(imagePreview);
 
             imageInput.addEventListener('change', function () {
@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             if (editImage !== 'images/null') {
                 imagePreview.src = editImage;
                 imagePreview.style.display = 'block';
