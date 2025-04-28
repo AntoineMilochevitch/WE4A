@@ -79,6 +79,7 @@ class AdminController extends AbstractController
                 'code' => $course['code'],
                 'nom' => $course['nom'],
                 'description' => $course['description'],
+                'image' => $course['image'],
                 'users' => $enrolledUsers,
             ];
         }
@@ -356,12 +357,16 @@ class AdminController extends AbstractController
 
         // Créer une nouvelle entité UE
         $course = new UE();
-        $course->setCode($data['code']); // Ex : "WE4A"
-        $course->setNom($data['nom']); // Ex : "Technologies WEB avancées"
-        $course->setDescription($data['description']); // Ex : "Appliquer une architecture Web avancée"
+        $course->setCode($data['code']);
+        $course->setNom($data['nom']);
+        $course->setDescription($data['description']);
 
+        if (isset($data['image'])) {
+            $course->setImage($data['image']);
 
-        // Sauvegarde dans la base de données
+        }
+
+        // Sauvegarder dans la base de données
         $entityManager->persist($course);
         $entityManager->flush();
 
@@ -396,6 +401,7 @@ class AdminController extends AbstractController
                 'code' => $course->getCode(),
                 'nom' => $course->getNom(),
                 'description' => $course->getDescription(),
+                'image' => $course->getImage(),
                 'users' => $data['users'] ?? []
             ],
         ]);
