@@ -464,6 +464,42 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
+            const imageMessage = document.createElement('p');
+            imageMessage.textContent = 'Image de l\'UE';
+            modalContent.appendChild(imageMessage);
+
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.id = 'new-image';
+            imageInput.accept = 'image/*';
+            modalContent.appendChild(imageInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const imagePreview = document.createElement('img');
+            imagePreview.id = 'image-preview';
+            imagePreview.style.display = 'none';
+            imagePreview.style.marginTop = '10px';
+            imagePreview.style.maxWidth = '100%';
+            modalContent.appendChild(imagePreview);
+
+            imageInput.addEventListener('change', function () {
+                const file = imageInput.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Veuillez sélectionner un fichier image valide.');
+                    imagePreview.style.display = 'none';
+                }
+            });
+
             const confirmationMessage = document.createElement('p');
             confirmationMessage.textContent = 'Description de l\'UE';
             modalContent.appendChild(confirmationMessage);
@@ -600,6 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let editCode;
         let editDescription;
+        let editImage;
 
         const editId = listItem.querySelector('.item-id').textContent;
         if (isUser) {
@@ -844,6 +881,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     editCode = course.code;
                     editName = course.nom;
                     editDescription = course.description;
+                    editImage = "images/" + course.image;
 
                     if (Array.isArray(course.users)) {
                         course.users.forEach(user => {
@@ -876,6 +914,46 @@ document.addEventListener('DOMContentLoaded', function() {
             libelleInput.value = editName;
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
+
+            const imageMessage = document.createElement('p');
+            imageMessage.textContent = 'Image de l\'UE';
+            modalContent.appendChild(imageMessage);
+
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.id = 'edit-image';
+            imageInput.accept = 'image/*';
+            modalContent.appendChild(imageInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const imagePreview = document.createElement('img');
+            imagePreview.id = 'image-preview';
+            imagePreview.style.display = 'none';
+            imagePreview.style.marginTop = '10px';
+            imagePreview.style.maxWidth = '100%';
+            if (editImage !== 'images/null') {
+                imagePreview.src = editImage;
+                imagePreview.style.display = 'block';
+            }
+            modalContent.appendChild(imagePreview);
+
+            imageInput.addEventListener('change', function () {
+                const file = imageInput.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Veuillez sélectionner un fichier image valide.');
+                    imagePreview.style.display = 'none';
+                }
+            });
 
             const confirmationMessage = document.createElement('p');
             confirmationMessage.textContent = 'Description de l\'UE';
@@ -1186,6 +1264,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const description = document.getElementById('new-description').value;
             const userList = document.getElementById('new-usersList');
             const inscriptions = Array.from(userList.querySelectorAll('li')).map(item => item.value);
+            const imageInput = document.getElementById('new-image');
+            const imageUrl = imageInput.value;
+            const imageFilename = imageUrl.split('\\').pop();
+
 
             if (!code || !nom || !description) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
@@ -1203,6 +1285,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 nom: nom,
                 code: code,
                 description: description,
+                image: imageFilename,
                 users: [] // Initialise un tableau vide pour les inscriptions
             };
 
@@ -1233,6 +1316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             code: data.course.code,
                             nom: data.course.nom,
                             description: data.course.description,
+                            image: data.course.image,
                             users: data.course.users,
                         };
 
