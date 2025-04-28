@@ -321,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const roleSelect = document.createElement('select');
             roleSelect.id = 'new-role';
+            roleSelect.className = 'role-select';
             const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
             let flagAdmin = false;
             options.forEach(role => {
@@ -376,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const inscriptionsSelect = document.createElement('select');
             inscriptionsSelect.id = 'new-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             const defaultOption = document.createElement('option');
             defaultOption.value = ""; // Attribue la valeur de l'option
             defaultOption.textContent = "-- Choisissez un cours --";
@@ -485,6 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
             defaultOption.textContent = "-- Choisissez un utilisateur --";
             inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             inscriptionsSelect.id = 'new-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             utilisateurs.forEach(user => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
@@ -654,6 +657,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const roleSelect = document.createElement('select');
             roleSelect.id = 'edit-role';
+            roleSelect.className = 'role-select';
             const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
             let flagAdmin = false;
             options.forEach(role => {
@@ -716,6 +720,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const inscriptionsSelect = document.createElement('select');
             inscriptionsSelect.id = 'edit-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             const defaultOption = document.createElement('option');
             defaultOption.value = ""; // Attribue la valeur de l'option
             if (flagAdmin === true){
@@ -893,6 +898,7 @@ document.addEventListener('DOMContentLoaded', function() {
             defaultOption.textContent = "-- Choisissez un utilisateur --";
             inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             inscriptionsSelect.id = 'edit-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             utilisateurs.forEach(user => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
