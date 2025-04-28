@@ -84,5 +84,28 @@ class NotificationController extends AbstractController
 
         return new JsonResponse(['success' => true]);
     }
+    #[Route('/notification/user', name: 'user_notification', methods: ['GET'])]
+    public function getLastNotification(UserNotifRepository $userNotifRepository): JsonResponse
+    {
+        $user = $this->getUser();
+        $lastNotif = $userNotifRepository->findLastNotificationForUser($user->getId());
+
+        if (!$lastNotif) {
+            return new JsonResponse(['notifications' => []]);
+        }
+
+        return new JsonResponse([
+            'notifications' => [[
+                'id' => $lastNotif->getNotification()->getId(),
+                'message' => $lastNotif->getNotification()->getMessage(),
+                'date' => $lastNotif->getNotification()->getDate()->format('Y-m-d H:i:s'),
+                'typeNotif' => $lastNotif->getNotification()->getTypeNotif()->getTypeNotif(),
+                'estVu' => $lastNotif->isEstVu(),
+            ]]
+        ]);
+    }
+
+
+
 
 }
