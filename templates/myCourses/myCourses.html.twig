@@ -59,7 +59,7 @@
                 </div>
                 <a href="/course/${course.code}" class="course-link">
                     <div class="course-image">
-                        <img src="/images/${course.image}" alt="Image de ${course.nom}">
+                        <img src="/images/${course.image ? course.image : 'course_image.png'}" alt="Image de ${course.nom}">
                     </div>
                     <div class="course-title">
                         <p>${course.nom} (${course.code})</p>

@@ -53,24 +53,8 @@ class NotificationController extends AbstractController
         $message = $data['message'];
         $type = strtolower($data['type']);
 
-        // Traduction du type reçu en type de notification existant
-        $typeMap = [
-            'low' => 'info',
-            'medium' => 'important',
-            'high' => 'warning',
-            'info' => 'info',
-            'important' => 'important',
-            'warning' => 'warning',
-        ];
-
-        if (!array_key_exists($type, $typeMap)) {
-            return new JsonResponse(['success' => false, 'error' => 'Type de notification invalide'], 400);
-        }
-
-        $finalType = $typeMap[$type];
-
-        // Chercher le type_notif correspondant
-        $typeNotif = $typeNotifRepository->findOneBy(['typeNotif' => $finalType]);
+        // Chercher directement le type_notif
+        $typeNotif = $typeNotifRepository->findOneBy(['typeNotif' => $type]);
         if (!$typeNotif) {
             return new JsonResponse(['success' => false, 'error' => 'Type de notification introuvable'], 404);
         }
@@ -100,4 +84,5 @@ class NotificationController extends AbstractController
 
         return new JsonResponse(['success' => true]);
     }
+
 }

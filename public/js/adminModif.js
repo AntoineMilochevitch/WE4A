@@ -1243,7 +1243,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             id: data.user.id,
                             nom: data.user.nom,
                             prenom: data.user.prenom,
-                            password: data.user.password,
                             email: data.user.email,
                             roles: data.user.roles,
                             inscriptions: data.user.inscriptions,

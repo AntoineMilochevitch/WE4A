@@ -64,8 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 updateCourseEpingleVisibility();
-                enableDragAndDrop('.course-content', ueId);
-                enableDragAndDrop('.course-epingle', ueId);
+                if (hasRole()) {
+                    enableDragAndDrop('.course-content', ueId);
+                    enableDragAndDrop('.course-epingle', ueId);
+                }
+
             })
             .catch(error => console.error('Erreur lors du chargement des sections :', error));
     }
@@ -182,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param title
      * @param elements
      */
-    function sendNotification(ueId, message, type = 'info') {
+    function sendNotification(ueId, message, type = 'low') {
         fetch('/notification/create', {
             method: 'POST',
             headers: {
@@ -203,9 +206,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             })
             .catch(error => {
-                console.error(' Erreur réseau notification :', error);
+                console.error('Erreur réseau notification :', error);
             });
     }
+
 
     function saveSectionToServer(ueId, title, elements) {
         console.log("Elements file :", elements);
@@ -254,13 +258,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then((sectionResponse) => {
                     if (sectionResponse.id) {
                         console.log('Section créée avec succès :', sectionResponse);
-                        // Appel automatique de notification
-                        sendNotification(ueId, `Nouvelle partie ajoutée : ${title}`, 'info');
+                        // Choisir la plus haute importance
+                        const importances = elements.map(e => e.importance || 'low');
+                        let finalImportance = 'low';
+                        if (importances.includes('hard')) {
+                            finalImportance = 'hard';
+                        } else if (importances.includes('medium')) {
+                            finalImportance = 'medium';
+                        }
+                        sendNotification(ueId, `Nouvelle partie ajoutée : ${title}`, finalImportance);
                     } else {
                         console.error('Erreur serveur création section :', sectionResponse.error);
                     }
                     return sectionResponse;
                 });
+
         });
     }
 
