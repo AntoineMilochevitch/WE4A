@@ -157,18 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let isProfAdmin = false;
 
             let roleText = "Inconnu";
-                if (utilisateur.roles.includes("ROLE_ADMIN")) {
-                    isAdmin = true;
-                    roleText = "Admin";
+                if (utilisateur.roles.includes("ROLE_PROF") && utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isProfAdmin = true;
+                    roleText = "Professeur / Admin";
                 } else if (utilisateur.roles.includes("ROLE_PROF")) {
                     isProf = true;
                     roleText = "Professeur";
                 } else if (utilisateur.roles.includes("ROLE_USER")) {
                     isEtudiant = true;
                     roleText = "Etudiant";
-                } else if (utilisateur.roles.includes("ROLE_PA")) {
-                    isProfAdmin = true;
-                    roleText = "Professeur / Admin";
+                } else if (utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isAdmin = true;
+                    roleText = "Admin";
                 }
 
             roleSpan.textContent = roleText;
@@ -644,14 +644,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id == editId) {
                     editName = user.nom;
                     editFirst_name = user.prenom;
-                    if (user.roles.includes("ROLE_ADMIN")) {
-                        editRole = "Admin";
+                    if (user.roles.includes("ROLE_ADMIN") && user.roles.includes("ROLE_PROF")) {
+                        editRole = "Professeur / Admin";
                     } else if (user.roles.includes("ROLE_PROF")) {
                         editRole = "Professeur";
                     } else if (user.roles.includes("ROLE_USER")){
                         editRole = "Etudiant";
-                    } else if (user.roles.includes("ROLE_PA")){
-                        editRole = "Professeur / Admin";
+                    } else if (user.roles.includes("ROLE_ADMIN")){
+                        editRole = "Admin";
                     }
 
                     if (Array.isArray(user.inscriptions)) {
@@ -1207,13 +1207,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newId = maxId + 1;
 
+            let newRole;
+            if (role === 'ROLE_USER') {
+                newRole = ['ROLE_USER'];
+            }
+            else if (role === 'ROLE_ADMIN') {
+                newRole = ['ROLE_ADMIN'];
+            }
+            else if (role === 'ROLE_PROF') {
+                newRole = ['ROLE_PROF'];
+            }
+            else if (role === 'ROLE_PA') {
+                newRole = ['ROLE_ADMIN', 'ROLE_PROF'];
+            }
+
+
             let newUser = {
                 id: newId,
                 nom: name,
                 prenom: first_name,
                 password: password,
                 email: email,
-                roles: [role],
+                roles: newRole,
                 inscriptions: [] // Initialise un tableau vide pour les inscriptions
             };
 
@@ -1364,18 +1379,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (nameSpan) nameSpan.textContent = newName;
             if (first_nameSpan) first_nameSpan.textContent = newFirst_name;
+            let role;
             if (roleSpan) {
                 if (newRole === 'ROLE_USER') {
                     roleSpan.textContent = "Etudiant";
+                    role = ['ROLE_USER'];
                 }
                 else if (newRole === 'ROLE_ADMIN') {
                     roleSpan.textContent = "Admin";
+                    role = ['ROLE_ADMIN'];
                 }
                 else if (newRole === 'ROLE_PROF') {
                     roleSpan.textContent = "Professeur";
+                    role = ['ROLE_PROF'];
                 }
                 else if (newRole === 'ROLE_PA') {
                     roleSpan.textContent = "Professeur / Admin";
+                    role = ['ROLE_ADMIN', 'ROLE_PROF'];
                 }
             }
 
@@ -1415,7 +1435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             nom: newName,
                             prenom: newFirst_name,
                             email: user.email,
-                            roles: [newRole],
+                            roles: role,
                             inscriptions: user.inscriptions,
                         }),
                     })
