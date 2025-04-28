@@ -157,18 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let isProfAdmin = false;
 
             let roleText = "Inconnu";
-                if (utilisateur.roles.includes("ROLE_ADMIN")) {
-                    isAdmin = true;
-                    roleText = "Admin";
+                if (utilisateur.roles.includes("ROLE_PROF") && utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isProfAdmin = true;
+                    roleText = "Professeur / Admin";
                 } else if (utilisateur.roles.includes("ROLE_PROF")) {
                     isProf = true;
                     roleText = "Professeur";
                 } else if (utilisateur.roles.includes("ROLE_USER")) {
                     isEtudiant = true;
                     roleText = "Etudiant";
-                } else if (utilisateur.roles.includes("ROLE_PA")) {
-                    isProfAdmin = true;
-                    roleText = "Professeur / Admin";
+                } else if (utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isAdmin = true;
+                    roleText = "Admin";
                 }
 
             roleSpan.textContent = roleText;
@@ -464,6 +464,42 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
+            const imageMessage = document.createElement('p');
+            imageMessage.textContent = 'Image de l\'UE';
+            modalContent.appendChild(imageMessage);
+
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.id = 'new-image';
+            imageInput.accept = 'image/*';
+            modalContent.appendChild(imageInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const imagePreview = document.createElement('img');
+            imagePreview.id = 'image-preview';
+            imagePreview.style.display = 'none';
+            imagePreview.style.marginTop = '10px';
+            imagePreview.style.maxWidth = '40%';
+            modalContent.appendChild(imagePreview);
+
+            imageInput.addEventListener('change', function () {
+                const file = imageInput.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Veuillez sélectionner un fichier image valide.');
+                    imagePreview.style.display = 'none';
+                }
+            });
+
             const confirmationMessage = document.createElement('p');
             confirmationMessage.textContent = 'Description de l\'UE';
             modalContent.appendChild(confirmationMessage);
@@ -600,6 +636,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let editCode;
         let editDescription;
+        let editImage;
 
         const editId = listItem.querySelector('.item-id').textContent;
         if (isUser) {
@@ -607,14 +644,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id == editId) {
                     editName = user.nom;
                     editFirst_name = user.prenom;
-                    if (user.roles.includes("ROLE_ADMIN")) {
-                        editRole = "Admin";
+                    if (user.roles.includes("ROLE_ADMIN") && user.roles.includes("ROLE_PROF")) {
+                        editRole = "Professeur / Admin";
                     } else if (user.roles.includes("ROLE_PROF")) {
                         editRole = "Professeur";
                     } else if (user.roles.includes("ROLE_USER")){
                         editRole = "Etudiant";
-                    } else if (user.roles.includes("ROLE_PA")){
-                        editRole = "Professeur / Admin";
+                    } else if (user.roles.includes("ROLE_ADMIN")){
+                        editRole = "Admin";
                     }
 
                     if (Array.isArray(user.inscriptions)) {
@@ -844,6 +881,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     editCode = course.code;
                     editName = course.nom;
                     editDescription = course.description;
+                    editImage = "images/" + course.image;
 
                     if (Array.isArray(course.users)) {
                         course.users.forEach(user => {
@@ -876,6 +914,46 @@ document.addEventListener('DOMContentLoaded', function() {
             libelleInput.value = editName;
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
+
+            const imageMessage = document.createElement('p');
+            imageMessage.textContent = 'Image de l\'UE';
+            modalContent.appendChild(imageMessage);
+
+            const imageInput = document.createElement('input');
+            imageInput.type = 'file';
+            imageInput.id = 'edit-image';
+            imageInput.accept = 'image/*';
+            modalContent.appendChild(imageInput);
+            modalContent.appendChild(document.createElement('br'));
+
+            const imagePreview = document.createElement('img');
+            imagePreview.id = 'image-preview';
+            imagePreview.style.display = 'none';
+            imagePreview.style.marginTop = '10px';
+            imagePreview.style.maxWidth = '40%';
+            if (editImage !== 'images/null') {
+                imagePreview.src = editImage;
+                imagePreview.style.display = 'block';
+            }
+            modalContent.appendChild(imagePreview);
+
+            imageInput.addEventListener('change', function () {
+                const file = imageInput.files[0];
+
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+
+                    reader.onload = function (event) {
+                        imagePreview.src = event.target.result;
+                        imagePreview.style.display = 'block';
+                    };
+
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Veuillez sélectionner un fichier image valide.');
+                    imagePreview.style.display = 'none';
+                }
+            });
 
             const confirmationMessage = document.createElement('p');
             confirmationMessage.textContent = 'Description de l\'UE';
@@ -1129,13 +1207,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newId = maxId + 1;
 
+            let newRole;
+            if (role === 'ROLE_USER') {
+                newRole = ['ROLE_USER'];
+            }
+            else if (role === 'ROLE_ADMIN') {
+                newRole = ['ROLE_ADMIN'];
+            }
+            else if (role === 'ROLE_PROF') {
+                newRole = ['ROLE_PROF'];
+            }
+            else if (role === 'ROLE_PA') {
+                newRole = ['ROLE_ADMIN', 'ROLE_PROF'];
+            }
+
+
             let newUser = {
                 id: newId,
                 nom: name,
                 prenom: first_name,
                 password: password,
                 email: email,
-                roles: [role],
+                roles: newRole,
                 inscriptions: [] // Initialise un tableau vide pour les inscriptions
             };
 
@@ -1185,6 +1278,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const description = document.getElementById('new-description').value;
             const userList = document.getElementById('new-usersList');
             const inscriptions = Array.from(userList.querySelectorAll('li')).map(item => item.value);
+            const imageInput = document.getElementById('new-image');
+            const imageUrl = imageInput.value;
+            const imageFilename = imageUrl.split('\\').pop();
+
 
             if (!code || !nom || !description) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
@@ -1202,6 +1299,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 nom: nom,
                 code: code,
                 description: description,
+                image: imageFilename,
                 users: [] // Initialise un tableau vide pour les inscriptions
             };
 
@@ -1232,6 +1330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             code: data.course.code,
                             nom: data.course.nom,
                             description: data.course.description,
+                            image: data.course.image,
                             users: data.course.users,
                         };
 
@@ -1280,18 +1379,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (nameSpan) nameSpan.textContent = newName;
             if (first_nameSpan) first_nameSpan.textContent = newFirst_name;
+            let role;
             if (roleSpan) {
                 if (newRole === 'ROLE_USER') {
                     roleSpan.textContent = "Etudiant";
+                    role = ['ROLE_USER'];
                 }
                 else if (newRole === 'ROLE_ADMIN') {
                     roleSpan.textContent = "Admin";
+                    role = ['ROLE_ADMIN'];
                 }
                 else if (newRole === 'ROLE_PROF') {
                     roleSpan.textContent = "Professeur";
+                    role = ['ROLE_PROF'];
                 }
                 else if (newRole === 'ROLE_PA') {
                     roleSpan.textContent = "Professeur / Admin";
+                    role = ['ROLE_ADMIN', 'ROLE_PROF'];
                 }
             }
 
@@ -1331,7 +1435,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             nom: newName,
                             prenom: newFirst_name,
                             email: user.email,
-                            roles: [newRole],
+                            roles: role,
                             inscriptions: user.inscriptions,
                         }),
                     })
