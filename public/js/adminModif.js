@@ -301,19 +301,150 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(firstNameInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const roleInput = document.createElement('input');
-            roleInput.type = 'text';
-            roleInput.id = 'new-role';
-            roleInput.placeholder =  'Rôle';
-            modalContent.appendChild(roleInput);
+            const emailInput = document.createElement('input');
+            emailInput.type = 'text';
+            emailInput.id = 'new-email';
+            emailInput.placeholder =  'Email';
+            modalContent.appendChild(emailInput);
             modalContent.appendChild(document.createElement('br'));
 
-            const departementInput = document.createElement('input');
-            departementInput.type = 'text';
-            departementInput.id = 'new-departement';
-            departementInput.placeholder = 'Departement';
-            modalContent.appendChild(departementInput);
+            const passwordInput = document.createElement('input');
+            passwordInput.type = 'text';
+            passwordInput.id = 'new-password';
+            passwordInput.placeholder =  'Password';
+            modalContent.appendChild(passwordInput);
             modalContent.appendChild(document.createElement('br'));
+
+            const roleMessage = document.createElement('p');
+            roleMessage.textContent = 'Role :';
+            modalContent.appendChild(roleMessage);
+
+            const roleSelect = document.createElement('select');
+            roleSelect.id = 'new-role';
+            roleSelect.className = 'role-select';
+            const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
+            let flagAdmin = false;
+            options.forEach(role => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = role; // Attribue la valeur de l'option
+                if (role === 'ROLE_USER') {
+                    option.textContent = "Etudiant";
+                    option.selected = true; // Définit l'option sélectionnée par défaut
+                }
+                else if (role === 'ROLE_ADMIN') {
+                    option.textContent = "Admin";
+
+                }
+                else if (role === 'ROLE_PROF') {
+                    option.textContent = "Professeur";
+                }
+                else if (role === 'ROLE_PA') {
+                    option.textContent = "Professeur / Admin";
+                }
+
+                roleSelect.appendChild(option); // Ajoute l'option au <select>
+            });
+            modalContent.appendChild(roleSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            roleSelect.addEventListener('change', function () {
+                if (roleSelect.value === 'ROLE_ADMIN') {
+                    inscriptionsSelect.disabled = true;
+                    defaultOption.textContent = "Vous ne pouvez pas ajouter de cours à un admin";
+                    const ueList = document.getElementById('new-ueList');
+
+                    if (ueList) {
+                        const listItems = ueList.querySelectorAll('li');
+
+                        listItems.forEach((listItem) => {
+                            listItem.remove(); // Supprimer les <li>
+                        });
+
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+                    }
+                }
+                else {
+                    inscriptionsSelect.disabled = false;
+                    defaultOption.textContent = "-- Choisissez un cours --";
+                }
+            })
+
+            const messageUE = document.createElement('p');
+            messageUE.textContent = 'Ajouter des inscriptions :';
+            modalContent.appendChild(messageUE);
+
+            const inscriptionsSelect = document.createElement('select');
+            inscriptionsSelect.id = 'new-inscription';
+            inscriptionsSelect.className = 'inscription-select';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un cours --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
+            ue.forEach(course => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = course.id; // Attribue la valeur de l'option
+                option.textContent = course.code;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const ueList = document.createElement('ul');
+            ueList.id = 'new-ueList';
+            const listItem = document.createElement('li');
+            listItem.textContent = '- Aucune UE';
+            ueList.appendChild(listItem);
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(ueList);
+
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedCourse = ue.find(course => course.id === selectedOption); // Trouve le cours correspondant
+                const ueListItems = Array.from(ueList.querySelectorAll('li'));
+
+                if (ueListItems.length === 1 && ueListItems[0].textContent === '- Aucune UE') {
+                    ueListItems[0].remove(); // Supprime cet élément
+                }
+
+                const stringToCompare = '- ' + selectedCourse.code;
+                const alreadyInList = ueListItems.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Ce cours est déjà assigné à cet utilisateur.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
+                }
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedCourse.code; // Ajout du code du cours ici
+                listItem.value = selectedCourse.id;
+
+                // Ajout d'un bouton pour supprimer l'UE
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'UE
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (ueList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucune UE"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'UE
+
+                ueList.appendChild(listItem);
+
+                inscriptionsSelect.value = "";
+            });
 
             modalContent.appendChild(document.createElement('p'));
 
@@ -329,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const libelleInput = document.createElement('input');
             libelleInput.type = 'text';
             libelleInput.id = 'new-libelle';
-            libelleInput.placeholder = 'Libellé';
+            libelleInput.placeholder = 'Nom';
             modalContent.appendChild(libelleInput);
             modalContent.appendChild(document.createElement('br'));
 
@@ -345,20 +476,82 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('br'));
 
             modalContent.appendChild(document.createElement('p'));
+
+            const messageUE = document.createElement('p');
+            messageUE.textContent = 'Ajouter des inscriptions :';
+            modalContent.appendChild(messageUE);
+
+            const inscriptionsSelect = document.createElement('select');
+            const defaultOption = document.createElement('option');
+            defaultOption.value = ""; // Attribue la valeur de l'option
+            defaultOption.textContent = "-- Choisissez un utilisateur --";
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
+            inscriptionsSelect.id = 'new-inscription';
+            inscriptionsSelect.className = 'inscription-select';
+            utilisateurs.forEach(user => {
+                const option = document.createElement('option'); // Crée une option
+                option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
+                option.textContent = user.id + ' ' + user.nom + ' ' + user.prenom;
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+            })
+            modalContent.appendChild(inscriptionsSelect);
+            modalContent.appendChild(document.createElement('br'));
+
+            const usersList = document.createElement('ul');
+            usersList.id = 'new-usersList';
+            const listItem = document.createElement('li');
+            listItem.textContent = '- Aucun utilisateur inscrit';
+            usersList.appendChild(listItem);
+            // Ajoute la liste <ul> au modal
+            modalContent.appendChild(usersList);
+
+            inscriptionsSelect.addEventListener('change', function () {
+                const selectedOption = parseInt(inscriptionsSelect.value, 10); // Récupère la valeur sélectionnée
+                const selectedUser = utilisateurs.find(user => user.id === selectedOption); // Trouve le user correspondant
+                const userListItem = Array.from(usersList.querySelectorAll('li'));
+
+                if (userListItem.length === 1 && userListItem[0].textContent === '- Aucun utilisateur inscrit') {
+                    userListItem[0].remove(); // Supprime cet élément
+                }
+
+                const stringToCompare = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom;
+                const alreadyInList = userListItem.some(item => item.textContent === stringToCompare);
+                if (alreadyInList) {
+                    alert('Cet utilisateur est déjà assigné à cet ue.');
+                    inscriptionsSelect.value = "";
+                    return; // On arrête l'exécution ici si l'élément existe déjà
+                }
+                const listItem = document.createElement('li');
+                listItem.textContent = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom; // Ajout des infos du user
+                listItem.value = selectedUser.id;
+
+                // Ajout d'un bouton pour supprimer l'utilisateur
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'Utilisateur
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (usersList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucun utilisateur inscrit"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucun utilisateur inscrit';
+                        usersList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
+
+                usersList.appendChild(listItem);
+
+                inscriptionsSelect.value = "";
+            });
         }
-
-        const messageUE = document.createElement('p');
-        messageUE.textContent = 'Ajouter des inscriptions :';
-        modalContent.appendChild(messageUE);
-
-        const addButton = document.createElement('button');
-        addButton.className = 'btn-add btn-action';
-        addButton.textContent = 'Ajouter';
-        addButton.id = 'addButton';
-        addButton.onclick = function () {
-
-        }
-        modalContent.appendChild(addButton);
 
         modalContent.appendChild(document.createElement('p'));
 
@@ -464,7 +657,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const roleSelect = document.createElement('select');
             roleSelect.id = 'edit-role';
+            roleSelect.className = 'role-select';
             const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
+            let flagAdmin = false;
             options.forEach(role => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = role; // Attribue la valeur de l'option
@@ -485,11 +680,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 if (option.textContent === editRole) {
                     option.selected = true; // Définit l'option sélectionnée par défaut (si correspond à "editRole")
+                    if (option.textContent === "Admin") {
+                        flagAdmin = true;
+                    }
                 }
                 roleSelect.appendChild(option); // Ajoute l'option au <select>
             });
             modalContent.appendChild(roleSelect);
             modalContent.appendChild(document.createElement('br'));
+
+            roleSelect.addEventListener('change', function () {
+                if (roleSelect.value === 'ROLE_ADMIN') {
+                    inscriptionsSelect.disabled = true;
+                    defaultOption.textContent = "Vous ne pouvez pas ajouter de cours à un admin";
+                    const ueList = document.getElementById('edit-ueList');
+
+                    if (ueList) {
+                        const listItems = ueList.querySelectorAll('li');
+
+                        listItems.forEach((listItem) => {
+                            listItem.remove(); // Supprimer les <li>
+                        });
+
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+
+                    }
+                }
+                else {
+                    inscriptionsSelect.disabled = false;
+                    defaultOption.textContent = "-- Choisissez un cours --";
+                }
+            })
 
             const inscriptionsMessage = document.createElement('p');
             inscriptionsMessage.textContent = 'Inscription aux UE :';
@@ -497,9 +720,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const inscriptionsSelect = document.createElement('select');
             inscriptionsSelect.id = 'edit-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             const defaultOption = document.createElement('option');
             defaultOption.value = ""; // Attribue la valeur de l'option
-            defaultOption.textContent = "-- Choisissez un cours --";
+            if (flagAdmin === true){
+                inscriptionsSelect.disabled = true;
+                defaultOption.textContent = "-- Choisissez un cours --";
+            }
+            else {
+                inscriptionsSelect.disabled = false;
+                defaultOption.textContent = "-- Choisissez un cours --";
+            }
             inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             ue.forEach(course => {
                 const option = document.createElement('option'); // Crée une option
@@ -526,6 +757,29 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (course.id == inscription) {
                             listItem.value = course.id;
                             listItem.textContent = `- ${course.code}`; // Définit le contenu de chaque élément
+
+                            // Ajout d'un bouton pour supprimer l'UE
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'X';
+                            deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                            deleteButton.style.backgroundColor = 'red';
+                            deleteButton.style.color = 'white'; // Couleur du texte
+                            deleteButton.style.border = 'none';
+                            deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                            // Ajout d'un événement pour supprimer l'UE
+                            deleteButton.addEventListener('click', function () {
+                                listItem.remove(); // Supprime cet élément de la liste
+                                if (ueList.querySelectorAll('li').length === 0) {
+                                    // Si la liste est vide, afficher "Aucune UE"
+                                    const emptyItem = document.createElement('li');
+                                    emptyItem.textContent = '- Aucune UE';
+                                    ueList.appendChild(emptyItem);
+                                }
+                            });
+
+                            listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'UE
+
                         }
                     })
                     ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
@@ -540,6 +794,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selectedCourse = ue.find(course => course.id === selectedOption); // Trouve le cours correspondant
                 const ueListItems = Array.from(ueList.querySelectorAll('li'));
 
+                if (ueListItems.length === 1 && ueListItems[0].textContent === '- Aucune UE') {
+                    ueListItems[0].remove(); // Supprime cet élément
+                }
+
                 const stringToCompare = '- ' + selectedCourse.code;
                 const alreadyInList = ueListItems.some(item => item.textContent === stringToCompare);
                 if (alreadyInList) {
@@ -549,13 +807,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const listItem = document.createElement('li');
                 listItem.textContent = '- ' + selectedCourse.code; // Ajout du code du cours ici
+                listItem.value = selectedCourse.id;
+
+                // Ajout d'un bouton pour supprimer l'UE
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'UE
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (ueList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucune UE"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'UE
+
                 ueList.appendChild(listItem);
 
                 inscriptionsSelect.value = "";
-
-
-                // A rajouter :
-                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
 
             });
 
@@ -620,6 +898,7 @@ document.addEventListener('DOMContentLoaded', function() {
             defaultOption.textContent = "-- Choisissez un utilisateur --";
             inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             inscriptionsSelect.id = 'edit-inscription';
+            inscriptionsSelect.className = 'inscription-select';
             utilisateurs.forEach(user => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
@@ -634,7 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editInscription.length == 0) {
                 const listItem = document.createElement('li');
                 listItem.textContent = '- Aucun utilisateur inscrit';
-                ueList.appendChild(listItem);
+                usersList.appendChild(listItem);
             }
             else {
                 // Parcourt le tableau dynamiquement
@@ -645,6 +924,28 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (user.id == inscription) {
                             listItem.value = user.id;
                             listItem.textContent = `- ${user.id} ${user.nom} ${user.prenom}`; // Définit le contenu de chaque élément
+
+                            // Ajout d'un bouton pour supprimer l'utilisateur
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'X';
+                            deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                            deleteButton.style.backgroundColor = 'red';
+                            deleteButton.style.color = 'white'; // Couleur du texte
+                            deleteButton.style.border = 'none';
+                            deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                            // Ajout d'un événement pour supprimer l'Utilisateur
+                            deleteButton.addEventListener('click', function () {
+                                listItem.remove(); // Supprime cet élément de la liste
+                                if (usersList.querySelectorAll('li').length === 0) {
+                                    // Si la liste est vide, afficher "Aucun utilisateur inscrit"
+                                    const emptyItem = document.createElement('li');
+                                    emptyItem.textContent = '- Aucun utilisateur inscrit';
+                                    usersList.appendChild(emptyItem);
+                                }
+                            });
+
+                            listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
                         }
                     })
                     usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
@@ -659,6 +960,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const selectedUser = utilisateurs.find(user => user.id === selectedOption); // Trouve le user correspondant
                 const userListItem = Array.from(usersList.querySelectorAll('li'));
 
+                if (userListItem.length === 1 && userListItem[0].textContent === '- Aucun utilisateur inscrit') {
+                    userListItem[0].remove(); // Supprime cet élément
+                }
+
                 const stringToCompare = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom;
                 const alreadyInList = userListItem.some(item => item.textContent === stringToCompare);
                 if (alreadyInList) {
@@ -668,13 +973,32 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const listItem = document.createElement('li');
                 listItem.textContent = '- ' + selectedUser.id + ' ' + selectedUser.nom + ' ' + selectedUser.prenom; // Ajout des infos du user
+
+                // Ajout d'un bouton pour supprimer l'utilisateur
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.marginLeft = '10px'; // Espace entre le texte et le bouton
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white'; // Couleur du texte
+                deleteButton.style.border = 'none';
+                deleteButton.style.cursor = 'pointer'; // Cliquable
+
+                // Ajout d'un événement pour supprimer l'Utilisateur
+                deleteButton.addEventListener('click', function () {
+                    listItem.remove(); // Supprime cet élément de la liste
+                    if (usersList.querySelectorAll('li').length === 0) {
+                        // Si la liste est vide, afficher "Aucun utilisateur inscrit"
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucun utilisateur inscrit';
+                        usersList.appendChild(emptyItem);
+                    }
+                });
+
+                listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
+
                 usersList.appendChild(listItem);
 
                 inscriptionsSelect.value = "";
-
-
-                // A rajouter :
-                // Envoyer l'association ue-user dans la bdd et mettre à jour la liste en dessous
 
             });
         }
@@ -788,32 +1112,143 @@ document.addEventListener('DOMContentLoaded', function() {
         if (utilisateursButton.disabled) {
             const name = document.getElementById('new-name').value;
             const first_name = document.getElementById('new-first_name').value;
+            const password = document.getElementById('new-password').value;
+            const email = document.getElementById('new-email').value;
             const role = document.getElementById('new-role').value;
-            const departement = document.getElementById('new-departement').value;
+            const ueList = document.getElementById('new-ueList');
+            const inscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.value);
 
-            if (!name  || !first_name || !role || !departement) {
+            if (!name || !first_name) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
-            utilisateurs.push({ name, first_name, role, departement });
+            const maxId = utilisateurs.reduce((max, utilisateur) => {
+                return utilisateur.id > max ? utilisateur.id : max;
+            }, 0);
+
+            const newId = maxId + 1;
+
+            let newUser = {
+                id: newId,
+                nom: name,
+                prenom: first_name,
+                password: password,
+                email: email,
+                roles: [role],
+                inscriptions: [] // Initialise un tableau vide pour les inscriptions
+            };
+
+            inscriptions.forEach(course => {
+                ue.forEach(cours => {
+                    if (course == cours.id) {
+                        newUser.inscriptions.push(cours.id); // Ajoute au tableau
+                        newUser.inscriptions.sort()
+                        cours.users.push(newUser.id);
+                    }
+                });
+
+            });
+
+            fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newUser),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.user && data.user.id) {
+                        // Ajouter l'utilisateur dans la liste locale
+                        const newUser = {
+                            id: data.user.id,
+                            nom: data.user.nom,
+                            prenom: data.user.prenom,
+                            password: data.user.password,
+                            email: data.user.email,
+                            roles: data.user.roles,
+                            inscriptions: data.user.inscriptions,
+                        };
+                        alert(`Utilisateur ${data.user.nom} ${data.user.prenom} créé avec succès et ajouté à la liste.`);
+                    } else if (data.error) {
+                        alert('Erreur : ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la création de l\'utilisateur:', error);
+                });
+            utilisateurs.push(newUser);
         }
         else {
             const code = document.getElementById('new-code').value;
-            const libelle = document.getElementById('new-libelle').value;
+            const nom = document.getElementById('new-libelle').value;
             const description = document.getElementById('new-description').value;
+            const userList = document.getElementById('new-usersList');
+            const inscriptions = Array.from(userList.querySelectorAll('li')).map(item => item.value);
 
-            if (!code || !libelle || !description) {
+            if (!code || !nom || !description) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
-            ue.push({ code, libelle, description });
+            const maxId = ue.reduce((max, course) => {
+                return course.id > max ? course.id : max;
+            }, 0);
+
+            const newId = maxId + 1;
+
+            let newCourse = {
+                id: newId,
+                nom: nom,
+                code: code,
+                description: description,
+                users: [] // Initialise un tableau vide pour les inscriptions
+            };
+
+            inscriptions.forEach(user => {
+                utilisateurs.forEach(utilisateur => {
+                    if (user == utilisateur.id) {
+                        newCourse.users.push(utilisateur.id); // Ajoute au tableau
+                        newCourse.users.sort()
+                        utilisateur.inscriptions.push(newCourse.id);
+                    }
+                });
+
+            });
+
+            fetch('/api/admin/create-course', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newCourse),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.course && data.course.id) {
+                        // Ajouter le cours dans la liste locale
+                        const newCourse = {
+                            id: data.course.id,
+                            code: data.course.code,
+                            nom: data.course.nom,
+                            description: data.course.description,
+                            users: data.course.users,
+                        };
+
+                        alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
+                    } else if (data.error) {
+                        alert('Erreur : ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors de la création du cours :', error);
+                });
+            ue.push(newCourse);
         }
 
         closeModal();
 
-        // Rafraichissement de la liste, à remplacer par du Ajax plus tard
         if (utilisateursButton.disabled) {
             showUtilisateurs();
         } else {
@@ -833,7 +1268,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const newFirst_name = document.getElementById('edit-first_name').value;
             const newRole = document.getElementById('edit-role').value;
             const ueList = document.getElementById('edit-ueList');
-            const newInscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.textContent.trim());
+            const newInscriptions = Array.from(ueList.querySelectorAll('li')).map(item => item.value);
 
             if (!newName || !newFirst_name) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
@@ -863,13 +1298,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             utilisateurs.forEach(user => {
                 if (user.id === numericId) {
-                    user.name = newName;
-                    user.first_name = newFirst_name;
-                    user.role = newRole;
+                    user.nom = newName;
+                    user.prenom = newFirst_name;
+                    user.roles = newRole;
                     user.inscriptions = [];
                     newInscriptions.forEach(course => {
                         ue.forEach(cours => {
-                            if (course == '- ' + cours.code) {
+                            if (course == cours.id) {
                                 user.inscriptions.push(cours.id); // Ajoute au tableau
                                 user.inscriptions.sort()
 
@@ -886,6 +1321,35 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
                     });
+
+                    fetch('/api/admin/update-user', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: user.id,
+                            nom: newName,
+                            prenom: newFirst_name,
+                            email: user.email,
+                            roles: [newRole],
+                            inscriptions: user.inscriptions,
+                        }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json(); // Parse la réponse en JSON
+                            } else {
+                                throw new Error('Erreur lors de l\'enregistrement des modifications');
+                            }
+                        })
+                        .then((data) => {
+                            alert(data.message); // Affiche un message de succès
+                        })
+                        .catch((error) => {
+                            console.error('Erreur :', error);
+                        });
+
                 }
             })
         }
@@ -913,7 +1377,7 @@ document.addEventListener('DOMContentLoaded', function() {
             ue.forEach(course => {
                 if (course.id === numericId){
                     course.code = newCode;
-                    course.libelle = newLibelle
+                    course.nom = newLibelle
                     course.users = [];
                     newInscriptions.forEach(user => {
                         utilisateurs.forEach(utilisateur => {
@@ -934,6 +1398,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
 
                     });
+                    fetch('/api/admin/update-course', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: course.id,
+                            nom: newLibelle,
+                            code: newCode,
+                            description: newDescription,
+                            users: course.users,
+                        }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json(); // Parse la réponse en JSON
+                            } else {
+                                throw new Error('Erreur lors de l\'enregistrement des modifications');
+                            }
+                        })
+                        .then((data) => {
+                            alert(data.message); // Affiche un message de succès
+                        })
+                        .catch((error) => {
+                            console.error('Erreur :', error);
+                        });
 
                 }
             })
@@ -944,23 +1434,49 @@ document.addEventListener('DOMContentLoaded', function() {
     function confirmDelete(button) {
         const listItemId = button.getAttribute('data-list-item-id');
         const listItem = document.getElementById(listItemId);
+        const numericId = parseInt(listItem.textContent, 10);
 
         listItem.remove();
 
         if (utilisateursButton.disabled) {
             utilisateurs.forEach(user => {
-                if (user.id === Number(listItemId[listItemId.length - 1]) + 1 ) {
+                if (user.id === numericId) {
                     utilisateurs.splice(utilisateurs.indexOf(user), 1);
                 }
             })
         }
         else {
             ue.forEach(course => {
-                if (course.id === Number(listItemId[listItemId.length - 1]) + 1 ){
+                if (course.id === numericId){
                     ue.splice(ue.indexOf(course), 1);
                 }
             })
         }
+
+        fetch(`/api/admin/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: numericId, // ID de l'élément à supprimer
+                type: utilisateursButton.disabled ? 'user' : 'course' // (utilisateur ou cours)
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la suppression dans la base de données.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(`Suppression réussie :`, data);
+            })
+            .catch(error => {
+                console.error('Erreur lors de la suppression :', error);
+                alert('Une erreur est survenue lors de la suppression côté serveur.');
+            });
+
     }
 
     // Fonction qui permet de rediriger les boutons de confirmation/annulation des fenêtres modales vers les fonctions correspondantes

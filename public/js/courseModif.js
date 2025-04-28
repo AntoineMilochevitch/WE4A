@@ -182,8 +182,34 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param title
      * @param elements
      */
+    function sendNotification(ueId, message, type = 'info') {
+        fetch('/notification/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ueId: ueId,
+                message: message,
+                type: type
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Notification envoyée avec succès.');
+                } else {
+                    console.error('Erreur serveur notification :', data.error);
+                }
+            })
+            .catch(error => {
+                console.error(' Erreur réseau notification :', error);
+            });
+    }
+
     function saveSectionToServer(ueId, title, elements) {
         console.log("Elements file :", elements);
+
         const body = {
             titre: title,
             elements: elements.map(async (element) => {
@@ -208,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }),
         };
 
-        // Résolvez toutes les promesses avant d'envoyer la requête
+
         return Promise.all(body.elements).then((resolvedElements) => {
             body.elements = resolvedElements;
             console.log("Corps de la requête :", body);
@@ -223,10 +249,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!response.ok) {
                         throw new Error('Erreur lors de la requête : ' + response.statusText);
                     }
-                    return response.json(); // Retourne les données JSON
+                    return response.json();
+                })
+                .then((sectionResponse) => {
+                    if (sectionResponse.id) {
+                        console.log('Section créée avec succès :', sectionResponse);
+                        // Appel automatique de notification
+                        sendNotification(ueId, `Nouvelle partie ajoutée : ${title}`, 'info');
+                    } else {
+                        console.error('Erreur serveur création section :', sectionResponse.error);
+                    }
+                    return sectionResponse;
                 });
         });
     }
+
 
     /**
      * Enregistre un élément sur le serveur
@@ -721,13 +758,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function showPartForm() {
         const modal = document.getElementById('part-modal');
         modal.style.display = 'block';
-    
+
         // Clear previous form data
         document.getElementById('part-title').value = '';
         document.getElementById('part-elements-container').innerHTML = '';
         document.getElementById('part-element-type').value = '';
         document.getElementById('part-element-fields').innerHTML = '';
-    
+
         // Remove previous event listeners
         const addElementButton = document.getElementById('part-add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
@@ -776,13 +813,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (elementImportanceField) elementImportanceField.value = '';
             if (elementFileField) elementFileField.value = '';
         });
-    
+
 
         // Handle form submission
         const partForm = document.getElementById('part-form');
         partForm.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevent page reload
-    
+
             const title = document.getElementById('part-title').value;
 
 
@@ -975,7 +1012,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const elementType = this.value;
         const elementFields = document.getElementById('ele-element-fields');
         elementFields.innerHTML = '';
-    
+
         if (elementType === 'text') {
             elementFields.innerHTML = `
                 <label for="ele-element-text">Nom de l'élément:</label>
@@ -1039,4 +1076,5 @@ document.addEventListener('DOMContentLoaded', function() {
             elementModal.style.display = 'none';
         }
     }
+
 });
