@@ -45,6 +45,7 @@ class ProfileController extends AbstractController
             'prenom' => $user->getPrenom(),
             'email' => $user->getEmail(),
             'avatar' => $user->getAvatar(),
+            'score' => $user->getScore(),
             'classement' => $rank,
         ];
 
