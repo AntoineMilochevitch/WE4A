@@ -75,7 +75,7 @@
 
 .content-display ul {
     list-style-type: none; /* Enlever les points */
-    padding-left: 30px; /* Garder l'indentation */
+    padding-left: 30px;
     margin-top: 40px;
 }
 
@@ -85,7 +85,7 @@
 
 .content-display ul li {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 2fr;
+    grid-template-columns: 1fr 3fr 3fr 1fr 4fr;
     align-items: center;
     gap: 5px;
     position: relative;
