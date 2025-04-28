@@ -362,8 +362,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         const emptyItem = document.createElement('li');
                         emptyItem.textContent = '- Aucune UE';
                         ueList.appendChild(emptyItem);
-
-
                     }
                 }
                 else {
@@ -657,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const roleSelect = document.createElement('select');
             roleSelect.id = 'edit-role';
             const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
+            let flagAdmin = false;
             options.forEach(role => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = role; // Attribue la valeur de l'option
@@ -677,11 +676,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 if (option.textContent === editRole) {
                     option.selected = true; // Définit l'option sélectionnée par défaut (si correspond à "editRole")
+                    if (option.textContent === "Admin") {
+                        flagAdmin = true;
+                    }
                 }
                 roleSelect.appendChild(option); // Ajoute l'option au <select>
             });
             modalContent.appendChild(roleSelect);
             modalContent.appendChild(document.createElement('br'));
+
+            roleSelect.addEventListener('change', function () {
+                if (roleSelect.value === 'ROLE_ADMIN') {
+                    inscriptionsSelect.disabled = true;
+                    defaultOption.textContent = "Vous ne pouvez pas ajouter de cours à un admin";
+                    const ueList = document.getElementById('edit-ueList');
+
+                    if (ueList) {
+                        const listItems = ueList.querySelectorAll('li');
+
+                        listItems.forEach((listItem) => {
+                            listItem.remove(); // Supprimer les <li>
+                        });
+
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+
+                    }
+                }
+                else {
+                    inscriptionsSelect.disabled = false;
+                    defaultOption.textContent = "-- Choisissez un cours --";
+                }
+            })
 
             const inscriptionsMessage = document.createElement('p');
             inscriptionsMessage.textContent = 'Inscription aux UE :';
@@ -691,7 +718,14 @@ document.addEventListener('DOMContentLoaded', function() {
             inscriptionsSelect.id = 'edit-inscription';
             const defaultOption = document.createElement('option');
             defaultOption.value = ""; // Attribue la valeur de l'option
-            defaultOption.textContent = "-- Choisissez un cours --";
+            if (flagAdmin === true){
+                inscriptionsSelect.disabled = true;
+                defaultOption.textContent = "-- Choisissez un cours --";
+            }
+            else {
+                inscriptionsSelect.disabled = false;
+                defaultOption.textContent = "-- Choisissez un cours --";
+            }
             inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
             ue.forEach(course => {
                 const option = document.createElement('option'); // Crée une option
