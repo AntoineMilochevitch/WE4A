@@ -24,6 +24,7 @@
                             <h3></h3>
                             <h3></h3>
                             <h3>Classement :</h3>
+                            <h3>Meilleur Score :</h3>
                         </div>
                     </div>
                     <div class="profil-action">
@@ -137,11 +138,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const profileName = document.querySelector('.profil-name h2');
-            const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
-            const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
-            const profileRank = document.querySelector('.profil-name h3:nth-child(4)');
-            const profilePic = document.querySelector('.profil-pic img');
             // Appeler la fonction toutes les 5 secondes
             setInterval(fetchProfileData, 5000000);
             // Appel initial
@@ -176,6 +172,49 @@
                 editProfileModal.style.display = "none";
             }
         });
+
+        // Function to fetch profile data from the server
+        function fetchProfileData() {
+            fetch('/api/profile')
+                .then(response => response.json())
+                .then(data => {
+                    const profileName = document.querySelector('.profil-name h2');
+                    const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
+                    const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
+                    const profileRank = document.querySelector('.profil-name h3:nth-child(4)');
+                    const profileScore = document.querySelector('.profil-name h3:nth-child(5)');
+                    const profilePic = document.querySelector('.profil-pic img');
+
+                    // Update profile information
+                    profileName.textContent = `${data.prenom} ${data.nom}`;
+                    profileEmail.textContent = data.email;
+                    profileRank.textContent = `Classement : ${data.classement}`;
+                    profileRole.textContent = data.role;
+                    profileScore.textContent = `Meilleur Score : ${data.score}`;
+                    profilePic.src = data.avatar ? `/images/${data.avatar}` : '/images/profil_pic1.jpg';
+                })
+                .catch(error => console.error('Erreur lors de la récupération des données du profil :', error));
+            }
+
+        // Function to send the score to the server
+        function sendScoreToServer(score) {
+            const formData = new FormData();
+            formData.append('score', score);
+
+            fetch('/api/profile/update_score', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    console.log('Score mis à jour avec succès:', data.message);
+                } else if (data.error) {
+                    console.error('Erreur lors de la mise à jour du score:', data.error);
+                }
+            })
+            .catch(error => console.error('Erreur réseau:', error));
+        }
 
         // SNAKE GAME
         const canvas = document.getElementById("snakeGame");
@@ -232,47 +271,6 @@
                 }
             }
             return false;
-        }
-
-        // Function to fetch profile data from the server
-        function fetchProfileData() {
-            fetch('/api/profile')
-                .then(response => response.json())
-                .then(data => {
-                    const profileName = document.querySelector('.profil-name h2');
-                    const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
-                    const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
-                    const profileRank = document.querySelector('.profil-name h3:nth-child(4)');
-                    const profilePic = document.querySelector('.profil-pic img');
-
-                    // Update profile information
-                    profileName.textContent = `${data.prenom} ${data.nom}`;
-                    profileEmail.textContent = data.email;
-                    profileRank.textContent = `Classement : ${data.classement}`;
-                    profileRole.textContent = data.role;
-                    profilePic.src = data.avatar ? `/images/${data.avatar}` : '/images/profil_pic1.jpg';
-                })
-                .catch(error => console.error('Erreur lors de la récupération des données du profil :', error));
-        }
-
-        // Function to send the score to the server
-        function sendScoreToServer(score) {
-            const formData = new FormData();
-            formData.append('score', score);
-
-            fetch('/api/profile/update_score', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    console.log('Score mis à jour avec succès:', data.message);
-                } else if (data.error) {
-                    console.error('Erreur lors de la mise à jour du score:', data.error);
-                }
-            })
-            .catch(error => console.error('Erreur réseau:', error));
         }
 
         // Function to draw the game

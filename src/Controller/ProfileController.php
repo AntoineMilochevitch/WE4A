@@ -7,6 +7,7 @@ use App\Repository\UsersRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,6 +45,7 @@ class ProfileController extends AbstractController
             'prenom' => $user->getPrenom(),
             'email' => $user->getEmail(),
             'avatar' => $user->getAvatar(),
+            'score' => $user->getScore(),
             'classement' => $rank,
         ];
 
@@ -82,7 +84,7 @@ class ProfileController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
-    public function updateProfile(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function updateProfile(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         $user = $this->getUser();
 
@@ -135,7 +137,7 @@ class ProfileController extends AbstractController
         }
         if ($mdp !== null && $mdp_confirm !== null && $mdp !== '' && $mdp_confirm !== '') {
             if ($mdp === $mdp_confirm) {
-                $user->setPassword(password_hash($mdp, PASSWORD_BCRYPT)); // Hachage du mot de passe
+                $user->setPassword($userPasswordHasher->hashPassword($user, $mdp)); // Hachage du mot de passe
             } else {
                 return new JsonResponse(['error' => 'Les mots de passe ne correspondent pas'], 400);
             }

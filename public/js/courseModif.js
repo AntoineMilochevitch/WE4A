@@ -64,8 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
 
                 updateCourseEpingleVisibility();
-                enableDragAndDrop('.course-content', ueId);
-                enableDragAndDrop('.course-epingle', ueId);
+                if (hasRole()) {
+                    enableDragAndDrop('.course-content', ueId);
+                    enableDragAndDrop('.course-epingle', ueId);
+                }
+
             })
             .catch(error => console.error('Erreur lors du chargement des sections :', error));
     }
