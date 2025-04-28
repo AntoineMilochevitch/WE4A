@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
           link.href = '/course/' + course.code;
           link.innerHTML = `
           <div class="card">
-            <img src="/images/${course.image}" alt="Course Image" class="card__image">
+            <img src="/images/${course.image ? course.image : 'course_image.png'}" alt="Course Image" class="card__image">
             <div class="card__content">
               <p class="card__title">${course.nom}</p>
               <p class="card__description">${course.description}</p>
