@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -285,7 +286,7 @@ class AdminController extends AbstractController
     }
 
     #[Route('/api/admin/create-user', name: 'api_admin_create_user', methods: ['POST'])]
-    public function createUser(Request $request, EntityManagerInterface $entityManager, UeRepository $ueRepository): JsonResponse
+    public function createUser(Request $request, EntityManagerInterface $entityManager, UeRepository $ueRepository, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
         // Décoder les données JSON envoyées avec la requête
         $data = json_decode($request->getContent(), true);
@@ -301,7 +302,7 @@ class AdminController extends AbstractController
         $user->setPrenom($data['prenom']);
         $user->setEmail($data['email']);
         $user->setRoles($data['roles']);
-        $user->setPassword($data['password']);
+        $user->setPassword($userPasswordHasher->hashPassword($user, $data['password']));
 
         $entityManager->persist($user);
         $entityManager->flush();
@@ -318,7 +319,6 @@ class AdminController extends AbstractController
                 $userUe = new UserUe();
                 $userUe->setUser($user);
                 $userUe->setUe($ue);
-
                 $entityManager->persist($userUe);
                 $entityManager->flush();
             }
