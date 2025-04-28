@@ -322,6 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const roleSelect = document.createElement('select');
             roleSelect.id = 'new-role';
             const options = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_PROF', 'ROLE_PA'];
+            let flagAdmin = false;
             options.forEach(role => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = role; // Attribue la valeur de l'option
@@ -331,6 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 else if (role === 'ROLE_ADMIN') {
                     option.textContent = "Admin";
+
                 }
                 else if (role === 'ROLE_PROF') {
                     option.textContent = "Professeur";
@@ -343,6 +345,32 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             modalContent.appendChild(roleSelect);
             modalContent.appendChild(document.createElement('br'));
+
+            roleSelect.addEventListener('change', function () {
+                if (roleSelect.value === 'ROLE_ADMIN') {
+                    inscriptionsSelect.disabled = true;
+                    defaultOption.textContent = "Vous ne pouvez pas ajouter de cours à un admin";
+                    const ueList = document.getElementById('new-ueList');
+
+                    if (ueList) {
+                        const listItems = ueList.querySelectorAll('li');
+
+                        listItems.forEach((listItem) => {
+                            listItem.remove(); // Supprimer les <li>
+                        });
+
+                        const emptyItem = document.createElement('li');
+                        emptyItem.textContent = '- Aucune UE';
+                        ueList.appendChild(emptyItem);
+
+
+                    }
+                }
+                else {
+                    inscriptionsSelect.disabled = false;
+                    defaultOption.textContent = "-- Choisissez un cours --";
+                }
+            })
 
             const messageUE = document.createElement('p');
             messageUE.textContent = 'Ajouter des inscriptions :';
