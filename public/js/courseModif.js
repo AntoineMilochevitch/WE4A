@@ -1,6 +1,58 @@
 let isEditing = false;
 let activePart = null; // Variable pour stocker la partie active
 
+function updateNotificationCount() {
+    const notificationCount = document.querySelector('.notification-count');
+    const remainingNotifications = document.querySelectorAll('.notification-item').length;
+    if (notificationCount) {
+        notificationCount.textContent = remainingNotifications;
+    }
+}
+
+// Fonction pour recharger les notifications depuis le serveur
+function loadNotifications() {
+    fetch('/notification/user')
+        .then(response => response.json())
+        .then(data => {
+            const notificationList = document.querySelector('.notification-content');
+            if (!notificationList) return;
+
+            // Nettoyer l'ancien contenu
+            notificationList.innerHTML = '';
+
+            if (data.notifications.length === 0) {
+                notificationList.innerHTML = '<p class="no-notif">Aucune notification</p>';
+            } else {
+                data.notifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.classList.add('notification-item');
+                    if (notification.typeNotif) {
+                        notificationItem.classList.add(notification.typeNotif.toLowerCase());
+                    }
+                    if (notification.estVu) {
+                        notificationItem.classList.add('read');
+                    }
+                    notificationItem.innerHTML = `
+                        <p>${notification.message}</p>
+                        <span class="delete-btn">&times;</span>
+                    `;
+
+                    // Attacher l'événement pour supprimer
+                    notificationItem.querySelector('.delete-btn').addEventListener('click', function() {
+                        notificationItem.remove();
+                        updateNotificationCount();
+                    });
+
+                    notificationList.appendChild(notificationItem);
+                });
+            }
+
+            updateNotificationCount();
+        })
+        .catch(error => console.error('Erreur chargement notifications :', error));
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
     const courseContent = document.querySelector('.course-content');
@@ -185,8 +237,10 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param title
      * @param elements
      */
+
+
     function sendNotification(ueId, message, type = 'low') {
-        fetch('/notification/create', {
+        return fetch('/notification/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -201,14 +255,25 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     console.log('Notification envoyée avec succès.');
+
+                    // Rafraîchir les notifications du panneau
+                    if (typeof loadNotifications === 'function') {
+                        loadNotifications();
+                    } else {
+                        console.error('La fonction loadNotifications n\'existe pas.');
+                    }
+
                 } else {
                     console.error('Erreur serveur notification :', data.error);
                 }
+                return data;
             })
             .catch(error => {
                 console.error('Erreur réseau notification :', error);
+                throw error;
             });
     }
+
 
 
     function saveSectionToServer(ueId, title, elements) {
