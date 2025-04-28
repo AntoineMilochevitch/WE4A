@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             modalContent.appendChild(imagePreview);
 
             imageInput.addEventListener('change', function () {
@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             if (editImage !== 'images/null') {
                 imagePreview.src = editImage;
                 imagePreview.style.display = 'block';
@@ -1403,7 +1403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id === numericId) {
                     user.nom = newName;
                     user.prenom = newFirst_name;
-                    user.roles = newRole;
+                    user.roles = role;
                     user.inscriptions = [];
                     newInscriptions.forEach(course => {
                         ue.forEach(cours => {
@@ -1484,7 +1484,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     course.users = [];
                     newInscriptions.forEach(user => {
                         utilisateurs.forEach(utilisateur => {
-                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom) {
+                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom + 'X') {
                                 course.users.push(utilisateur.id); // Ajoute au tableau
                                 course.users.sort()
 

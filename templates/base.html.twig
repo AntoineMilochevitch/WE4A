@@ -15,7 +15,11 @@
 <body>
 <header>
     <div class="logo">
-        <a href= {{ path('home') }}>
+        {% set redirectPath = path('admin') %}
+        {% if is_granted('ROLE_USER') %}
+            {% set redirectPath = path('home') %}
+        {% endif %}
+        <a href="{{ redirectPath }}">
             <img src="{{ asset('images/logo_UTBM_blanc.png') }}" alt="MyMoodle">
         </a>
     </div>
@@ -24,30 +28,31 @@
             {% if 'ROLE_ADMIN' in app.user.roles %}
                 <li><a href="{{ path('admin') }}">Admin</a></li>
             {% endif %}
-            <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
-            <li><a href="{{ path('find') }}">Recherche de cours</a></li>
 
+            {% if 'ROLE_USER' in app.user.roles %}
+                <li><a href="{{ path('my_courses') }}">Mes cours</a></li>
+                <li><a href="{{ path('find') }}">Recherche de cours</a></li>
+            {% endif %}
         </ul>
     </div>
     <div class="user">
         <ul>
-
-            <li>
-                <a href="#">
-                    <ion-icon name="notifications-outline"></ion-icon>
-                    <span class="notification-count">
+            {% if is_granted('ROLE_USER') %}
+                <li>
+                    <a href="#">
+                        <ion-icon name="notifications-outline"></ion-icon>
+                        <span class="notification-count">
                         {{ notifications|filter(n => not n.estVu)|length }}
                     </span>
-                </a>
-            </li>
-
-            <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
-
+                    </a>
+                </li>
+                <li><a href="{{ path('profile') }}"><ion-icon name="person-circle-outline"></ion-icon></a></li>
+            {% endif %}
             <button class="Btn" onclick="window.location.href='{{ path('app_logout') }}'">
                 <div class="sign">
                     <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
                 </div>
-                <div class="text">Login</div>
+                <div class="text">Logout</div>
             </button>
         </ul>
     </div>
@@ -69,8 +74,6 @@
         {% endfor %}
     </div>
 </div>
-
-
 {% block body %}
 {% endblock %}
 
