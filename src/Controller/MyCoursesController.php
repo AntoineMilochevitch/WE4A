@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\UserUe;
+use App\Entity\Ue;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,40 +17,59 @@ class MyCoursesController extends AbstractController
      * @Route("/api/my-courses", name="api_my_courses", methods={"GET"})
      */
     #[Route('/api/my-courses', name: 'api_my_courses')]
-    public function getCourses(): JsonResponse
+    public function getCourses(EntityManagerInterface $entityManager): JsonResponse
     {
-        // Récupérer l'utilisateur
-        $user = $this->getUser();
+        try {
+            $user = $this->getUser();
 
-        if (!$user) {
-            return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
-        }
-
-        // Récupérer les cours auxquels l'utilisateur est inscrit
-        $userUes= $user->getUserUes();
-
-        if (!$user->getUserUes() instanceof \Doctrine\Common\Collections\Collection || $user->getUserUes()->isEmpty()) {
-            return new JsonResponse(['error' => 'Aucun cours trouvé'], 404);
-        }
-
-        $courseData = [];
-        foreach ($userUes as $userUe) {
-            $ue = $userUe->getUe();
-            if (!$ue) {
-                continue; // Ignorez les entrées invalides
+            if (!$user) {
+                return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
             }
-            $courseData[] = [
-                'id' => $ue->getId(),
-                'nom' => $ue->getNom(),
-                'code' => $ue->getCode(),
-                'image' => $ue->getImage(),
-                'description' => $ue->getDescription(),
-                'favoris' => $userUe->getFavoris(),
-                'lastActivity' => $userUe->getLastVisited(),
-            ];
-        }
 
-        return new JsonResponse($courseData);
+            if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                $allCourses = $entityManager->getRepository(Ue::class)->allUE();
+
+                $courseData = [];
+                foreach ($allCourses as $ue) {
+                    $courseData[] = [
+                        'id' => $ue['id'],
+                        'nom' => $ue['nom'],
+                        'code' => $ue['code'],
+                        'image' => $ue['image'],
+                        'description' => $ue['description'],
+                    ];
+                }
+
+                return new JsonResponse($courseData);
+            } else {
+                $userUes = $user->getUserUes();
+
+                if (!$userUes instanceof \Doctrine\Common\Collections\Collection || $userUes->isEmpty()) {
+                    return new JsonResponse(['error' => 'Aucun cours trouvé'], 404);
+                }
+
+                $courseData = [];
+                foreach ($userUes as $userUe) {
+                    $ue = $userUe->getUe();
+                    if (!$ue) {
+                        continue;
+                    }
+                    $courseData[] = [
+                        'id' => $ue->getId(),
+                        'nom' => $ue->getNom(),
+                        'code' => $ue->getCode(),
+                        'image' => $ue->getImage(),
+                        'description' => $ue->getDescription(),
+                        'favoris' => $userUe->getFavoris(),
+                        'lastActivity' => $userUe->getLastVisited(),
+                    ];
+                }
+
+                return new JsonResponse($courseData);
+            }
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
