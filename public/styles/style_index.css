@@ -224,17 +224,18 @@
 }
 
 /* Importance color variations */
-.info-item.important {
-    background-color: #ffdddd;
+.info-item.low {
+    background-color: #ddf4ff;
 }
 
-.info-item.warning {
+.info-item.medium {
     background-color: #fff4cc;
 }
 
-.info-item.info {
-    background-color: #ddf4ff;
+.info-item.hard {
+    background-color: #ffdddd;
 }
+
 
 /* ================ */
 /* === MENU POPUP === */
