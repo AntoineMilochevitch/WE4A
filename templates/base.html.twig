@@ -52,7 +52,7 @@
                 <div class="sign">
                     <img src="{{ asset('images/logout.webp') }}" alt="Login Icon" class="logo-image">
                 </div>
-                <div class="text">Login</div>
+                <div class="text">Logout</div>
             </button>
         </ul>
     </div>
@@ -74,24 +74,6 @@
         {% endfor %}
     </div>
 </div>
-
-{% if app.user %}
-     <div class="mb-3">
-        You are logged in as {{ app.user.userIdentifier }}
-    </div>
-    <div class="mb-3">
-        Your roles: {{ app.user.roles|join(', ') }}
-    </div>
-{% endif %}
-
-
-{% if 'ROLE_ADMIN' in app.user.roles %}
-    <div class="alert alert-info">
-        Vous êtes un admin 🎓
-    </div>
-{% endif %}
-
-
 {% block body %}
 {% endblock %}
 
