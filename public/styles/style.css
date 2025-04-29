@@ -235,15 +235,15 @@ header .user ul li a:hover ion-icon {
     color: #888;
 }
 
-.notification-item.important {
+.notification-item.medium {
     background-color: #ffdddd;
 }
 
-.notification-item.warning {
+.notification-item.hard {
     background-color: #fff4cc;
 }
 
-.notification-item.info {
+.notification-item.low {
     background-color: #ddf4ff;
 }
 
