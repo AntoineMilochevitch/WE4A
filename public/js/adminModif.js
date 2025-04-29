@@ -1254,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.user && data.user.id) {
                         // Ajouter l'utilisateur dans la liste locale
-                        const newUser = {
+                        newUser = {
                             id: data.user.id,
                             nom: data.user.nom,
                             prenom: data.user.prenom,
@@ -1325,7 +1325,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.course && data.course.id) {
                         // Ajouter le cours dans la liste locale
-                        const newCourse = {
+                        newCourse = {
                             id: data.course.id,
                             code: data.course.code,
                             nom: data.course.nom,
