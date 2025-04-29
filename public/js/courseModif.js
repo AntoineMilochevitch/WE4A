@@ -189,9 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Parcourir les utilisateurs et les ajouter dans les conteneurs correspondants
                 data.forEach(user => {
+                    const randomNumber = Math.floor(Math.random() * 7) + 1;
                     const participantHtml = `
                         <div class="participant">
-                            <img src="/images/${user.avatar}" alt="Photo de profil" class="profile-pic">
+                            <img src="/images/${user.avatar ? user.avatar : `profil_pic${randomNumber}.jpg`}" alt="Photo de profil" class="profile-pic">
                             <span class="participant-name">${user.nom}</span>
                             <span class="participant-firstname">${user.prenom}</span>
                             <a href="mailto:${user.email}" class="participant-email">${user.email}</a>
@@ -199,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="ligne-gris"></div>
                     `;
 
-                    if (user.role.includes('ROLE_ADMIN')) {
+                    if (user.role.includes('ROLE_PROF')) {
                         professorsContainer.insertAdjacentHTML('beforeend', participantHtml);
                     } else if (user.role.includes('ROLE_USER')) {
                         studentsContainer.insertAdjacentHTML('beforeend', participantHtml);
@@ -237,8 +238,6 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param title
      * @param elements
      */
-
-
     function sendNotification(ueId, message, type = 'low') {
         return fetch('/notification/create', {
             method: 'POST',
@@ -306,7 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return Promise.all(body.elements).then((resolvedElements) => {
             body.elements = resolvedElements;
-            console.log("Corps de la requête :", body);
             return fetch(`/api/course/${ueId}/add_section`, {
                 method: 'POST',
                 headers: {
@@ -322,7 +320,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then((sectionResponse) => {
                     if (sectionResponse.id) {
-                        console.log('Section créée avec succès :', sectionResponse);
                         // Choisir la plus haute importance
                         const importances = elements.map(e => e.importance || 'low');
                         let finalImportance = 'low';
@@ -349,7 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param element
      */
     function saveElementToServer(ueId, sectionId, element) {
-        console.log("element :", element);
         let files;
         if (element.type === 'file') {
             files = element.fileInput.files;
@@ -401,7 +397,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 fichier: null,
                 importance: element.importance || null,
             };
-            console.log("Corps de la requête :", body);
 
             fetch(`/api/course/${ueId}/add_element`, {
                 method: 'POST',
@@ -537,7 +532,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 // Envoyer une requête GET pour télécharger le fichier
-                console.log("elemntId :", elementId);
                 fetch(`/api/course/${ueId}/download_file/${elementId}`, {
                     method: 'GET',
                 })
@@ -836,18 +830,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('part-modal');
         modal.style.display = 'block';
 
-        // Clear previous form data
+        // Réinitialiser les données de la modal
         document.getElementById('part-title').value = '';
         document.getElementById('part-elements-container').innerHTML = '';
         document.getElementById('part-element-type').value = '';
         document.getElementById('part-element-fields').innerHTML = '';
 
-        // Remove previous event listeners
+        let elements = []; // Réinitialiser le tableau des éléments
+
+        // Nettoyer les anciens gestionnaires d'événements
         const addElementButton = document.getElementById('part-add-element');
         addElementButton.replaceWith(addElementButton.cloneNode(true));
 
-        let elements = []; // Tableau pour stocker les éléments
-        // Handle adding a new element to the form
         document.getElementById('part-add-element').addEventListener('click', function () {
             const elementType = document.getElementById('part-element-type').value;
             const elementText = document.getElementById('element-text').value;
@@ -884,7 +878,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Ajoutez l'élément au tableau `elements`
             elements.push(newElement);
 
-            // Réinitialisez les champs du formulaire
+            // Réinitialiser les champs du formulaire
             document.getElementById('element-text').value = '';
             if (elementDescription) document.getElementById('element-description').value = '';
             if (elementImportanceField) elementImportanceField.value = '';
@@ -892,24 +886,25 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-        // Handle form submission
+        /// Nettoyer les anciens gestionnaires d'événements du formulaire
         const partForm = document.getElementById('part-form');
-        partForm.addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent page reload
+        partForm.replaceWith(partForm.cloneNode(true));
+        document.getElementById('part-form').addEventListener('submit', function (event) {
+            event.preventDefault();
 
             const title = document.getElementById('part-title').value;
 
-
-            console.log("elements :", elements);
             // Send the data to the server
+            console.log("saveSectionTOServer before :", ueId, title, elements);
             saveSectionToServer(ueId, title, elements)
                 .then((response) => {
-                    console.log("Réponse du serveur :", response);
                     if (response.id) {
-
+                        console.log("SaveSectionToServer in :", ueId, title, elements);
                         console.log("Section créée avec succès :", response);
                         createPart(title, elements, response.id);
+                        console.log("createPart :", ueId, title, elements);
                         loadSections(ueId)
+                        elements = []; // Réinitialiser le tableau des éléments après l'envoi
 
                     } else {
                         console.error('Erreur lors de la création de la section :', response.error);
@@ -917,6 +912,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch((error) => console.error('Erreur réseau :', error));
 
+            console.log("SaveSectionTOServer after :", ueId, title, elements);
             const modal = document.getElementById('part-modal');
             modal.style.display = 'none'; // Close the modal
 
@@ -927,28 +923,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('cancel-part').addEventListener('click', function () {
             modal.style.display = 'none';
         });
-    }
-
-    /**
-     * Get the file icon based on the file type
-     * @param fileType
-     * @returns {string}
-     */
-    function getFileIcon(fileType) {
-        switch (fileType) {
-            case 'pdf':
-                return 'document-outline';
-            case 'doc':
-            case 'docx':
-                return 'document-text-outline';
-            case 'ppt':
-            case 'pptx':
-                return 'document-text-outline';
-            case 'zip':
-                return 'archive-outline';
-            default:
-                return 'document-outline';
-        }
     }
 
     /**
@@ -986,7 +960,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Récupérer les valeurs des champs
             const sectionId = activePart.dataset.sectionId;
             const elementType = document.getElementById('ele-element-type').value || 'text';
-            console.log("type d'élément :", elementType);
             const elementText = document.getElementById('ele-element-text').value;
             const elementDescription = document.getElementById('ele-element-description')
                 ? document.getElementById('ele-element-description').value
