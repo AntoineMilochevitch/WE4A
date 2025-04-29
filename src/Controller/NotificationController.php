@@ -84,28 +84,41 @@ class NotificationController extends AbstractController
 
         return new JsonResponse(['success' => true]);
     }
-    #[Route('/notification/user', name: 'user_notification', methods: ['GET'])]
-    public function getLastNotification(UserNotifRepository $userNotifRepository): JsonResponse
+    #[Route('/notification/user', name: 'user_notifications', methods: ['GET'])]
+    public function getUnreadUserNotifications(UserNotifRepository $userNotifRepository): JsonResponse
     {
         $user = $this->getUser();
-        $lastNotif = $userNotifRepository->findLastNotificationForUser($user->getId());
 
-        if (!$lastNotif) {
-            return new JsonResponse(['notifications' => []]);
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non authentifié'], 401);
+        }
+
+        // Récupérer toutes les notifications non lues
+        $userNotifications = $userNotifRepository->createQueryBuilder('u')
+            ->join('u.notification', 'n')
+            ->where('u.usersId = :userId')
+            ->andWhere('u.estVu = false')
+            ->setParameter('userId', $user->getId())
+            ->orderBy('n.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $notifications = [];
+
+        foreach ($userNotifications as $userNotif) {
+            $notif = $userNotif->getNotification();
+            $notifications[] = [
+                'id' => $notif->getId(),
+                'message' => $notif->getMessage(),
+                'estVu' => $userNotif->isEstVu(),
+                'typeNotif' => $notif->getTypeNotif()?->getTypeNotif(),
+            ];
         }
 
         return new JsonResponse([
-            'notifications' => [[
-                'id' => $lastNotif->getNotification()->getId(),
-                'message' => $lastNotif->getNotification()->getMessage(),
-                'date' => $lastNotif->getNotification()->getDate()->format('Y-m-d H:i:s'),
-                'typeNotif' => $lastNotif->getNotification()->getTypeNotif()->getTypeNotif(),
-                'estVu' => $lastNotif->isEstVu(),
-            ]]
+            'notifications' => $notifications
         ]);
     }
-
-
 
 
 }
