@@ -1263,6 +1263,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             inscriptions: data.user.inscriptions,
                         };
                         alert(`Utilisateur ${data.user.nom} ${data.user.prenom} créé avec succès et ajouté à la liste.`);
+                        utilisateurs.push(newUser);
+                        closeModal();
+                        showUtilisateurs();
                     } else if (data.error) {
                         alert('Erreur : ' + data.error);
                     }
@@ -1270,7 +1273,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Erreur lors de la création de l\'utilisateur:', error);
                 });
-            utilisateurs.push(newUser);
         }
         else {
             const code = document.getElementById('new-code').value;
@@ -1333,8 +1335,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             image: data.course.image,
                             users: data.course.users,
                         };
-
                         alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
+                        ue.push(newCourse);
+                        closeModal();
+                        showUE();
                     } else if (data.error) {
                         alert('Erreur : ' + data.error);
                     }
@@ -1342,15 +1346,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Erreur lors de la création du cours :', error);
                 });
-            ue.push(newCourse);
-        }
-
-        closeModal();
-
-        if (utilisateursButton.disabled) {
-            showUtilisateurs();
-        } else {
-            showUE();
         }
     }
 
