@@ -363,42 +363,8 @@ document.addEventListener('DOMContentLoaded', function() {
             fileName = file.name;
         }
 
-        if (fichierBase64) {
-            fichierBase64.then((base64) => {
-                const body = {
-                    titre: element.text,
-                    type: element.type,
-                    description: element.description || null,
-                    fichier: base64,
-                    importance: element.importance || null,
-                    fileName: fileName,
-                };
-
-                fetch(`/api/course/${ueId}/add_element`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ ...body, sectionId }),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log('Élément enregistré avec succès :', data);
-                    })
-                    .catch((error) => {
-                        console.error('Erreur lors de l\'enregistrement de l\'élément :', error);
-                    });
-            });
-        } else {
-            const body = {
-                titre: element.text,
-                type: element.type,
-                description: element.description || null,
-                fichier: null,
-                importance: element.importance || null,
-            };
-
-            fetch(`/api/course/${ueId}/add_element`, {
+        const saveElement = (body) => {
+            return fetch(`/api/course/${ueId}/add_element`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -412,8 +378,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch((error) => {
                     console.error('Erreur lors de l\'enregistrement de l\'élément :', error);
                 });
+        };
+
+        if (fichierBase64) {
+            fichierBase64.then((base64) => {
+                const body = {
+                    titre: element.text,
+                    type: element.type,
+                    description: element.description || null,
+                    fichier: base64,
+                    importance: element.importance || null,
+                    fileName: fileName,
+                };
+
+                saveElement(body).then(() => {
+                    loadSections(ueId); // Charger les sections après l'enregistrement
+                });
+            });
+        } else {
+            const body = {
+                titre: element.text,
+                type: element.type,
+                description: element.description || null,
+                fichier: null,
+                importance: element.importance || null,
+            };
+
+            saveElement(body).then(() => {
+                loadSections(ueId); // Charger les sections après l'enregistrement
+            });
         }
-        loadSections(ueId)
+
         const modal = document.getElementById('element-modal');
         if (modal) {
             modal.style.display = 'none';
@@ -838,22 +833,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let elements = []; // Réinitialiser le tableau des éléments
 
-        // Nettoyer les anciens gestionnaires d'événements
-        const addElementButton = document.getElementById('part-add-element');
-        addElementButton.replaceWith(addElementButton.cloneNode(true));
+        // Remplacer le formulaire
+        const partForm = document.getElementById('part-form');
+        const clonedForm = partForm.cloneNode(true);
+        partForm.replaceWith(clonedForm);
 
+        // Réattacher le gestionnaire d'événement pour le dropdown
+        const partElementType = document.getElementById('part-element-type');
+        partElementType.addEventListener('change', function () {
+            const elementType = this.value;
+            const elementFields = document.getElementById('part-element-fields');
+            elementFields.innerHTML = '';
+
+            if (elementType === 'text') {
+                elementFields.innerHTML = `
+                <label for="element-text">Nom de l'élément:</label>
+                <input type="text" id="element-text" name="element-text">
+                <label for="element-description">Description:</label>
+                <textarea id="element-description" name="element-description"></textarea>
+                <label for="element-importance">Importance:</label>
+                <select id="element-importance" name="element-importance">
+                    <option value="" disabled selected>Choisir une importance</option>
+                    <option value="low">Faible</option>
+                    <option value="medium">Moyenne</option>
+                    <option value="high">Élevée</option>
+                </select>
+            `;
+            } else if (elementType === 'file') {
+                elementFields.innerHTML = `
+                <label for="element-text">Nom de l'élément:</label>
+                <input type="text" id="element-text" name="element-text">
+                <label for="element-description">Description:</label>
+                <textarea id="element-description" name="element-description"></textarea>
+                <label for="element-file">Fichier:</label>
+                <input type="file" id="element-file" name="element-file">
+            `;
+            } else if (elementType === 'depot') {
+                elementFields.innerHTML = `
+                <label for="element-text">Nom de l'élément:</label>
+                <input type="text" id="element-text" name="element-text">
+                <label for="element-description">Description:</label>
+                <textarea id="element-description" name="element-description"></textarea>
+            `;
+            } else {
+                elementFields.innerHTML = `
+                <label for="element-text">Nom de l'élément:</label>
+                <input type="text" id="element-text" name="element-text">
+            `;
+            }
+        });
+
+        // Ajouter un gestionnaire pour le bouton "Ajouter un élément"
         document.getElementById('part-add-element').addEventListener('click', function () {
             const elementType = document.getElementById('part-element-type').value;
             const elementText = document.getElementById('element-text').value;
             const elementDescription = document.getElementById('element-description').value;
             const elementDate = new Date().toLocaleDateString();
-            // Vérifiez si le champ importance existe
             const elementImportanceField = document.getElementById('element-importance');
             const elementImportance = elementImportanceField ? elementImportanceField.value : null;
-
-            // Vérifiez si le champ fichier existe
             const elementFileField = document.getElementById('element-file');
             const elementFile = elementFileField ? elementFileField.files[0] : null;
+
             const newElement = {
                 text: elementText,
                 type: elementType,
@@ -864,18 +904,17 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             const elementHtml = `
-                <div class="element">
-                    <div class="element-header">
-                        <ion-icon name="${elementType === 'text' ? 'document-text-outline' : elementType === 'depot' ? 'cloud-upload-outline' : 'document-outline'}"></ion-icon>
-                        <p>${elementText}</p>
-                        ${elementDescription ? `<p class="element-description">${elementDescription}</p>` : ''}
-                    </div>
+            <div class="element">
+                <div class="element-header">
+                    <ion-icon name="${elementType === 'text' ? 'document-text-outline' : elementType === 'depot' ? 'cloud-upload-outline' : 'document-outline'}"></ion-icon>
+                    <p>${elementText}</p>
+                    ${elementDescription ? `<p class="element-description">${elementDescription}</p>` : ''}
                 </div>
-                `;
+            </div>
+        `;
 
             document.getElementById('part-elements-container').insertAdjacentHTML('beforeend', elementHtml);
 
-            // Ajoutez l'élément au tableau `elements`
             elements.push(newElement);
 
             // Réinitialiser les champs du formulaire
@@ -885,41 +924,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (elementFileField) elementFileField.value = '';
         });
 
-
-        /// Nettoyer les anciens gestionnaires d'événements du formulaire
-        const partForm = document.getElementById('part-form');
-        partForm.replaceWith(partForm.cloneNode(true));
+        // Gestion de la soumission du formulaire
         document.getElementById('part-form').addEventListener('submit', function (event) {
             event.preventDefault();
 
             const title = document.getElementById('part-title').value;
 
-            // Send the data to the server
-            console.log("saveSectionTOServer before :", ueId, title, elements);
             saveSectionToServer(ueId, title, elements)
                 .then((response) => {
                     if (response.id) {
-                        console.log("SaveSectionToServer in :", ueId, title, elements);
-                        console.log("Section créée avec succès :", response);
                         createPart(title, elements, response.id);
-                        console.log("createPart :", ueId, title, elements);
-                        loadSections(ueId)
-                        elements = []; // Réinitialiser le tableau des éléments après l'envoi
-
+                        loadSections(ueId);
+                        elements = [];
                     } else {
                         console.error('Erreur lors de la création de la section :', response.error);
                     }
                 })
                 .catch((error) => console.error('Erreur réseau :', error));
 
-            console.log("SaveSectionTOServer after :", ueId, title, elements);
-            const modal = document.getElementById('part-modal');
-            modal.style.display = 'none'; // Close the modal
-
+            modal.style.display = 'none';
         });
 
-
-        // Handle cancel button
         document.getElementById('cancel-part').addEventListener('click', function () {
             modal.style.display = 'none';
         });
@@ -1008,52 +1033,6 @@ document.addEventListener('DOMContentLoaded', function() {
         element.remove();
     }
 
-
-    /**
-     * Listener for the element type dropdown
-     */
-    document.getElementById('part-element-type').addEventListener('change', function() {
-        const elementType = this.value;
-        const elementFields = document.getElementById('part-element-fields');
-        elementFields.innerHTML = '';
-
-        if (elementType === 'text') {
-            elementFields.innerHTML = `
-                <label for="element-text">Nom de l'élément:</label>
-                <input type="text" id="element-text" name="element-text">
-                <label for="element-description">Description:</label>
-                <textarea id="element-description" name="element-description"></textarea>
-                <label for="element-importance">Importance:</label>
-                <select id="element-importance" name="element-importance">
-                    <option value="" disabled selected>Choisir une importance</option>
-                    <option value="low">Faible</option>
-                    <option value="medium">Moyenne</option>
-                    <option value="high">Élevée</option>
-                </select>
-            `;
-        } else if (elementType === 'file') {
-            elementFields.innerHTML = `
-                <label for="element-text">Nom de l'élément:</label>
-                <input type="text" id="element-text" name="element-text">
-                <label for="element-description">Description:</label>
-                <textarea id="element-description" name="element-description"></textarea>
-                <label for="element-file">Fichier:</label>
-                <input type="file" id="element-file" name="element-file">
-            `;
-        } else if (elementType === 'depot') {
-            elementFields.innerHTML = `
-                <label for="element-text">Nom de l'élément:</label>
-                <input type="text" id="element-text" name="element-text">
-                <label for="element-description">Description:</label>
-                <textarea id="element-description" name="element-description"></textarea>
-            `;
-        } else {
-            elementFields.innerHTML = `
-                <label for="element-text">Nom de l'élément:</label>
-                <input type="text" id="element-text" name="element-text">
-            `;
-        }
-    });
 
     /**
      * Listener for the element type dropdown in the modal
