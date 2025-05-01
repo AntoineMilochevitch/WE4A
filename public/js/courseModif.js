@@ -1,4 +1,4 @@
-let isEditing = false;
+let isEditing = false; // Variable pour savoir si on est en mode édition
 let activePart = null; // Variable pour stocker la partie active
 
 function updateNotificationCount() {
@@ -56,12 +56,19 @@ function loadNotifications() {
 document.addEventListener('DOMContentLoaded', function() {
 
     const courseContent = document.querySelector('.course-content');
-    const participantsContent = document.querySelector('.participants-content');
+    const participantsContent = document.querySelector('.participants-content'); // div pour les participants
 
+    /**
+     * Verifie si l'utilisateur a le role admin ou prof
+     * @returns boolean
+     */
     function hasRole() {
         return userRoles.includes('ROLE_ADMIN') || userRoles.includes('ROLE_PROF');
     }
 
+    /**
+     * Active ou désactive les boutons en fonction du rôle de l'utilisateur
+     */
     function enableButtonsBasedOnRole() {
         document.querySelectorAll('.btn-edit-part, .btn-delete-part, .btn-add-element, .btn-pin-part, .btn-add-part').forEach(button => {
             if (hasRole()) {
@@ -75,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     enableButtonsBasedOnRole();
     /**
-     * Load sections from the API
+     * Charge les sections du cours
      * @param ueId
      */
     function loadSections(ueId) {
@@ -83,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(`/api/course/${ueId}/sections`)
             .then(response => response.json())
             .then(data => {
-                const courseContent = document.querySelector('.course-content');
-                const courseEpingle = document.querySelector('.course-epingle');
+                const courseContent = document.querySelector('.course-content'); // div pour le contenu du cours
+                const courseEpingle = document.querySelector('.course-epingle'); // div pour le contenu épinglé
 
                 // Vider les conteneurs
                 courseContent.innerHTML = '';
@@ -115,8 +122,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
 
-                updateCourseEpingleVisibility();
+                updateCourseEpingleVisibility(); // Mettre à jour la visibilité de la section épinglée
                 if (hasRole()) {
+                    // Activer le drag and drop pour changer l'ordre
                     enableDragAndDrop('.course-content', ueId);
                     enableDragAndDrop('.course-epingle', ueId);
                 }
@@ -127,15 +135,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadSections(ueId);
 
+    /**
+     * Met à jour la visibilité de la section épinglée
+     */
     function updateCourseEpingleVisibility() {
-        const courseEpingle = document.querySelector('.course-epingle');
+        const courseEpingle = document.querySelector('.course-epingle'); // div pour le contenu épinglé
         if (courseEpingle.children.length === 0) {
-            courseEpingle.style.display = 'none';
+            courseEpingle.style.display = 'none'; // Masquer la section épinglée si elle est vide
         } else {
-            courseEpingle.style.display = 'block';
+            courseEpingle.style.display = 'block'; // Afficher la section épinglée si elle n'est pas vide
         }
     }
 
+    /**
+     * Active le drag and drop pour réorganiser les sections
+     * @param containerSelector
+     * @param ueId
+     */
     function enableDragAndDrop(containerSelector, ueId) {
         const container = document.querySelector(containerSelector);
 
@@ -143,15 +159,15 @@ document.addEventListener('DOMContentLoaded', function() {
             animation: 150,
             handle: '.part-header', // Drag via header
             scroll: true,
-            scrollSensitivity: 100,
-            scrollSpeed: 15,
+            scrollSensitivity: 100, // Sensibilité de défilement
+            scrollSpeed: 15, // Vitesse de défilement
             onEnd: function () {
-                const parts = container.querySelectorAll('.part');
+                const parts = container.querySelectorAll('.part'); // Sélectionner toutes les parties
                 const updates = [];
 
                 parts.forEach((part, index) => {
-                    const sectionId = part.getAttribute('data-section-id');
-                    updates.push({ id: sectionId, ordre: index + 1 });
+                    const sectionId = part.getAttribute('data-section-id'); // Récupérer l'ID de la section
+                    updates.push({ id: sectionId, ordre: index + 1 }); // Ajouter à la liste des mises à jour
                 });
 
                 // Envoyer les nouveaux ordres a la bdd
@@ -173,15 +189,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     /**
-     * Load participants from the API
+     * Charger les participants
      * @param ueId
      */
     function loadParticipants(ueId) {
         fetch(`/api/course/${ueId}/users`)
             .then(response => response.json())
             .then(data => {
-                const professorsContainer = participantsContent.querySelector('.professors .part-content');
-                const studentsContainer = participantsContent.querySelector('.students .part-content');
+                const professorsContainer = participantsContent.querySelector('.professors .part-content'); // div pour les professeurs
+                const studentsContainer = participantsContent.querySelector('.students .part-content'); // div pour les étudiants
 
                 // Vider les conteneurs
                 professorsContainer.innerHTML = '';
@@ -200,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="ligne-gris"></div>
                     `;
 
+                    // Ajouter l'utilisateur dans le conteneur approprié
                     if (user.role.includes('ROLE_PROF')) {
                         professorsContainer.insertAdjacentHTML('beforeend', participantHtml);
                     } else if (user.role.includes('ROLE_USER')) {
@@ -210,6 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Erreur lors du chargement des participants :', error));
     }
 
+    // Ajouter un événement pour charger les participants
     document.querySelectorAll('.course-menu-li a').forEach(item => {
         item.addEventListener('click', function(e) {
             const text = this.textContent.trim();
@@ -221,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     /**
-     * Toggle the display of part content
+     * Basculer l'affichage du contenu de la partie
      * @param header
      */
     function togglePartContent(header) {
@@ -232,12 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         header.classList.toggle('collapsed', !isCollapsed);
     }
 
-    /**
-     * Enregistre une section sur le serveur
-     * @param ueId
-     * @param title
-     * @param elements
-     */
+
     function sendNotification(ueId, message, type = 'low') {
         return fetch('/notification/create', {
             method: 'POST',
@@ -274,12 +287,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
-
+    /**
+     * Enregistre une section sur le serveur
+     * @param ueId
+     * @param title
+     * @param elements
+     * @returns {Promise<Response>}
+     */
     function saveSectionToServer(ueId, title, elements) {
         console.log("Elements file :", elements);
 
         const body = {
             titre: title,
+            // map pour transformer les éléments : async car on doit attendre le fichier
             elements: elements.map(async (element) => {
                 let fichierBase64 = null;
                 let fileName = null;
@@ -302,9 +322,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }),
         };
 
-
+        // Utiliser Promise.all pour attendre la résolution de tous les fichiers
         return Promise.all(body.elements).then((resolvedElements) => {
             body.elements = resolvedElements;
+            // Envoyer la requête au serveur
             return fetch(`/api/course/${ueId}/add_section`, {
                 method: 'POST',
                 headers: {
@@ -328,6 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else if (importances.includes('medium')) {
                             finalImportance = 'medium';
                         }
+                        // Envoyer la notification
                         sendNotification(ueId, `Nouvelle partie ajoutée : ${title}`, finalImportance);
                     } else {
                         console.error('Erreur serveur création section :', sectionResponse.error);
@@ -363,6 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fileName = file.name;
         }
 
+        // Enregistrer l'élément sur le serveur
         const saveElement = (body) => {
             return fetch(`/api/course/${ueId}/add_element`, {
                 method: 'POST',
@@ -380,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         };
 
+        // Vérifier si un fichier est présent
         if (fichierBase64) {
             fichierBase64.then((base64) => {
                 const body = {
@@ -410,6 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const modal = document.getElementById('element-modal');
+        // Fermer la modal
         if (modal) {
             modal.style.display = 'none';
         } else {
@@ -417,6 +442,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Convertit un fichier en base64 pour l'envoi
+     * @param file
+     * @returns {Promise<unknown>}
+     */
     function convertFileToBase64(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -427,13 +457,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Create a new part
+     * Créer une partie dans le contenu du cours
      * @param title
      * @param elements
      * @param sectionId
      */
     function createPart(title, elements, sectionId) {
-        const courseContent = document.querySelector('.course-content');
+        const courseContent = document.querySelector('.course-content'); // div pour le contenu du cours
         if (!courseContent) {
             console.error('Element .course-content introuvable.');
             return;
@@ -509,6 +539,7 @@ document.addEventListener('DOMContentLoaded', function() {
             togglePartContent(this);
         });
 
+        // Ajouter l'événement pour le bouton de sauvegarde
         const editButton = newPart.querySelector('.btn-edit-part');
         editButton.addEventListener('click', function () {
             editPart(newPart, this);
@@ -552,10 +583,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 
-
+        // Ajouter l'événement pour le bouton de suppression
         const deleteButton = newPart.querySelector('.btn-delete-part');
         deleteButton.addEventListener('click', function () {
-            const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?");
+            const confirmDelete = confirm("Voulez-vous vraiment supprimer cette partie ?"); // demande de confirmation
             if (!confirmDelete) return;
 
             const sectionId = newPart.dataset.sectionId;
@@ -598,9 +629,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
 
-                const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
+                const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?"); // demande de confirmation
                 if (!confirmDelete) return;
 
+                // Supprimer l'élément du serveur
                 fetch(`/api/course/${ueId}/delete_element/${sectionId}/${elementId}`, {
                     method: 'DELETE',
                     headers: {
@@ -624,13 +656,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         const courseEpingle = document.querySelector('.course-epingle');
-        const pinButton = newPart.querySelector('.btn-pin-part');
+        const pinButton = newPart.querySelector('.btn-pin-part'); // Sélectionner le bouton d'épinglage
 
+        // Ajouter l'événement pour le bouton d'épinglage
         pinButton.addEventListener('click', function (e) {
             e.stopPropagation();
-            const part = this.closest('.part');
-            const sectionId = part.dataset.sectionId;
-            const isPinned = part.classList.contains('epingle');
+            const part = this.closest('.part'); // Sélectionner la partie parente
+            const sectionId = part.dataset.sectionId; // Récupérer l'ID de la section
+            const isPinned = part.classList.contains('epingle'); // Vérifier si la section est déjà épinglée
 
             // Appel AJAX pour épingler/désépingler
             fetch(`/api/course/${ueId}/pin_section/${sectionId}`, {
@@ -652,9 +685,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             part.classList.add('epingle');
                             document.querySelector('.course-epingle').appendChild(part);
                         }
-
-                        //trier les div
-
+                        // Mettre à jour la visibilité de la section épinglée
                         updateCourseEpingleVisibility();
                     } else {
                         console.error('Erreur lors de la mise à jour de l\'épinglage.');
@@ -663,22 +694,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => console.error('Erreur réseau :', error));
         });
 
+        // Ajouter l'événement pour le bouton d'ajout d'élément
         const addElementButton = newPart.querySelector('.btn-add-element');
         addElementButton.addEventListener('click', function () {
-            showElementForm(newPart);
+            showElementForm(newPart); // Afficher le formulaire d'ajout d'élément
         });
-        enableButtonsBasedOnRole();
+        enableButtonsBasedOnRole(); // Réactiver les boutons en fonction du rôle de l'utilisateur
         return newPart;
     }
 
 
     /**
-     * Save changes to the section
+     * Enregistre les modifications de la section
      * @param part
      */
     function saveChanges(part) {
-        const sectionId = part.dataset.sectionId;
+        const sectionId = part.dataset.sectionId; // Récupérer l'ID de la section
         const title = part.querySelector('.part-header h2').innerText;
+        // Récupérer tous les éléments de la section
         const elements = Array.from(part.querySelectorAll('.element')).map(element => {
             const textElement = element.querySelector('.element-header p');
             const importanceSelect = element.querySelector('.importance-select');
@@ -689,7 +722,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                fichierBase64 = convertFileToBase64(file);
+                fichierBase64 = convertFileToBase64(file); // Convertir le fichier en base64
                 fileName = file.name;
             }
 
@@ -704,6 +737,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
 
+        // Utiliser Promise.all pour attendre la résolution de tous les fichiers
         Promise.all(elements.map(e => e.fichier)).then(resolvedFiles => {
             resolvedFiles.forEach((file, index) => {
                 elements[index].fichier = file;
@@ -723,19 +757,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Edit the part
+     * Editer une partie
      * @param part
      * @param editButton
      */
     function editPart(part, editButton) {
-        const header = part.querySelector('.part-header');
-        const title = header.querySelector('h2');
-        const elements = part.querySelectorAll('.element');
+        const header = part.querySelector('.part-header'); // Sélectionner l'en-tête de la partie
+        const title = header.querySelector('h2'); // Sélectionner le titre
+        const elements = part.querySelectorAll('.element'); // Sélectionner tous les éléments de la partie
 
         if (title.isContentEditable) {
             // Désactiver le mode édition
             saveChanges(part);
             title.contentEditable = 'false';
+            // Récupérer tous les éléments de la section
             elements.forEach(element => {
                 const textElement = element.querySelector('.element-header p');
                 const descriptionElement = element.querySelector('.element-description');
@@ -747,18 +782,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 const fileInput = element.querySelector('.file-input');
                 const fileInputLabel = element.querySelector('.file-input-label');
 
+                // Désactiver le mode édition pour chaque texte
                 if (textElement) {
                     textElement.contentEditable = 'false';
                     textElement.classList.remove('editable');
                 }
+                // Désactiver le mode édition pour la description
                 if (descriptionElement) {
                     descriptionElement.contentEditable = 'false';
                     descriptionElement.classList.remove('editable');
                 }
+                // Désactiver le mode édition pour le select
                 if (importanceSelect) importanceSelect.style.display = 'none';
+                // Désactiver le mode édition pour le file input
                 if (fileInput) fileInput.style.display = 'none';
                 if (fileInputLabel) fileInputLabel.style.display = 'none';
             });
+            // Changer l'icône du bouton
             editButton.name = "create-outline";
             editButton.title = "Modifier";
             title.classList.remove('editable');
@@ -774,6 +814,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     importanceSelect.style.display = 'block'; // Passer en display block
                     importanceSelect.disabled = false; // Activer le menu
                 }
+                // Ajouter un événement pour changer l'importance
                 document.querySelectorAll('.importance-select').forEach(select => {
                     select.addEventListener('change', function () {
                         const elementHeader = this.closest('.element-header');
@@ -793,18 +834,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 const fileInput = element.querySelector('.file-input');
                 const fileInputLabel = element.querySelector('.file-input-label');
 
+                // Activer le mode édition pour chaque texte
                 if (textElement) {
                     textElement.contentEditable = 'true';
                     textElement.classList.add('editable');
                 }
+                // Activer le mode édition pour la description
                 if (descriptionElement) {
                     descriptionElement.contentEditable = 'true';
                     descriptionElement.classList.add('editable');
                 }
 
+                // Activer le mode édition pour le fichier
                 if (fileInput) fileInput.style.display = 'inline-block';
                 if (fileInputLabel) fileInputLabel.style.display = 'inline-block';
             });
+            // Changer l'icône du bouton
             editButton.name = "checkmark-outline";
             editButton.title = "Valider";
             title.classList.add('editable');
@@ -819,7 +864,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     /**
-     * Display the form to add a new part
+     * Afficher le formulaire pour ajouter une nouvelle partie
      */
     function showPartForm() {
         const modal = document.getElementById('part-modal');
@@ -885,6 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Ajouter un gestionnaire pour le bouton "Ajouter un élément"
         document.getElementById('part-add-element').addEventListener('click', function () {
+            // Récupérer les valeurs des champs
             const elementType = document.getElementById('part-element-type').value;
             const elementText = document.getElementById('element-text').value;
             const elementDescription = document.getElementById('element-description').value;
@@ -913,6 +959,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
+            // Ajouter l'élément au conteneur
             document.getElementById('part-elements-container').insertAdjacentHTML('beforeend', elementHtml);
 
             elements.push(newElement);
@@ -930,12 +977,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const title = document.getElementById('part-title').value;
 
+            // Envoyer la requête pour créer la section
             saveSectionToServer(ueId, title, elements)
                 .then((response) => {
                     if (response.id) {
-                        createPart(title, elements, response.id);
-                        loadSections(ueId);
-                        elements = [];
+                        createPart(title, elements, response.id); // Créer la partie dans le DOM
+                        loadSections(ueId); // Recharger les sections
+                        elements = []; // Réinitialiser le tableau des éléments
                     } else {
                         console.error('Erreur lors de la création de la section :', response.error);
                     }
@@ -951,7 +999,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Display the form to add a new element
+     * Afficher le formulaire pour ajouter un élément
      * @param part
      */
     function showElementForm(part) {
@@ -959,7 +1007,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('element-modal');
         modal.style.display = 'block';
 
-        // Clear previous form data
+        // supprimer les champs de la modal
         document.getElementById('ele-element-type').value = 'document-outline';
         document.getElementById('ele-element-text').value = '';
         document.getElementById('ele-element-fields').innerHTML = `
@@ -967,13 +1015,14 @@ document.addEventListener('DOMContentLoaded', function() {
             <input type="text" id="ele-element-text" name="element-text">
         `;
 
-        // Remove previous event listeners
+        // supprimer le listener d'événement précédent
         const addElementButton = document.getElementById('add-element-modal');
         if (!addElementButton) {
             console.error('Bouton "add-element-modal" introuvable.');
             return;
         }
         addElementButton.replaceWith(addElementButton.cloneNode(true));
+        // ajouter un nouvel événement
         document.getElementById('add-element-modal').addEventListener('click', function(event) {
             event.preventDefault(); // Empêche le rechargement de la page
 
@@ -1017,31 +1066,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     /**
-     * Delete an element
-     * @param element
-     */
-    function deleteElement(element) {
-        //add pop up to confirm removal
-        const confirmDelete = confirm("Voulez-vous vraiment supprimer cet élément ?");
-        if (!confirmDelete) return;
-
-
-        const nextElement = element.nextElementSibling;
-        if (nextElement && nextElement.classList.contains('ligne-gris')) {
-            nextElement.remove();
-        }
-        element.remove();
-    }
-
-
-    /**
-     * Listener for the element type dropdown in the modal
+     * Listenner pour le changement de type d'élément
      */
     document.getElementById('ele-element-type').addEventListener('change', function() {
         const elementType = this.value;
         const elementFields = document.getElementById('ele-element-fields');
         elementFields.innerHTML = '';
 
+        // Afficher les champs en fonction du type d'élément sélectionné
         if (elementType === 'text') {
             elementFields.innerHTML = `
                 <label for="ele-element-text">Nom de l'élément:</label>
@@ -1088,15 +1120,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Ajouter les événements aux boutons de cancel de chaque partie
     document.getElementById('cancel-element').addEventListener('click', function () {
         const modal = document.getElementById('element-modal');
         modal.style.display = 'none'; // Ferme la modal des éléments
     });
 
+    // Ajouter les événements aux boutons d'ajout de chaque partie
     document.querySelector('.btn-add-part').addEventListener('click', function() {
         showPartForm();
     });
 
+    // Fermer la modal si l'utilisateur clique en dehors de celle-ci
     window.onclick = function(event) {
         const partModal = document.getElementById('part-modal');
         const elementModal = document.getElementById('element-modal');

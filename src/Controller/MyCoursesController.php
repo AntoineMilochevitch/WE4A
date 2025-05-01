@@ -15,6 +15,7 @@ class MyCoursesController extends AbstractController
     /**
      * Pour récupérer les cours de l'utilisateur
      * @Route("/api/my-courses", name="api_my_courses", methods={"GET"})
+     * @param EntityManagerInterface $entityManager
      */
     #[Route('/api/my-courses', name: 'api_my_courses')]
     public function getCourses(EntityManagerInterface $entityManager): JsonResponse
@@ -26,7 +27,9 @@ class MyCoursesController extends AbstractController
                 return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
             }
 
+            // Vérifier si l'utilisateur a le rôle ROLE_ADMIN
             if (in_array('ROLE_ADMIN', $user->getRoles())) {
+                // Récupérer tous les cours
                 $allCourses = $entityManager->getRepository(Ue::class)->allUE();
 
                 $courseData = [];
@@ -42,11 +45,8 @@ class MyCoursesController extends AbstractController
 
                 return new JsonResponse($courseData);
             } else {
+                // Récupérer les cours de l'utilisateur
                 $userUes = $user->getUserUes();
-
-                if (!$userUes instanceof \Doctrine\Common\Collections\Collection || $userUes->isEmpty()) {
-                    return new JsonResponse(['error' => 'Aucun cours trouvé'], 404);
-                }
 
                 $courseData = [];
                 foreach ($userUes as $userUe) {
@@ -76,6 +76,7 @@ class MyCoursesController extends AbstractController
      * Pour basculer l'état des favoris d'un cours
      * @Route("/api/toggle-favoris/{id}", name="toggle_favoris", methods={"POST"})
      * @param int $id
+     * @param EntityManagerInterface $entityManager
      */
     #[Route('/api/toggle-favoris/{id}', name: 'toggle_favoris', methods: ['POST'])]
     public function toggleFavoris(int $id, EntityManagerInterface $entityManager): JsonResponse

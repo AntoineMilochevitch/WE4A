@@ -13,13 +13,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             const courseContainer = document.querySelector('.cours');
             const paginationContainer = document.querySelector('.pagination');
-            let itemsPerPage = 6;
-            let currentPage = 1;
+            let itemsPerPage = 6; // Nombre de cours par page
+            let currentPage = 1; // Page actuelle
             let courses = [];
             let isFavorisActive = false;
 
-            /*
-            * Fonction pour récupérer les cours depuis l'API
+            /**
+             * Fonction pour récupérer les cours depuis le serveur
              */
             function fetchCourses() {
                 fetch('/api/my-courses')
@@ -31,10 +31,11 @@
                     })
                     .catch(error => console.error('Erreur lors de la récupération des cours :', error));
             }
-            /*
-            * Fonction pour afficher les cours dans le conteneur
-            * @page : numéro de la page actuelle
-            * @itemsPerPage : nombre d'éléments par page
+
+            /**
+             * Fonction pour afficher les cours
+             * @param page
+             * @param itemsPerPage
              */
             function displayCourses(page, itemsPerPage) {
                 courseContainer.innerHTML = '';
@@ -74,17 +75,17 @@
                 });
             }
 
-            /*
-            * Fonction pour mettre à jour la pagination
+            /**
+             * Fonction pour mettre à jour la pagination
              */
             function updatePagination() {
                 paginationContainer.innerHTML = '';
-                const filteredCourses = isFavorisActive
+                const filteredCourses = isFavorisActive // Vérifier si le mode favoris est actif
                     ? courses.filter(course => course.favoris)
                     : courses;
-                const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+                const totalPages = Math.ceil(filteredCourses.length / itemsPerPage); // Calculer le nombre total de pages
 
-                const prevButton = document.createElement('button');
+                const prevButton = document.createElement('button'); // Créer le bouton précédent
                 prevButton.classList.add('btn-pagination');
                 prevButton.innerHTML = '<ion-icon name="caret-back-outline"></ion-icon>';
                 prevButton.addEventListener('click', () => {
@@ -95,7 +96,7 @@
                 });
                 paginationContainer.appendChild(prevButton);
 
-                const nextButton = document.createElement('button');
+                const nextButton = document.createElement('button'); // Créer le bouton suivant
                 nextButton.classList.add('btn-pagination');
                 nextButton.innerHTML = '<ion-icon name="caret-forward-outline"></ion-icon>';
                 nextButton.addEventListener('click', () => {
@@ -107,18 +108,16 @@
                 paginationContainer.appendChild(nextButton);
             }
 
-            /*
-            * Événements pour les boutons de tri et de filtre
-             */
+
             // Événements pour le nombre de cours à afficher
             document.querySelectorAll('.tri-cours-5 .dropdown-item').forEach(item => {
                 item.addEventListener('click', (event) => {
-                    const selectedOption = event.target.textContent;
-                    itemsPerPage = selectedOption.toLowerCase() === 'tous' ? courses.length : parseInt(selectedOption);
+                    const selectedOption = event.target.textContent; // Récupérer le texte de l'élément cliqué
+                    itemsPerPage = selectedOption.toLowerCase() === 'tous' ? courses.length : parseInt(selectedOption); // Mettre à jour le nombre d'éléments par page
                     document.querySelector('.tri-cours-5 button').innerHTML = `Nombre de cours : ${selectedOption} <ion-icon name="caret-down-outline"></ion-icon>`;
                     currentPage = 1;
-                    displayCourses(currentPage, itemsPerPage);
-                    updatePagination();
+                    displayCourses(currentPage, itemsPerPage); // Afficher les cours de la première page
+                    updatePagination(); // Mettre à jour la pagination
                 });
             });
 
@@ -126,6 +125,7 @@
             document.querySelectorAll('.tri-cours-4 .dropdown-item').forEach(item => {
                 item.addEventListener('click', (event) => {
                     const mode = event.target.textContent.toLowerCase();
+                    // Mettre à jour le mode d'affichage en fonction de l'option sélectionnée
                     if (mode === 'carte') {
                         courseContainer.classList.add('carte-mode');
                         courseContainer.classList.remove('list-mode', 'description-mode');
@@ -147,8 +147,8 @@
                     isFavorisActive = selectedOption === 'Favoris'; // Activer/désactiver le mode favoris
                     document.querySelector('.tri-cours-1 button').innerHTML = `${selectedOption} <ion-icon name="caret-down-outline"></ion-icon>`;
                     currentPage = 1;
-                    displayCourses(currentPage, itemsPerPage);
-                    updatePagination();
+                    displayCourses(currentPage, itemsPerPage); // Afficher les cours de la première page
+                    updatePagination(); // Mettre à jour la pagination
                 });
             });
 
@@ -161,6 +161,7 @@
                 }
             });
 
+            // Réactiver le clic sur le lien de cours lorsque la souris sort de l'icône étoile
             courseContainer.addEventListener('mouseout', function (event) {
                 const starIcon = event.target.closest('.star-icon');
                 if (starIcon) {
@@ -173,9 +174,9 @@
             courseContainer.addEventListener('click', function(event) {
                 const starIcon = event.target.closest('.star-icon');
                 if (starIcon) {
-                    event.stopPropagation();
-                    const courseElement = starIcon.closest('.case-cours');
-                    const courseId = courseElement.dataset.courseId;
+                    event.stopPropagation(); // Empêche la propagation de l'événement
+                    const courseElement = starIcon.closest('.case-cours'); // Récupérer le cours
+                    const courseId = courseElement.dataset.courseId; // Récupérer l'ID du cours
                     // Envoyé les données au serveur pour mettre à jour l'état des favoris
                     fetch(`/api/toggle-favoris/${courseId}`, {
                         method: 'POST',
@@ -187,9 +188,9 @@
                         .then(data => {
                             if (data.success) {
                                 // Mettre à jour l'état des favoris dans les données locales
-                                const course = courses.find(c => c.id == courseId);
+                                const course = courses.find(c => c.id === courseId);
                                 if (course) {
-                                    course.favoris = data.isFavoris;
+                                    course.favoris = data.isFavoris; // Mettre à jour l'état des favoris
                                 }
 
                                 // Réafficher les cours en fonction du mode actuel
