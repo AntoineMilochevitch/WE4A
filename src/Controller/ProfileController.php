@@ -14,6 +14,7 @@ class ProfileController extends AbstractController
     /**
      * Récupérer le profil de l'utilisateur
      * @Route("/api/profile", name="api_profile")
+     * @param Connection $connection
      * @return JsonResponse
      */
     #[Route('/api/profile', name: 'api_profile')]
@@ -51,6 +52,8 @@ class ProfileController extends AbstractController
     /**
      * pour mettre à jour le score de l'utilisateur
      * @Route("/api/profile/update_score", name="update_score")
+     * @param Request $request
+     * @param Connection $connection
      * @return JsonResponse
      */
     #[Route('/api/profile/update_score', name: 'update_score', methods: ['POST'])]
@@ -61,6 +64,7 @@ class ProfileController extends AbstractController
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
+        // Récupérer le score depuis la requête
         $score = $request->request->get('score');
         if ($score !== null) {
             $currentScore = $connection->fetchOne('SELECT score FROM users WHERE id = ?', [$user->getId()]);
@@ -76,6 +80,9 @@ class ProfileController extends AbstractController
     /**
      * Mettre à jour le profil de l'utilisateur
      * @Route("/api/profile/update_profile", name="update_profile")
+     * @param Request $request
+     * @param Connection $connection
+     * @param UserPasswordHasherInterface $userPasswordHasher
      * @return JsonResponse
      */
     #[Route('/api/profile/update_profile', name: 'update_profile', methods: ['POST'])]
@@ -87,15 +94,18 @@ class ProfileController extends AbstractController
             return new JsonResponse(['error' => 'Utilisateur non trouvé'], 404);
         }
 
+        // Récupérer les données du formulaire
         $email = $request->request->get('profile-email');
         $mdp = $request->request->get('profile-password');
         $mdp_confirm = $request->request->get('profile-password-confirm');
         $uploadedFile = $request->files->get('profile-avatar'); // Récupérer le fichier
 
         if ($uploadedFile) {
+            // Récupérer l'avatar actuel de l'utilisateur
             $currentAvatar = $connection->fetchOne('SELECT avatar FROM users WHERE id = ?', [$user->getId()]);
             $excludedFiles = ['profil_pic1.jpg', 'profil_pic2.jpg', 'profil_pic3.jpg', 'profil_pic4.jpg', 'profil_pic5.jpg', 'profil_pic6.jpg', 'profil_pic7.jpg', 'profil_pic8.jpg'];
 
+            // Supprimer l'avatar actuel s'il n'est pas dans la liste des fichiers exclus
             if ($currentAvatar && !in_array($currentAvatar, $excludedFiles)) {
                 $currentAvatarPath = $this->getParameter('kernel.project_dir') . '/public/images/' . $currentAvatar;
 
@@ -104,18 +114,23 @@ class ProfileController extends AbstractController
                 }
             }
 
+            // Vérifier le type de fichier
             $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
             if (!in_array($uploadedFile->getMimeType(), $allowedMimeTypes)) {
                 return new JsonResponse(['error' => 'Type de fichier non valide'], 400);
             }
 
+            // Créer un nom de fichier unique
             $newFilename = uniqid() . '.' . $uploadedFile->guessExtension();
             $uploadDir = $this->getParameter('kernel.project_dir') . '/public/images';
+            // Déplacer le fichier téléchargé
             $uploadedFile->move($uploadDir, $newFilename);
 
+            // Mettre à jour le nom de fichier dans la base de données
             $connection->executeStatement('UPDATE users SET avatar = ? WHERE id = ?', [$newFilename, $user->getId()]);
         }
 
+        // Mettre à jour l'email et le mot de passe
         if ($email !== null && $email !== '') {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $connection->executeStatement('UPDATE users SET email = ? WHERE id = ?', [$email, $user->getId()]);

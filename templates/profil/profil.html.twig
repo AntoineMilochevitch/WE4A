@@ -108,9 +108,9 @@
         function sendUpdatedProfile(event) {
             event.preventDefault(); // Empêche le rechargement de la page
 
-            const formData = new FormData(event.target);
+            const formData = new FormData(event.target); // Récupère les données du formulaire
             const errorContainer = document.getElementById('error-message');
-            //
+            // Envoie les données du formulaire au serveur
             fetch('/api/profile/update_profile', {
                 method: 'POST',
                 body: formData,
@@ -119,10 +119,10 @@
             .then(data => {
                 if (data.message) {
                     console.log('Profil mis à jour avec succès:', data.message);
-                    fetchProfileData();
-                    const editProfileModal = document.getElementById("edit-profile-modal");
-                    editProfileModal.style.display = "none";
-                    event.target.reset();
+                    fetchProfileData(); // Récupère les données du profil mis à jour
+                    const editProfileModal = document.getElementById("edit-profile-modal"); // Récupère la modale
+                    editProfileModal.style.display = "none"; // Cache la modale
+                    event.target.reset(); // Réinitialise le formulaire
                 } else if (data.error) {
                     console.error('Erreur lors de la mise à jour du profil:', data.error);
                     errorContainer.textContent = data.error;
@@ -138,12 +138,13 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Appeler la fonction toutes les 5 secondes
+            // Appeler la fonction toutes les 5 secondes pour mettre à jour le classement (si d'autre on joué en même temps)
             setInterval(fetchProfileData, 5000000);
             // Appel initial
             fetchProfileData();
         });
 
+        // Récupère les éléments HTML nécessaires pour la gestion de la modale et des interactions utilisateur
         const editProfileModal = document.getElementById("edit-profile-modal");
         const editProfileButton = document.querySelector(".btn-modif-profil");
         const cancelProfileButton = document.getElementById("cancel-profile");
@@ -151,33 +152,37 @@
         const fileInput = document.getElementById("profile-avatar");
         const fileLabel = document.querySelector(".custom-file-label");
 
+        // Listenner pour le changement de fichier
         fileInput.addEventListener("change", (event) => {
             const fileName = event.target.files[0]?.name || "Choisir un fichier";
             fileLabel.textContent = fileName;
         });
 
-        // Open the modal
+        // Listener pour le bouton de modification du profil
         editProfileButton.addEventListener("click", () => {
             editProfileModal.style.display = "block";
         });
 
-        // Close the modal
+        // Listener pour le bouton d'annulation de la modale
         cancelProfileButton.addEventListener("click", () => {
             editProfileModal.style.display = "none";
         });
 
-        // Close the modal when clicking outside of it
+        // Listener pour fermer la modale en cliquant à l'extérieur
         window.addEventListener("click", (event) => {
             if (event.target === editProfileModal) {
                 editProfileModal.style.display = "none";
             }
         });
 
-        // Function to fetch profile data from the server
+        /**
+        * Fonction pour récupérer les données du profil de l'utilisateur
+        */
         function fetchProfileData() {
             fetch('/api/profile')
                 .then(response => response.json())
                 .then(data => {
+                    // Met à jour le DOM avec les données du profil
                     const profileName = document.querySelector('.profil-name h2');
                     const profileEmail = document.querySelector('.profil-name h3:nth-child(3)');
                     const profileRole = document.querySelector('.profil-name h3:nth-child(2)');
@@ -185,7 +190,6 @@
                     const profileScore = document.querySelector('.profil-name h3:nth-child(5)');
                     const profilePic = document.querySelector('.profil-pic img');
 
-                    // Update profile information
                     profileName.textContent = `${data.prenom} ${data.nom}`;
                     profileEmail.textContent = data.email;
                     profileRank.textContent = `Classement : ${data.classement}`;
@@ -196,7 +200,10 @@
                 .catch(error => console.error('Erreur lors de la récupération des données du profil :', error));
             }
 
-        // Function to send the score to the server
+        /**
+        * Fonction pour envoyer le score au serveur
+        * @param score
+        */
         function sendScoreToServer(score) {
             const formData = new FormData();
             formData.append('score', score);

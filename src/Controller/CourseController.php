@@ -132,6 +132,7 @@ class CourseController extends AbstractController
                 ];
             }
 
+            // Ajouter la section et ses éléments au tableau de données
             $data[] = [
                 'id' => $section->getId(),
                 'titre' => $section->getTitre(),
@@ -208,6 +209,7 @@ class CourseController extends AbstractController
                 return new JsonResponse(['error' => 'Titre requis'], 400);
             }
 
+            // Créer une nouvelle section
             $section = new Section();
             $section->setTitre($data['titre']);
             $section->setDate(new \DateTime());
@@ -215,6 +217,7 @@ class CourseController extends AbstractController
             $section->setEstVisible(true);
             $section->setEstEpingle(false);
 
+            // Sélectionner l'ordre maximum des sections
             $maxOrder = $entityManager->getRepository(Section::class)
                 ->createQueryBuilder('s')
                 ->select('MAX(s.ordre)')
@@ -225,9 +228,11 @@ class CourseController extends AbstractController
 
             $section->setOrdre($maxOrder + 1);
 
+            // Ajouter la section à l'UE
             $entityManager->persist($section);
             $entityManager->flush();
 
+            // Ajouter les éléments à la section
             foreach ($data['elements'] as $elem) {
                 $type = $entityManager->getRepository(Type::class)->findOneBy(['nomType' => $elem['type']]);
 
@@ -247,15 +252,15 @@ class CourseController extends AbstractController
 
                 if (!empty($elem['fichier'])) {
                     try {
-                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png']; // Types MIME autorisés
-                        $fileContent = $this->handleFileUpload($elem['fichier'], $allowedMimeTypes);
+                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/zip']; // Types MIME autorisés
+                        $fileContent = $this->handleFileUpload($elem['fichier'], $allowedMimeTypes); // Traiter le fichier
 
                         // Récupérer le nom du fichier original
                         $originalFileName = $elem['fileName'] ?? 'fichier_inconnu';
 
                         // Sérialiser les données du fichier
                         $fileData = [
-                            'name' => $originalFileName,
+                            'name' => $originalFileName, // Nom du fichier
                             'data' => base64_encode($fileContent),
                         ];
                         $serializedData = json_encode($fileData);
@@ -266,12 +271,15 @@ class CourseController extends AbstractController
                     }
                 }
 
+                // Ajouter l'élément à la section
                 $section->addElement($element);
                 $entityManager->persist($element);
             }
 
+            // Enregistrer la section et les éléments
             $entityManager->flush();
 
+            // Retourner une réponse JSON avec l'ID de la section
             return new JsonResponse([
                 'message' => 'Section ajoutée avec succès',
                 'id' => $section->getId()
@@ -338,8 +346,8 @@ class CourseController extends AbstractController
         $element->setEstVisible(true);
         if (!empty($data['fichier'])) {
             try {
-                $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png']; // Types MIME autorisés
-                $fileContent = $this->handleFileUpload($data['fichier'], $allowedMimeTypes);
+                $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/zip']; // Types MIME autorisés
+                $fileContent = $this->handleFileUpload($data['fichier'], $allowedMimeTypes); // Traiter le fichier
 
                 // Récupérer le nom du fichier original
                 $originalFileName = $data['fileName'] ?? 'fichier_inconnu';
@@ -356,6 +364,7 @@ class CourseController extends AbstractController
                 return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
             }
         }
+        // Ajouter l'élément à la section
         $element->setImportance($data['importance'] ?? null);
         $section->addElement($element);
 
@@ -458,8 +467,8 @@ class CourseController extends AbstractController
 
                     // Mettre à jour le fichier si modifié
                     if (!empty($elementData['fichier'])) {
-                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-                        $fileContent = base64_decode($elementData['fichier']);
+                        $allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'application/zip']; // Types MIME autorisés
+                        $fileContent = base64_decode($elementData['fichier']); // Décoder le fichier base64
                         $finfo = new \finfo(FILEINFO_MIME_TYPE);
                         $mimeType = $finfo->buffer($fileContent);
 
@@ -476,6 +485,7 @@ class CourseController extends AbstractController
                 }
             }
         }
+        // Mettre à jour la section
         $entityManager->flush();
 
         return new JsonResponse(['message' => 'Section mise à jour avec succès']);
@@ -501,21 +511,21 @@ class CourseController extends AbstractController
 
         // Convertir la ressource BLOB en chaîne
         $fichierResource = $element->getFichier();
-        $fichierContent = stream_get_contents($fichierResource);
+        $fichierContent = stream_get_contents($fichierResource); // Lire le contenu du fichier
 
         if ($fichierContent === false) {
             $logger->error("Erreur lors de la lecture du fichier pour l'élément ID: {$elementId}");
             return new Response('Erreur lors de la lecture du fichier.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $fileData = json_decode($fichierContent, true);
+        $fileData = json_decode($fichierContent, true); // Décoder le JSON
         if (!$fileData || !isset($fileData['data'])) {
             $logger->error("Données du fichier invalides pour l'élément ID: {$elementId}");
             return new Response('Données du fichier invalides.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        // Dans la méthode `downloadFile` du `CourseController`
-        $fileName = $fileData['name'] ?? 'fichier_inconnu'; // Utiliser le nom du fichier original
+        // Récupérer le nom du fichier et le contenu
+        $fileName = $fileData['name'] ?? 'fichier_inconnu';
         $fileContent = base64_decode($fileData['data']);
 
         if ($fileContent === false) {
@@ -525,13 +535,22 @@ class CourseController extends AbstractController
 
         $logger->info("Fichier téléchargé avec succès pour l'élément ID: {$elementId}");
 
+        // Créer la réponse avec le contenu du fichier
         $response = new Response($fileContent);
-        $response->headers->set('Content-Type', 'application/octet-stream');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        $response->headers->set('Content-Type', 'application/octet-stream'); // Type MIME générique
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"'); // Nom du fichier
 
         return $response;
     }
 
+    /**
+     * Route pour épingler ou désépingler une section
+     * @Route("/api/course/{ueId}/pin_section/{sectionId}", name="pin_section", methods={"PUT"})
+     * @param int $sectionId
+     * @param EntityManagerInterface $entityManager
+     * @param Request $request
+     * @return JsonResponse
+     */
     #[Route('/api/course/{ueId}/pin_section/{sectionId}', name: 'pin_section', methods: ['PUT'])]
     public function pinSection(int $sectionId, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
@@ -541,24 +560,33 @@ class CourseController extends AbstractController
             return new JsonResponse(['success' => false, 'error' => 'Section non trouvée'], 404);
         }
 
+        // Décoder le JSON
         $data = json_decode($request->getContent(), true);
-        $section->setEstEpingle($data['estEpingle'] ?? false);
+        $section->setEstEpingle($data['estEpingle'] ?? false); // Mettre à jour l'état d'épinglage
 
         $entityManager->flush();
 
         return new JsonResponse(['success' => true]);
     }
 
+    /**
+     * Route pour mettre à jour l'ordre des sections
+     * @Route("/api/course/{ueId}/update_section_order", name="update_section_order", methods={"PUT"})
+     * @param Request $request
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
     #[Route('/api/course/{ueId}/update_section_order', name: 'update_section_order', methods: ['PUT'])]
     public function updateSectionOrder(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        $sections = $data['sections'] ?? [];
+        $sections = $data['sections'] ?? [];  // Récupérer les sections du JSON
 
         foreach ($sections as $sectionData) {
+            // Vérifier si l'ID de la section est présent
             $section = $em->getRepository(Section::class)->find($sectionData['id']);
             if ($section) {
-                $section->setOrdre($sectionData['ordre']);
+                $section->setOrdre($sectionData['ordre']); // Mettre à jour l'ordre de la section
             }
         }
 
