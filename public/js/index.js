@@ -9,10 +9,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let currentIndex = 0;
 
+  // Récupérer la liste des cours via l'API
   fetch('/api/my-courses')
       .then(response => response.json())
       .then(data => {
         scrollContainer.innerHTML = '';
+
+        // Créer dynamiquement les cartes cours (max 6 affichées)
         data.slice(0, 6).forEach(course => {
           const link = document.createElement('a');
           link.href = '/course/' + course.code;
@@ -30,6 +33,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const cards = scrollContainer.querySelectorAll(".card");
 
+        /**
+         * Fonction pour défiler jusqu'à la carte à l'index donné
+         * @param {number} index
+         */
         function scrollToCard(index) {
           if (index < 0 || index >= cards.length) return;
           currentIndex = index;
@@ -41,6 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
           updateProgressBar();
         }
 
+        /**
+         * Met à jour la barre de progression en fonction de la carte active
+         */
         function updateProgressBar() {
           if (progressBar && cards.length > 0) {
             const progress = ((currentIndex + 1) / cards.length) * 100;
@@ -48,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         }
 
+        // Gestion des événements des flèches de navigation
         if (leftBtn && rightBtn && scrollContainer && cards.length > 0) {
           leftBtn.addEventListener("click", () => scrollToCard(currentIndex - 1));
           rightBtn.addEventListener("click", () => scrollToCard(currentIndex + 1));
@@ -65,16 +76,19 @@ document.addEventListener("DOMContentLoaded", function () {
   menuDots.forEach(dot => {
     const popup = dot.nextElementSibling;
 
+    // Affiche ou masque le menu contextuel au clic sur les 3 points
     dot.addEventListener('click', function (event) {
       event.stopPropagation();
       event.preventDefault();
 
+      // Fermer tous les autres menus avant d'ouvrir celui-ci
       document.querySelectorAll('.menu-popup').forEach(otherPopup => {
         if (otherPopup !== popup) {
           otherPopup.style.display = 'none';
         }
       });
 
+      // Bascule l'affichage du menu
       if (popup) {
         popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
       }
@@ -83,6 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const markAsReadBtn = popup?.querySelector('.mark-read-btn');
     const deleteBtn = popup?.querySelector('.delete-btn');
 
+    // Action : marquer la notification comme lue
     markAsReadBtn?.addEventListener('click', function (e) {
       e.stopPropagation();
       const notifId = this.dataset.id;
@@ -96,8 +111,10 @@ document.addEventListener("DOMContentLoaded", function () {
           .then(response => response.json())
           .then(data => {
             if (data.status === 'success') {
+              // Marquer visuellement la notification comme lue
               const infoItem = dot.closest('.info-item');
               if (infoItem) infoItem.classList.add('read');
+              // Retirer le bouton "Marquer comme lu"
               this.remove();
             } else {
               alert('Erreur lors du marquage comme lu.');
@@ -110,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (popup) popup.style.display = 'none';
     });
 
+    // Action : supprimer la notification (visuellement)
     deleteBtn?.addEventListener('click', function (e) {
       e.stopPropagation();
       const infoItem = dot.closest('.info-item');
@@ -118,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  // Fermer tous les menus si clic en dehors
   document.addEventListener('click', () => {
     document.querySelectorAll('.menu-popup').forEach(popup => {
       popup.style.display = 'none';
