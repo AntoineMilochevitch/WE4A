@@ -1,22 +1,27 @@
 {% extends 'base.html.twig' %}
 
+{# Définir le titre de la page #}
 {% block title %}MyMoodle{% endblock %}
-    
+
+{# Importer les feuilles de style spécifiques à la page #}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('styles/style_index.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
 {% endblock %}
-    
+
+{# Importer les scripts JavaScript nécessaires #}
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('js/index.js') }}"></script>
 {% endblock %}
 
+{# Contenu principal de la page #}
 {% block body %}
     <body>
     <div class="content">
         <div class="container">
 
+            {# Section des cartes de cours avec flèches pour défiler #}
             <div class="cards-wrapper">
                 <div class="card-arrows">
                     <button class="arrow left" id="arrowLeft">
@@ -28,19 +33,22 @@
                 </div>
 
                 <div class="cards-container" id="scrollContainer">
-                    <!-- Les cours seront chargés dynamiquement ici via JS -->
+                    {# Les cours seront chargés dynamiquement ici via JavaScript #}
                 </div>
             </div>
 
+            {# Barre de progression sous les cartes #}
             <div class="progress-bar-container">
                 <div id="progressBar" class="progress-bar"></div>
             </div>
 
             <hr class="separator">
 
+            {# Section des notifications récentes #}
             <h2 class="section-title">Notifications Récentes</h2>
 
             <div class="info-container">
+                {# Boucle sur les notifications passées depuis le contrôleur #}
                 {% for notif in notifications %}
                     <div class="info-item {{ notif.notification.typeNotif.typeNotif|lower }} {% if notif.estVu %}read{% endif %}">
                         <div class="info-content">
@@ -54,18 +62,22 @@
                                 {{ notif.notification.date|date('d/m/Y') }}
                             </div>
                         </div>
+
+                        {# Menu contextuel pour chaque notification #}
                         <div class="menu-container">
                             <span class="menu-dots">⋮</span>
                             <div class="menu-popup">
+                                {# Bouton pour marquer comme lu si ce n'est pas déjà le cas #}
                                 {% if not notif.estVu %}
                                     <button class="menu-button mark-read-btn" data-id="{{ notif.notification.id }}">✅ Marquer comme lu</button>
-
                                 {% endif %}
+                                {# Bouton pour supprimer la notification (fonctionnalité à implémenter) #}
                                 <button class="menu-button delete-btn">🗑️ Supprimer</button>
                             </div>
                         </div>
                     </div>
                 {% else %}
+                    {# Message affiché s'il n'y a aucune notification #}
                     <p>Aucune notification pour le moment.</p>
                 {% endfor %}
             </div>
