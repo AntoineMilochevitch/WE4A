@@ -22,6 +22,7 @@ class LoginSuccessHandler implements AuthenticationSuccessHandlerInterface
         // On récupère les rôles de l'utilisateur connecté
         $roles = $token->getRoleNames();
 
+        //Si l'utilisateur a le role admin alors il est directement redirigé vers la page admin après son login
         if (in_array('ROLE_ADMIN', $roles, true)) {
             return new RedirectResponse($this->router->generate('admin')); // Route admin
         }

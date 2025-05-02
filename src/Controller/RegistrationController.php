@@ -12,6 +12,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
+// Page d'inscription (register)
+// ❌ Non accessible dans le rendu final du site
+// ✅ Utilisée uniquement pendant le développement pour faciliter la création de comptes test
+
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]

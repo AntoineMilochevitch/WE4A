@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block body %}
-    <!-- Modal caché par défaut -->
+    <!-- Modal (fenêtre pop-up) cachée par défaut, s'affiche lorsqu'un cours est cliqué -->
     <div id="ueModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="image">
@@ -25,23 +25,26 @@
     </div>
 
     <div class="content-display">
+
+        <!-- Barre de recherche -->
         <div class="search">
             <input type="text" id="searchInput" placeholder="Rechercher un cours">
             <button id="searchButton"><ion-icon name="search-outline"></ion-icon></button>
         </div>
 
-        <!-- Tableau des cours -->
+        <!-- Tableau affichant les cours trouvés dynamiquement par JS -->
         <table id="coursesTable">
             <thead>
             <tr>
                 <th>Code</th>
                 <th>Nom</th>
                 <th>Description</th>
-                <th></th>
+                <th></th> <!-- Colonne vide (ex: bouton "voir plus") -->
             </tr>
             </thead>
             <tbody>
-                <script src="{{ asset('js/find.js') }}"></script> <!-- Ajout du fichier JS -->
+                <!-- Le contenu du tableau est rempli dynamiquement via JavaScript -->
+                <script src="{{ asset('js/find.js') }}"></script> <!-- Script JS chargé ici -->
             </tbody>
 
         </table>
