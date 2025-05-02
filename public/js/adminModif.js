@@ -157,18 +157,18 @@ document.addEventListener('DOMContentLoaded', function() {
             let isProfAdmin = false;
 
             let roleText = "Inconnu";
-                if (utilisateur.roles.includes("ROLE_ADMIN")) {
-                    isAdmin = true;
-                    roleText = "Admin";
+                if (utilisateur.roles.includes("ROLE_PROF") && utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isProfAdmin = true;
+                    roleText = "Professeur / Admin";
                 } else if (utilisateur.roles.includes("ROLE_PROF")) {
                     isProf = true;
                     roleText = "Professeur";
                 } else if (utilisateur.roles.includes("ROLE_USER")) {
                     isEtudiant = true;
                     roleText = "Etudiant";
-                } else if (utilisateur.roles.includes("ROLE_PA")) {
-                    isProfAdmin = true;
-                    roleText = "Professeur / Admin";
+                } else if (utilisateur.roles.includes("ROLE_ADMIN")) {
+                    isAdmin = true;
+                    roleText = "Admin";
                 }
 
             roleSpan.textContent = roleText;
@@ -479,7 +479,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             modalContent.appendChild(imagePreview);
 
             imageInput.addEventListener('change', function () {
@@ -644,14 +644,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id == editId) {
                     editName = user.nom;
                     editFirst_name = user.prenom;
-                    if (user.roles.includes("ROLE_ADMIN")) {
-                        editRole = "Admin";
+                    if (user.roles.includes("ROLE_ADMIN") && user.roles.includes("ROLE_PROF")) {
+                        editRole = "Professeur / Admin";
                     } else if (user.roles.includes("ROLE_PROF")) {
                         editRole = "Professeur";
                     } else if (user.roles.includes("ROLE_USER")){
                         editRole = "Etudiant";
-                    } else if (user.roles.includes("ROLE_PA")){
-                        editRole = "Professeur / Admin";
+                    } else if (user.roles.includes("ROLE_ADMIN")){
+                        editRole = "Admin";
                     }
 
                     if (Array.isArray(user.inscriptions)) {
@@ -930,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
             imagePreview.id = 'image-preview';
             imagePreview.style.display = 'none';
             imagePreview.style.marginTop = '10px';
-            imagePreview.style.maxWidth = '100%';
+            imagePreview.style.maxWidth = '40%';
             if (editImage !== 'images/null') {
                 imagePreview.src = editImage;
                 imagePreview.style.display = 'block';
@@ -1207,13 +1207,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newId = maxId + 1;
 
+            let newRole;
+            if (role === 'ROLE_USER') {
+                newRole = ['ROLE_USER'];
+            }
+            else if (role === 'ROLE_ADMIN') {
+                newRole = ['ROLE_ADMIN'];
+            }
+            else if (role === 'ROLE_PROF') {
+                newRole = ['ROLE_PROF'];
+            }
+            else if (role === 'ROLE_PA') {
+                newRole = ['ROLE_ADMIN', 'ROLE_PROF'];
+            }
+
+
             let newUser = {
                 id: newId,
                 nom: name,
                 prenom: first_name,
                 password: password,
                 email: email,
-                roles: [role],
+                roles: newRole,
                 inscriptions: [] // Initialise un tableau vide pour les inscriptions
             };
 
@@ -1239,7 +1254,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.user && data.user.id) {
                         // Ajouter l'utilisateur dans la liste locale
-                        const newUser = {
+                        newUser = {
                             id: data.user.id,
                             nom: data.user.nom,
                             prenom: data.user.prenom,
@@ -1248,6 +1263,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             inscriptions: data.user.inscriptions,
                         };
                         alert(`Utilisateur ${data.user.nom} ${data.user.prenom} créé avec succès et ajouté à la liste.`);
+                        utilisateurs.push(newUser);
+                        closeModal();
+                        showUtilisateurs();
                     } else if (data.error) {
                         alert('Erreur : ' + data.error);
                     }
@@ -1255,7 +1273,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Erreur lors de la création de l\'utilisateur:', error);
                 });
-            utilisateurs.push(newUser);
         }
         else {
             const code = document.getElementById('new-code').value;
@@ -1310,7 +1327,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.course && data.course.id) {
                         // Ajouter le cours dans la liste locale
-                        const newCourse = {
+                        newCourse = {
                             id: data.course.id,
                             code: data.course.code,
                             nom: data.course.nom,
@@ -1318,8 +1335,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             image: data.course.image,
                             users: data.course.users,
                         };
-
                         alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
+                        ue.push(newCourse);
+                        closeModal();
+                        showUE();
                     } else if (data.error) {
                         alert('Erreur : ' + data.error);
                     }
@@ -1327,15 +1346,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 .catch(error => {
                     console.error('Erreur lors de la création du cours :', error);
                 });
-            ue.push(newCourse);
-        }
-
-        closeModal();
-
-        if (utilisateursButton.disabled) {
-            showUtilisateurs();
-        } else {
-            showUE();
         }
     }
 
@@ -1364,18 +1374,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (nameSpan) nameSpan.textContent = newName;
             if (first_nameSpan) first_nameSpan.textContent = newFirst_name;
+            let role;
             if (roleSpan) {
                 if (newRole === 'ROLE_USER') {
                     roleSpan.textContent = "Etudiant";
+                    role = ['ROLE_USER'];
                 }
                 else if (newRole === 'ROLE_ADMIN') {
                     roleSpan.textContent = "Admin";
+                    role = ['ROLE_ADMIN'];
                 }
                 else if (newRole === 'ROLE_PROF') {
                     roleSpan.textContent = "Professeur";
+                    role = ['ROLE_PROF'];
                 }
                 else if (newRole === 'ROLE_PA') {
                     roleSpan.textContent = "Professeur / Admin";
+                    role = ['ROLE_ADMIN', 'ROLE_PROF'];
                 }
             }
 
@@ -1383,7 +1398,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (user.id === numericId) {
                     user.nom = newName;
                     user.prenom = newFirst_name;
-                    user.roles = newRole;
+                    user.roles = role;
                     user.inscriptions = [];
                     newInscriptions.forEach(course => {
                         ue.forEach(cours => {
@@ -1415,7 +1430,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             nom: newName,
                             prenom: newFirst_name,
                             email: user.email,
-                            roles: [newRole],
+                            roles: role,
                             inscriptions: user.inscriptions,
                         }),
                     })
@@ -1464,7 +1479,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     course.users = [];
                     newInscriptions.forEach(user => {
                         utilisateurs.forEach(utilisateur => {
-                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom) {
+                            if (user == '- ' + utilisateur.id + ' ' + utilisateur.nom + ' ' + utilisateur.prenom + 'X') {
                                 course.users.push(utilisateur.id); // Ajoute au tableau
                                 course.users.sort()
 

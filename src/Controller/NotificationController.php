@@ -84,5 +84,41 @@ class NotificationController extends AbstractController
 
         return new JsonResponse(['success' => true]);
     }
+    #[Route('/notification/user', name: 'user_notifications', methods: ['GET'])]
+    public function getUnreadUserNotifications(UserNotifRepository $userNotifRepository): JsonResponse
+    {
+        $user = $this->getUser();
+
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non authentifié'], 401);
+        }
+
+        // Récupérer toutes les notifications non lues
+        $userNotifications = $userNotifRepository->createQueryBuilder('u')
+            ->join('u.notification', 'n')
+            ->where('u.usersId = :userId')
+            ->andWhere('u.estVu = false')
+            ->setParameter('userId', $user->getId())
+            ->orderBy('n.date', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+        $notifications = [];
+
+        foreach ($userNotifications as $userNotif) {
+            $notif = $userNotif->getNotification();
+            $notifications[] = [
+                'id' => $notif->getId(),
+                'message' => $notif->getMessage(),
+                'estVu' => $userNotif->isEstVu(),
+                'typeNotif' => $notif->getTypeNotif()?->getTypeNotif(),
+            ];
+        }
+
+        return new JsonResponse([
+            'notifications' => $notifications
+        ]);
+    }
+
 
 }
