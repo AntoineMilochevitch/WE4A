@@ -17,29 +17,32 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils, UeRepository $ueRepository, UsersRepository $userRepository, SectionRepository $sectionRepository): Response
     {
 
-        // get the login error if there is one
+        // Récupère l'erreur de connexion s'il y en a une
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
+        // Récupère le dernier nom d'utilisateur saisi
         $lastUsername = $authenticationUtils->getLastUsername();
 
-
+        // Récupère le nombre total de cours
         $nombreCours = $ueRepository->count([]);
 
+        // Récupère tous les utilisateurs (étudiants + profs)
         $users = $userRepository->findAll();
 
+        // Compte les utilisateurs ayant le rôle ROLE_USER
         $nombreUsers = count(array_filter($users, function ($user) {
             return in_array('ROLE_USER', $user->getRoles());
         }));
 
+        // Compte les utilisateurs ayant le rôle ROLE_PROF
         $nombreProf = count(array_filter($users, function($user){
             return in_array('ROLE_PROF', $user->getRoles());
         }));
 
+        // Nombre de posts (sections probablement utilisées comme forums ou publications)
         $nombrePost = $sectionRepository->count([]);
 
-
-
+        // Rend la page de connexion en y injectant les statistiques
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,
             'error' => $error,

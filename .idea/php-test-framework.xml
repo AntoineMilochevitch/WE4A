@@ -5,6 +5,7 @@
       <tool tool_name="PHPUnit">
         <cache>
           <versions>
+            <info id="LocalC:\Users\samue\Symfony\WE4A\vendor\autoload.php" version="9.6.22" />
             <info id="Local\vendor/autoload.php" version="9.6.22" />
           </versions>
         </cache>

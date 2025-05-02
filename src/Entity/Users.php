@@ -112,6 +112,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
 
+        // ROLE_USER est ajouté à tous les utilisateurs connectés pour garantir un rôle de base.
+        // Sans ce rôle, l'utilisateur ne peut accéder qu'à la page de connexion.
         $roles[] = 'ROLE_USER';
 
 

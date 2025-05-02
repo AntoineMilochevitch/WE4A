@@ -35,6 +35,8 @@ class UeRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    //Fonction appelé par la page Recherche de cours quand on appuie sur la loupe pour effectuer la recherche
+    //La recherche est effectué sur le code ET le nom de l'ue
     public function findByCode(string $term)
     {
         return $this->createQueryBuilder('u')

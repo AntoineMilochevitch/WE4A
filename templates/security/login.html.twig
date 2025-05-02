@@ -10,50 +10,74 @@
 {% block body %}
     <form method="post">
         {% if error %}
+            <!-- Affichage d’un message d’erreur en cas d’échec de connexion -->
             <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
         <div class="hbox">
 
             <div class="login-container">
+                <!-- Logo de l'établissement -->
                 <img src="{{ asset('images/utbmlogo.jpg') }}" alt="Logo UTBM" width="200">
 
-
+                <!-- Champ email prérempli avec le dernier identifiant saisi -->
                 <input type="email" value="{{ last_username }}" name="_username" id="username" class="form-control" autocomplete="email" placeholder="Nom d’utilisateur" required autofocus>
 
                 <div class="password-container">
+                    <!-- Champ mot de passe -->
                     <input type="password" name="_password" id="password" class="form-control" autocomplete="current-password" placeholder="Mot de passe" required>
+
+                    <!-- Icône pour afficher/masquer le mot de passe -->
                     <img id="togglePassword" src="{{ asset('images/password_hide.png') }}" alt="Afficher/Masquer le mot de passe">
+
                     <input type="hidden" name="_csrf_token"
                                value="{{ csrf_token('authenticate') }}"
                     >
                 </div>
-
+                <!-- Bouton de soumission -->
                 <button class="btn btn-lg btn-primary" id="connexion" type="submit" value="Connexion">
                     Connexion
                 </button>
 
-                <p class="signup-link">
-                    <a href="{{ path('app_register') }}">S'inscrire</a>
-                </p>
+                {#
+                    Lien vers le formulaire d'inscription.
+                    Ce formulaire a d'abord été généré automatiquement via les commandes Symfony,
+                    puis personnalisé. Il nous a servi de base pour permettre rapidement la création
+                    d'utilisateurs et pour tester la partie administrateur (gestion des comptes).
+
+                    ⚠️ Pour le rendu final, ce formulaire n'est pas nécessaire,
+                    car la création de compte se fait exclusivement via l'espace admin.
+
+                    <p class="signup-link">
+                        <a href="{{ path('app_register') }}">S'inscrire</a>
+                    </p>
+                #}
+
 
             </div>
 
             <div class="login-container-stat">
                 <h2>Statistiques</h2>
 
+                <!-- Statistique : nombre d'étudiants -->
                 <div class="stat-item">
                     <img src="{{ asset('images/student.png') }}" alt="Icone">
                     <span>Étudiants : <strong>{{ nombreUsers }}</strong></span>
                 </div>
+
+                <!-- Statistique : nombre d'enseignants -->
                 <div class="stat-item">
                     <img src="{{ asset('images/prof.png') }}" alt="Icone">
                     <span>Enseignants : <strong>{{ nombreProf }}</strong></span>
                 </div>
+
+                <!-- Statistique : nombre de cours -->
                 <div class="stat-item">
                     <img src="{{ asset('images/cours.png') }}" alt="Icone">
                     <span>Cours disponibles : <strong>{{ nombreCours }}</strong></span>
                 </div>
+
+                <!-- Statistique : nombre de publications -->
                 <div class="stat-item">
                     <img src="{{ asset('images/post.png') }}" alt="Icone">
                     <span>Nombre de posts : <strong>{{ nombrePost }}</strong></span>
@@ -62,7 +86,7 @@
 
         </div>
 
-
+        <!-- Script JS pour afficher/masquer le mot de passe -->
         <script>
             document.getElementById("togglePassword").addEventListener("click", function () {
                 var passwordField = document.getElementById("password");
@@ -87,7 +111,6 @@
                 <label for="_remember_me">Remember me</label>
             </div>
         #}
-
 
     </form>
 {% endblock %}
