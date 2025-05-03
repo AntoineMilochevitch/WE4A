@@ -34,7 +34,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-
+    // Fonction qui permet de récuperer les infos des utilisateurs et des cours de la base de données
     #[Route('/api/admin', name: 'api_admin')]
     public function getInfo(UsersRepository $usersRepository, UeRepository $ueRepository, UserUeRepository $userUeRepository): JsonResponse
     {
@@ -51,8 +51,6 @@ class AdminController extends AbstractController
                         array_filter($userUe, fn($relation) => $relation['user_id'] === $user['id'])
                     )
                 );
-
-
 
             $usersData[] = [
                 'id' => $user['id'],
@@ -188,7 +186,7 @@ class AdminController extends AbstractController
         return new JsonResponse($responseData);
     }
 
-
+    // Fonction qui met à jour la base de données pour modifier un utilisateur
     #[Route('/api/admin/update-user', name: 'api_admin_update_user', methods: ['POST'])]
     public function updateUser(Request $request, UsersRepository $usersRepository, UeRepository $ueRepository, EntityManagerInterface $entityManager): JsonResponse {
         // Décoder les données envoyées en JSON par la requêter
@@ -237,7 +235,7 @@ class AdminController extends AbstractController
         return new JsonResponse(['message' => 'Utilisateur mis à jour avec succès']);
     }
 
-
+// Fonction qui met à jour la base de données pour modifier un cours
     #[Route('/api/admin/update-course', name: 'api_admin_update_course', methods: ['POST'])]
     public function updateCourse(Request $request, UsersRepository $usersRepository, UeRepository $ueRepository, EntityManagerInterface $entityManager): JsonResponse {
         // Décoder les données envoyées en JSON par la requêter
@@ -285,6 +283,7 @@ class AdminController extends AbstractController
         return new JsonResponse(['message' => 'UE mis à jour avec succès']);
     }
 
+    // Fonction qui met à jour la base de données pour créer un utilisateur
     #[Route('/api/admin/create-user', name: 'api_admin_create_user', methods: ['POST'])]
     public function createUser(Request $request, EntityManagerInterface $entityManager, UeRepository $ueRepository, UserPasswordHasherInterface $userPasswordHasher): JsonResponse
     {
@@ -343,7 +342,7 @@ class AdminController extends AbstractController
 
     }
 
-
+    // Fonction qui met à jour la base de données pour créer un cours
     #[Route('/api/admin/create-course', name: 'api_admin_create_course', methods: ['POST'])]
     public function createCourse(Request $request, EntityManagerInterface $entityManager, UsersRepository $usersRepository): JsonResponse
     {
@@ -407,7 +406,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-
+    // Fonction qui met à jour la base de données pour supprimer un élément (utilisateur ou cours)
     #[Route('/api/admin/delete', name: 'api_admin_delete', methods: ['DELETE'])]
     public function deleteElement(Request $request, EntityManagerInterface $em): JsonResponse
     {
