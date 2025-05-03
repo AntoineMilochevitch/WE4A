@@ -1,3 +1,38 @@
+/*
+Ce fichier correspond au code javascript de la page admin
+
+Il contient plusieurs fonctions, articulées autour des deux listes utilisateurs et ue
+    - utilisateurs contient la liste des utilisateurs, avec leurs informations respectives
+    - ue contient la liste des cours, avec leurs informations respectives
+Ces deux listes locales sont mises à jour avec la base de données
+
+Il y a plusieurs fonctions princpales :
+    - fetchInfo :
+        Permet de récuperer les informations de la base de données (tables Users, UE, et User_UE)
+        et les sotcke dans les lsites locales
+
+    - showUtilisateurs
+    - showUE
+        Ces deux fonctions permettent d'afficher les listes d'utilisateurs / d'ue sur la page admin lorsque l'on clique
+        sur les boutons correspondant
+
+    - showCreateModal
+    - showEditModal
+    - showDeleteModal
+        Ces trois fonctions permettent d'afficher les fenêtres modales pour la création, la modification, et la
+        suppression des utilisateurs / ue
+
+    - confirmCreate
+    - confirmEdit
+    - confirmDelete
+    - confirm
+        Lorsque que l'on clique sur confirmer dans une fenetre modale, on appelle la fonction confirm, qui vient elle
+        même appeler la fonction de confirmation correspondant à la fenetre modale. Les fonctions confirmCreate,
+        confirmEdit, et confirmDelete utilisent des fonctions de AdminController.php pour mettre à jour la base de
+        données (pour créer, modifier, supprimer)
+*/
+
+
 let utilisateurs = [];
 let ue = [];
 
@@ -10,52 +45,24 @@ document.addEventListener('DOMContentLoaded', function() {
     utilisateursButton.addEventListener('click', showUtilisateurs);
     utilisateursButton.classList.add('btn-selection', 'btn-enabled');
 
+    // Bouton qui permet d'afficher la liste des UE
     const ueButton = document.createElement('button');
     ueButton.textContent = 'UE';
     ueButton.addEventListener('click', showUE);
     ueButton.classList.add('btn-selection', 'btn-enabled');
 
-    // Bouton qui permet d'afficher la liste des cours
     selectionDiv.appendChild(utilisateursButton);
     selectionDiv.appendChild(ueButton);
 
     // Création du div
     const contentDiv = document.querySelector('.content-display');
 
+    // On récupere les infos de la base de données
     fetchInfo();
 
-    /*utilisateurs = [
-        { id: 1, name: 'MOLIERES', first_name: 'Samuel', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4A']},
-        { id: 2, name: 'EL ANDALOUSSI BENBRAHIM', first_name: 'Nizar', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'AP4B']},
-        { id: 3, name: 'MILOCHEVITCH', first_name: 'Antoine', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
-        { id: 4, name: 'CORREARD', first_name: 'Alexis', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41']},
-        { id: 5, name: 'BOOL', first_name: 'George', role: 'Etudiant' ,departement: 'MECA', inscription: ['MT3F', 'MAA1', 'PS25']},
-        { id: 6, name: 'LOVELACE', first_name: 'Ada', role: 'Etudiant' ,departement: 'IMSI', inscription: ['MT3F', 'PS25', 'CM1A', 'CM1B']},
-        { id: 7, name: 'HAMILTON', first_name: 'Margaret', role: 'Etudiant' ,departement: 'ENERGIE', inscription: ['PS22', 'AP4A', 'MT3F']},
-        { id: 8, name: 'TURING', first_name: 'Alan', role: 'Etudiant' ,departement: 'EDIM', inscription: ['PS25', 'MT3F', 'MAA1', 'CM1A']},
-        { id: 9, name: 'AL-KHWARIZMI', first_name: 'Muḥammad', role: 'Etudiant' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40', 'IA41', 'AP4A', 'AP4B', 'MT3F']},
-        { id: 10, name: 'PROF1', first_name: 'Prof1', role: 'Professeur' ,departement: 'INFO', inscription: ['WE4A', 'WE4B', 'SI40']},
-        { id: 11, name: 'PROF2', first_name: 'Prof2', role: 'Professeur' ,departement: 'INFO', inscription: ['IA41', 'AP4A', 'AP4B']},
-        { id: 12, name: 'PROF3', first_name: 'Prof3', role: 'Professeur' ,departement: 'MECA', inscription: ['MT3F', 'PS25', 'MAA1', 'CM1A', 'CM1B']},
-    ];*/
-
-    /*ue = [
-        { id: 1, code: 'WE4A', libelle: 'Technologies et programmation WEB', description: 'Maîtriser les technologies Web permettant de créer des sites Web modernes'},
-        { id: 2, code: 'WE4B', libelle: 'Technologies WEB avancées', description: 'Comprendre et appliquer une architecture web avancée à l\'aide d\'un Framework'},
-        { id: 3, code: 'SI40', libelle: 'Systèmes d\'information', description: 'Mettre en œuvre des outils de conception de systèmes d\'information permettant la mise en application des méthodes associées'},
-        { id: 4, code: 'IA41', libelle: 'Intelligence artificielle', description: 'Acquérir les compétences sur les principaux concepts et outils logiciels dédiés à l\'Intelligence Artificielle (IA)'},
-        { id: 5, code: 'AP4A', libelle: 'Programmation Orientée Objet', description: 'Acquérir les compétences pour analyser et concevoir des applications en utilisant les principes de la POO'},
-        { id: 6, code: 'AP4B', libelle: 'Programmation Orientée Objet', description: 'Programmation Orientée Objet: Modélisation UML et langage Java'},
-        { id: 7, code: 'MT3F', libelle: 'Algèbre et analyse', description: 'Acquérir l\'essentiel des connaissances fondamentales en algèbre et en analyse, utiles à l\'ingénieur'},
-        { id: 8, code: 'MAA1', libelle: 'Structure et propriétés des matériaux ', description: 'Appréhender et comprendre la structure des matériaux'},
-        { id: 9, code: 'CM1A', libelle: 'Organisation de la matière - partie I', description: 'Connaître les grands principes de base pour la chimie des matériaux'},
-        { id: 10, code: 'CM1B', libelle: 'Organisation de la matière - partie II', description: 'Décrire les concepts de base de la chimie générale : Solubilité, oxydo-réduction, cinétique chimique'},
-        { id: 11, code: 'PS22', libelle: 'Electronique analogique', description: 'Donner les bases tant théoriques que pratiques de l\'électronique analogique'},
-        { id: 12, code: 'PS25', libelle: 'Mécanique du solide', description: 'Apporter les bases générales indispensables pour l\'analyse cinématique et technologique des mécanismes'}
-    ];*/
-
+    // Fonction qui permet de récuperer les infos de la base de données
     async function fetchInfo() {
-        fetch('/api/admin')
+        fetch('/api/admin') // Appel à la fonction getInfo de AdminController.php
             .then(response => response.json())
             .then(data => {
                 const { users, courses } = data;
@@ -68,53 +75,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 showUtilisateurs();
             })
             .catch(error => console.error('Error fetching courses/users:', error));
-
-        /*
-        try {
-            const usersResponse = await fetch('/api/admin/users');
-            const utilisateurs = await usersResponse.json();
-            console.log('Utilisateurs:', utilisateurs);
-
-            const coursesResponse = await fetch('/api/admin/courses');
-            const ue = await coursesResponse.json();
-            console.log('Cours:', ue);
-
-            showUtilisateurs(utilisateurs);
-        } catch (error) {
-            console.error('Erreur lors de la récupération des données :', error);
-        }*/
-
-
-
-
-        /*fetch('/api/admin/users')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(user => {
-                    utilisateurs.push(user);
-                })
-                showUtilisateurs();
-            })
-            .catch(error => console.error('Error fetching courses/users:', error));*/
     }
 
-    async function fetchUsersByCourse(courseId) {
-        try {
-            const response = await fetch(`/api/admin/courses/${courseId}/users`);
-            if (!response.ok) throw new Error("Erreur lors de la récupération des utilisateurs pour le cours");
-
-            const users = await response.json();
-            console.log(`Utilisateurs inscrits au cours ${courseId} :`, users);
-            return users;
-        } catch (error) {
-            console.error(error.message);
-        }
-    }
-
-
+    // Fonction qui affiche la liste des utilisateurs
     function showUtilisateurs() {
         contentDiv.innerHTML = ''; // Efface le contenu précédent
 
+        // On créer ensuite les différents éléments de la page
         const createButton = document.createElement('button');
         createButton.className = 'btn-create btn-action';
         createButton.style.float = 'right';
@@ -130,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let i = 0;
         const ul = document.createElement('ul');
+        // Parcours de chaque utilisateur pour afficher ses infos et les boutons de modification / suppression
         utilisateurs.forEach(utilisateur => {
             const li = document.createElement('li');
             li.id = `liUser-${i}`;
@@ -151,23 +119,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const roleSpan = document.createElement('span');
             roleSpan.className = 'item-role';
-            let isAdmin = false;
-            let isProf = false;
-            let isEtudiant = false;
-            let isProfAdmin = false;
 
             let roleText = "Inconnu";
                 if (utilisateur.roles.includes("ROLE_PROF") && utilisateur.roles.includes("ROLE_ADMIN")) {
-                    isProfAdmin = true;
                     roleText = "Professeur / Admin";
                 } else if (utilisateur.roles.includes("ROLE_PROF")) {
-                    isProf = true;
                     roleText = "Professeur";
                 } else if (utilisateur.roles.includes("ROLE_USER")) {
-                    isEtudiant = true;
                     roleText = "Etudiant";
                 } else if (utilisateur.roles.includes("ROLE_ADMIN")) {
-                    isAdmin = true;
                     roleText = "Admin";
                 }
 
@@ -204,8 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
         ueButton.classList.add('btn-enabled');
     }
 
+    // Même chose que showUtilisateurs mais pour les cours
     function showUE() {
-        contentDiv.innerHTML = ''; // Clear previous content
+        contentDiv.innerHTML = '';
 
         const createButton = document.createElement('button');
         createButton.className = 'btn-create btn-action';
@@ -222,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const ul = document.createElement('ul');
         i=0;
+        // Parcours des cours
         ue.forEach(course => {
             const li = document.createElement('li');
             li.id = `liUE-${i}`;
@@ -273,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fonction qui permet d'afficher le formulaire de création d'un élément dans l'une des listes
     function showCreateModal(isUser) {
+        // On crée les différents élément du formulaire
         const modal = document.getElementById('modal');
         modal.style.display = 'block';
 
@@ -287,6 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
         modalContent.appendChild(confirmationMessage);
 
         if (isUser) {
+            // On adapte le formulaire pour les utilisateurs
             const nameInput = document.createElement('input');
             nameInput.type = 'text';
             nameInput.id = 'new-name';
@@ -342,11 +306,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     option.textContent = "Professeur / Admin";
                 }
 
-                roleSelect.appendChild(option); // Ajoute l'option au <select>
+                roleSelect.appendChild(option); // Ajoute l'option au select
             });
             modalContent.appendChild(roleSelect);
             modalContent.appendChild(document.createElement('br'));
 
+            // Fonction qui permet d'ajouter des inscriptions à l'utilisateur, ainsi que de bloquer l'accès aux inscriptions si l'utilisateur est un admin
             roleSelect.addEventListener('change', function () {
                 if (roleSelect.value === 'ROLE_ADMIN') {
                     inscriptionsSelect.disabled = true;
@@ -357,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const listItems = ueList.querySelectorAll('li');
 
                         listItems.forEach((listItem) => {
-                            listItem.remove(); // Supprimer les <li>
+                            listItem.remove(); // Supprimer les li
                         });
 
                         const emptyItem = document.createElement('li');
@@ -381,12 +346,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const defaultOption = document.createElement('option');
             defaultOption.value = ""; // Attribue la valeur de l'option
             defaultOption.textContent = "-- Choisissez un cours --";
-            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au <select>
+            inscriptionsSelect.appendChild(defaultOption); // Ajoute l'option au select
             ue.forEach(course => {
                 const option = document.createElement('option'); // Crée une option
                 option.value = course.id; // Attribue la valeur de l'option
                 option.textContent = course.code;
-                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au select
             })
             modalContent.appendChild(inscriptionsSelect);
             modalContent.appendChild(document.createElement('br'));
@@ -396,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const listItem = document.createElement('li');
             listItem.textContent = '- Aucune UE';
             ueList.appendChild(listItem);
-            // Ajoute la liste <ul> au modal
+            // Ajoute la liste ul au modal
             modalContent.appendChild(ueList);
 
             inscriptionsSelect.addEventListener('change', function () {
@@ -449,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
             modalContent.appendChild(document.createElement('p'));
 
         } else {
-            // Ajouter les champs de saisie
+            // On adapte de la même façon le formulaire pour les cours
             const codeInput = document.createElement('input');
             codeInput.type = 'text';
             codeInput.id = 'new-code';
@@ -538,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const listItem = document.createElement('li');
             listItem.textContent = '- Aucun utilisateur inscrit';
             usersList.appendChild(listItem);
-            // Ajoute la liste <ul> au modal
+            // Ajoute la liste ul au modal
             modalContent.appendChild(usersList);
 
             inscriptionsSelect.addEventListener('change', function () {
@@ -570,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 deleteButton.style.border = 'none';
                 deleteButton.style.cursor = 'pointer'; // Cliquable
 
-                // Ajout d'un événement pour supprimer l'Utilisateur
+                // Ajout d'un événement pour supprimer l'utilisateur
                 deleteButton.addEventListener('click', function () {
                     listItem.remove(); // Supprime cet élément de la liste
                     if (usersList.querySelectorAll('li').length === 0) {
@@ -589,9 +554,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
+        // On finit d'implémenter le formulaire
         modalContent.appendChild(document.createElement('p'));
 
-        // Ajouter les boutons
+        // Ajouter les boutons de confirmation et d'annulation
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirmer';
         confirmButton.className = 'btn-confirm btn-answer';
@@ -629,17 +595,21 @@ document.addEventListener('DOMContentLoaded', function() {
         confirmationMessage.textContent = 'Veuillez modifier les champs ci-dessous.';
         modalContent.appendChild(confirmationMessage);
 
-        let editName;
+        //Définition des variables qui serviront pour récuperer les infos
+        // Variables pour les utilisateur
+        let editName; // Présente pour les deux
         let editFirst_name;
         let editRole;
-        let editInscription = [];
+        let editInscription = []; // Présente pour les deux
 
+        //Variables pour les cours
         let editCode;
         let editDescription;
         let editImage;
 
         const editId = listItem.querySelector('.item-id').textContent;
         if (isUser) {
+            // On récupère les infos de l'utilisateur, et on affiche le formulaire
             utilisateurs.forEach(user => {
                 if (user.id == editId) {
                     editName = user.nom;
@@ -662,8 +632,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 }
             })
-
-            //editInscription = utilisateurs.find(user => user.name === editName).inscription;
 
             const nameMessage = document.createElement('p');
             nameMessage.textContent = 'Nom :';
@@ -736,7 +704,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         const listItems = ueList.querySelectorAll('li');
 
                         listItems.forEach((listItem) => {
-                            listItem.remove(); // Supprimer les <li>
+                            listItem.remove(); // Supprimer les li
                         });
 
                         const emptyItem = document.createElement('li');
@@ -788,7 +756,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else {
                 // Parcourt le tableau dynamiquement
                 editInscription.forEach(inscription => {
-                    const listItem = document.createElement('li'); // Crée un élément <li>
+                    const listItem = document.createElement('li'); // Crée un élément li
                     listItem.textContent = `- Erreur`;
                     ue.forEach(course => {
                         if (course.id == inscription) {
@@ -819,7 +787,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         }
                     })
-                    ueList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+                    ueList.appendChild(listItem); // Ajoute l'élément li à la liste ul
                 });
             }
 
@@ -876,6 +844,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
         } else {
+            // De la même manière, on récupère les infos du cours, et on affiche le formulaire
             ue.forEach(course => {
                 if (course.id == editId) {
                     editCode = course.code;
@@ -885,7 +854,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (Array.isArray(course.users)) {
                         course.users.forEach(user => {
-                            editInscription.push(user); // Ajoute au tableau
+                            editInscription.push(user); // Ajoute au tableau local
                         });
                     }
                 }
@@ -981,7 +950,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const option = document.createElement('option'); // Crée une option
                 option.value = user.id + ' ' + user.nom + ' ' + user.prenom; // Attribue la valeur de l'option
                 option.textContent = user.id + ' ' + user.nom + ' ' + user.prenom;
-                inscriptionsSelect.appendChild(option); // Ajoute l'option au <select>
+                inscriptionsSelect.appendChild(option); // Ajoute l'option au select
             })
             modalContent.appendChild(inscriptionsSelect);
             modalContent.appendChild(document.createElement('br'));
@@ -996,7 +965,7 @@ document.addEventListener('DOMContentLoaded', function() {
             else {
                 // Parcourt le tableau dynamiquement
                 editInscription.forEach(inscription => {
-                    const listItem = document.createElement('li'); // Crée un élément <li>
+                    const listItem = document.createElement('li'); // Crée un élément li
                     listItem.textContent = `- Erreur`; // Définit le contenu de chaque élément
                     utilisateurs.forEach(user => {
                         if (user.id == inscription) {
@@ -1026,11 +995,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             listItem.appendChild(deleteButton); // Ajoute le bouton à côté de l'utilisateur
                         }
                     })
-                    usersList.appendChild(listItem); // Ajoute l'élément <li> à la liste <ul>
+                    usersList.appendChild(listItem); // Ajoute l'élément li à la liste ul
                 });
             }
 
-            // Ajoute la liste <ul> au modal
+            // Ajoute la liste ul au modal
             modalContent.appendChild(usersList);
 
             inscriptionsSelect.addEventListener('change', function () {
@@ -1081,44 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        /*const messageUE = document.createElement('p');
-        messageUE.textContent = 'Modifier les inscriptions :';
-        modalContent.appendChild(messageUE);
-
-        const ulUE = document.createElement('ul');
-        ulUE.id = 'ue-list';
-        editInscription.forEach(inscription => {
-            const liUE = document.createElement('li');
-            liUE.id = `liInscr-${inscription}`;
-
-            const inscriptionSpan = document.createElement('span');
-            inscriptionSpan.className = 'item-inscription';
-            inscriptionSpan.textContent = inscription;
-            liUE.appendChild(inscriptionSpan);
-
-            const removeButton = document.createElement('button');
-            removeButton.className = 'btn-remove btn-action';
-            removeButton.textContent = 'Enlever';
-            removeButton.id = `removeButton-${inscription}`;
-            removeButton.onclick = function () {
-
-            };
-            liUE.appendChild(removeButton);
-
-            ulUE.appendChild(liUE);
-
-        })
-        modalContent.appendChild(ulUE);
-
-        const addButton = document.createElement('button');
-        addButton.className = 'btn-add btn-action';
-        addButton.textContent = 'Ajouter';
-        addButton.id = 'addButton';
-        addButton.onclick = function () {
-
-        }
-        modalContent.appendChild(addButton);*/
-
+        // On affiche ensuite le reste du formulaire
         modalContent.appendChild(document.createElement('p'));
 
         // Ajouter le bouton "Confirmer"
@@ -1181,13 +1113,12 @@ document.addEventListener('DOMContentLoaded', function() {
             confirm(this);
         };
         modalContent.appendChild(cancelButton);
-}
-    
-
+    }
 
     // Fonction qui permet de confirmer la création d'un élément dans l'une des listes
     function confirmCreate() {
         if (utilisateursButton.disabled) {
+            // L'élément est un utilisateur, on récupère les infos rentrées sur le formulaire
             const name = document.getElementById('new-name').value;
             const first_name = document.getElementById('new-first_name').value;
             const password = document.getElementById('new-password').value;
@@ -1221,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newRole = ['ROLE_ADMIN', 'ROLE_PROF'];
             }
 
-
+            // On définit le nouvel utilisateur en regroupant les variables
             let newUser = {
                 id: newId,
                 nom: name,
@@ -1243,6 +1174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             });
 
+            // Appel de la fonction createUser pour créer l'utilisateur sur la base de données
             fetch('/api/admin/create-user', {
                 method: 'POST',
                 headers: {
@@ -1253,7 +1185,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.user && data.user.id) {
-                        // Ajouter l'utilisateur dans la liste locale
+                        // On récupère l'utilisateur pour l'ajouter à la liste locale
                         newUser = {
                             id: data.user.id,
                             nom: data.user.nom,
@@ -1263,7 +1195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             inscriptions: data.user.inscriptions,
                         };
                         alert(`Utilisateur ${data.user.nom} ${data.user.prenom} créé avec succès et ajouté à la liste.`);
-                        utilisateurs.push(newUser);
+                        utilisateurs.push(newUser); // On ajoute l'utilisateur à la liste locale
                         closeModal();
                         showUtilisateurs();
                     } else if (data.error) {
@@ -1275,6 +1207,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         else {
+            // L'élément est un cours, on récupère les infos rentrées sur le formulaire
             const code = document.getElementById('new-code').value;
             const nom = document.getElementById('new-libelle').value;
             const description = document.getElementById('new-description').value;
@@ -1296,6 +1229,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const newId = maxId + 1;
 
+            // On définit le nouveau cours en regroupant les variables
             let newCourse = {
                 id: newId,
                 nom: nom,
@@ -1316,6 +1250,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             });
 
+            // Appel de la fonction createCourse pour créer l'utilisateur sur la base de données
             fetch('/api/admin/create-course', {
                 method: 'POST',
                 headers: {
@@ -1326,7 +1261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.course && data.course.id) {
-                        // Ajouter le cours dans la liste locale
+                        // On récupère le nouveau cours
                         newCourse = {
                             id: data.course.id,
                             code: data.course.code,
@@ -1336,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             users: data.course.users,
                         };
                         alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
-                        ue.push(newCourse);
+                        ue.push(newCourse); // On ajoute le nouveau cours au tableau local
                         closeModal();
                         showUE();
                     } else if (data.error) {
@@ -1356,7 +1291,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const numericId = parseInt(listItem.textContent, 10);
 
         if (utilisateursButton.disabled) {
-
+            // L'élément est un utilisateur, on récupère les informations rentrées dans le formulaire
             const newName = document.getElementById('edit-name').value;
             const newFirst_name = document.getElementById('edit-first_name').value;
             const newRole = document.getElementById('edit-role').value;
@@ -1396,6 +1331,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             utilisateurs.forEach(user => {
                 if (user.id === numericId) {
+                    // On modifie l'utilisateur local
                     user.nom = newName;
                     user.prenom = newFirst_name;
                     user.roles = role;
@@ -1420,6 +1356,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     });
 
+                    // Appel de la fonction updateUser de AdminController.php pour mettre à jour la base de données
                     fetch('/api/admin/update-user', {
                         method: 'POST',
                         headers: {
@@ -1452,6 +1389,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         }
         else {
+            // L'élément est un cours, on récupère les informations rentrées dans le formulaire
             const newCode = document.getElementById('edit-code').value;
             const newLibelle = document.getElementById('edit-libelle').value;
             const newDescription = document.getElementById('edit-description').value;
@@ -1474,6 +1412,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             ue.forEach(course => {
                 if (course.id === numericId){
+                    // On modifie le cours local
                     course.code = newCode;
                     course.nom = newLibelle
                     course.users = [];
@@ -1494,8 +1433,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                             }
                         });
-
                     });
+
+                    // Appel de la fonction updateCourse de AdminController.php pour mettre à jour la base de données
                     fetch('/api/admin/update-course', {
                         method: 'POST',
                         headers: {
@@ -1534,8 +1474,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const listItem = document.getElementById(listItemId);
         const numericId = parseInt(listItem.textContent, 10);
 
-        listItem.remove();
+        listItem.remove(); // On enlève la ligne correspondante dans la liste de la page
 
+        // On enlève l'élément local du tableau correspondant
         if (utilisateursButton.disabled) {
             utilisateurs.forEach(user => {
                 if (user.id === numericId) {
@@ -1551,6 +1492,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         }
 
+        // Appel de la fonction deleteElement de AdminController.php pour suppprimer l'entrée dans la base de données
         fetch(`/api/admin/delete`, {
             method: 'DELETE',
             headers: {
