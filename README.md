@@ -51,6 +51,7 @@ php bin/console doctrine:migrations:migrate
 
 3. (Optionnel) Peupler la base de données avec des données de test :
 - Importer le fichier `data.sql` dans la base de données via phpMyAdmin.
+- Le fichier entier de la bdd est `we4a.sql`.
 
 ### 4. Lancer le serveur
 
