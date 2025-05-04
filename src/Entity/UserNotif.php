@@ -11,9 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class UserNotif
 {
     #[ORM\Id]
-    #[ORM\ManyToOne(targetEntity: Users::class)]
-    #[ORM\JoinColumn(name: 'users_id', referencedColumnName: 'id', nullable: false)]
-    private ?Users $user = null;
+    #[ORM\Column(name: 'users_id', type: 'integer')]
+    private ?int $usersId = null;
 
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: Notification::class)]
@@ -26,17 +25,14 @@ class UserNotif
     /**
      * Get the user associated with this notification.
      */
-    public function getUser(): ?Users
+    public function getUsersId(): ?int
     {
-        return $this->user;
+        return $this->usersId;
     }
 
-    /**
-     * Set the user for this notification.
-     */
-    public function setUser(Users $user): static
+    public function setUsersId(int $usersId): static
     {
-        $this->user = $user;
+        $this->usersId = $usersId;
         return $this;
     }
 
