@@ -594,6 +594,4 @@ class CourseController extends AbstractController
 
         return new JsonResponse(['success' => true, 'message' => 'Ordre des sections mis à jour']);
     }
-
-
 }
