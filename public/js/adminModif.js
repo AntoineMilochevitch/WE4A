@@ -757,7 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Parcourt le tableau dynamiquement
                 editInscription.forEach(inscription => {
                     const listItem = document.createElement('li'); // Crée un élément li
-                    listItem.textContent = `- Erreur`;
+                    listItem.textContent = ``;
                     ue.forEach(course => {
                         if (course.id == inscription) {
                             listItem.value = course.id;
@@ -966,7 +966,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Parcourt le tableau dynamiquement
                 editInscription.forEach(inscription => {
                     const listItem = document.createElement('li'); // Crée un élément li
-                    listItem.textContent = `- Erreur`; // Définit le contenu de chaque élément
+                    listItem.textContent = ``; // Définit le contenu de chaque élément
                     utilisateurs.forEach(user => {
                         if (user.id == inscription) {
                             listItem.value = user.id;
