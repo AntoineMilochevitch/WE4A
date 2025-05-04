@@ -61,18 +61,22 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchInfo();
 
     // Fonction qui permet de récuperer les infos de la base de données
-    async function fetchInfo() {
+    async function fetchInfo(switchToUE = false) {
+        // Vider les tableaux locaux avant de les remplir
+        utilisateurs = [];
+        ue = [];
         fetch('/api/admin') // Appel à la fonction getInfo de AdminController.php
             .then(response => response.json())
             .then(data => {
                 const { users, courses } = data;
-                users.forEach(user => {
-                    utilisateurs.push(user);
-                })
-                courses.forEach(course => {
-                    ue.push(course);
-                })
-                showUtilisateurs();
+                users.forEach(user => utilisateurs.push(user));
+                courses.forEach(course => ue.push(course));
+
+                if (switchToUE) {
+                    showUE(); // Basculer vers l'onglet UE
+                } else {
+                    showUtilisateurs(); // Afficher les utilisateurs par défaut
+                }
             })
             .catch(error => console.error('Error fetching courses/users:', error));
     }
@@ -1163,6 +1167,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 inscriptions: [] // Initialise un tableau vide pour les inscriptions
             };
 
+            console.log("newUser", newUser);
+
             inscriptions.forEach(course => {
                 ue.forEach(cours => {
                     if (course == cours.id) {
@@ -1207,73 +1213,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         }
         else {
-            // L'élément est un cours, on récupère les infos rentrées sur le formulaire
             const code = document.getElementById('new-code').value;
             const nom = document.getElementById('new-libelle').value;
             const description = document.getElementById('new-description').value;
+            const imageInput = document.getElementById('new-image').files[0];
             const userList = document.getElementById('new-usersList');
             const inscriptions = Array.from(userList.querySelectorAll('li')).map(item => item.value);
-            const imageInput = document.getElementById('new-image');
-            const imageUrl = imageInput.value;
-            const imageFilename = imageUrl.split('\\').pop();
-
 
             if (!code || !nom || !description) {
                 alert('Veuillez remplir tous les champs avant de confirmer.');
                 return;
             }
 
-            const maxId = ue.reduce((max, course) => {
-                return course.id > max ? course.id : max;
-            }, 0);
+            // Création de l'objet FormData
+            const formData = new FormData();
+            formData.append('code', code);
+            formData.append('nom', nom);
+            formData.append('description', description);
+            if (imageInput) {
+                formData.append('image', imageInput); // Ajout de l'image
+            }
 
-            const newId = maxId + 1;
+            // Ajout des utilisateurs uniquement si la liste n'est pas vide
+            if (inscriptions.length > 0) {
+                inscriptions
+                    .filter(userId => userId !== 0 && userId !== null && userId !== undefined) // Filtrer les valeurs invalides
+                    .forEach(userId => formData.append('users[]', userId));
+            }
 
-            // On définit le nouveau cours en regroupant les variables
-            let newCourse = {
-                id: newId,
-                nom: nom,
-                code: code,
-                description: description,
-                image: imageFilename,
-                users: [] // Initialise un tableau vide pour les inscriptions
-            };
+            console.log("formData", formData);
 
-            inscriptions.forEach(user => {
-                utilisateurs.forEach(utilisateur => {
-                    if (user == utilisateur.id) {
-                        newCourse.users.push(utilisateur.id); // Ajoute au tableau
-                        newCourse.users.sort()
-                        utilisateur.inscriptions.push(newCourse.id);
-                    }
-                });
-
-            });
-
-            // Appel de la fonction createCourse pour créer l'utilisateur sur la base de données
+            // Envoi de la requête avec fetch
             fetch('/api/admin/create-course', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(newCourse),
+                body: formData,
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.course && data.course.id) {
-                        // On récupère le nouveau cours
-                        newCourse = {
-                            id: data.course.id,
-                            code: data.course.code,
-                            nom: data.course.nom,
-                            description: data.course.description,
-                            image: data.course.image,
-                            users: data.course.users,
-                        };
-                        alert(`Cours ${data.course.nom} créé avec succès et ajouté à la liste.`);
-                        ue.push(newCourse); // On ajoute le nouveau cours au tableau local
+                        alert(`Cours ${data.course.nom} créé avec succès.`);
                         closeModal();
-                        showUE();
+                        fetchInfo(true); // Rafraîchit les données
                     } else if (data.error) {
                         alert('Erreur : ' + data.error);
                     }

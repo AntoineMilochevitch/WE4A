@@ -18,7 +18,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-
+use Psr\Log\LoggerInterface;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'admin')]
@@ -344,10 +344,11 @@ class AdminController extends AbstractController
 
     // Fonction qui met à jour la base de données pour créer un cours
     #[Route('/api/admin/create-course', name: 'api_admin_create_course', methods: ['POST'])]
-    public function createCourse(Request $request, EntityManagerInterface $entityManager, UsersRepository $usersRepository): JsonResponse
+    public function createCourse(Request $request, EntityManagerInterface $entityManager, UsersRepository $usersRepository,  LoggerInterface $logger): JsonResponse
     {
         // Décoder les données JSON envoyées avec la requête
-        $data = json_decode($request->getContent(), true);
+        $data = $request->request->all();
+        $uploadedFile = $request->files->get('image'); // Récupérer le fichier image
 
         // Vérifier les données reçues
         if (!isset($data['code'], $data['nom'], $data['description'])) {
@@ -360,18 +361,37 @@ class AdminController extends AbstractController
         $course->setNom($data['nom']);
         $course->setDescription($data['description']);
 
-        if (isset($data['image'])) {
-            $course->setImage($data['image']);
+        if ($uploadedFile) {
+            // Vérifier le type de fichier
+            $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!in_array($uploadedFile->getMimeType(), $allowedMimeTypes)) {
+                return new JsonResponse(['error' => 'Type de fichier non valide'], 400);
+            }
 
+            // Créer un nom de fichier unique
+            $newFilename = uniqid() . '.' . $uploadedFile->guessExtension();
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/images';
+
+            // Déplacer le fichier téléchargé
+            $uploadedFile->move($uploadDir, $newFilename);
+
+            // Enregistrer le nom de l'image dans l'entité
+            $course->setImage($newFilename);
+        }
+        else {
+            $course->setImage('default.jpg'); // Nom de l'image par défaut
         }
 
         // Sauvegarder dans la base de données
         $entityManager->persist($course);
         $entityManager->flush();
+        $logger->info('Contenu de users dans la requête', [
+            'users' => $data['users'] ?? null,
+        ]);
+        $users = $data['users'] ?? [];
 
-        if (isset($data['users'])) {
-            $userIds = $data['users']; // Liste des IDs des utilisateurs
-            foreach ($userIds as $userId) {
+        if (!empty($users)) {// Liste des IDs des utilisateurs
+            foreach ($users as $userId) {
                 $user = $usersRepository->find($userId);
                 if (!$user) {
                     return new JsonResponse(['error' => "Utilisateur avec l'ID $userId introuvable."], Response::HTTP_NOT_FOUND);
