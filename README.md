@@ -69,7 +69,7 @@ Accéder à l'application via `http://127.0.0.1:8000`
 
 | Email                          | Mot de passe | Rôle           |
 |-------------------------------|--------------|----------------|
-| admin.admin@moodle.fr         | admina       | Administrateur |
+| admin.admin@moodle.fr         | admin       | Administrateur |
 | alexis.correard@moodle.fr     | correarda    | Étudiant       |
 | prof1.prof1@moodle.fr         | prof1p       | Professeur     |
 
